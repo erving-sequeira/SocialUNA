@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna;
+package cr.ac.una.est.socialuna.app;
 
 import javafx.application.Application;
 

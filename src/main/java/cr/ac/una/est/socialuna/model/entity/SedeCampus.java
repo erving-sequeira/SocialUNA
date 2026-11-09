@@ -7,12 +7,22 @@ public class SedeCampus {
     private String tipo;
     private boolean activa;
 
+    /** Reservado para reconstrucción de datos persistidos. */
+    protected SedeCampus() { }
+
     public SedeCampus(String id, String nombre, String alias, String tipo, boolean activa) {
-        this.id = id;
-        this.nombre = nombre;
+        this.id = requerido(id, "id");
+        this.nombre = requerido(nombre, "nombre");
         this.alias = alias;
         this.tipo = tipo;
         this.activa = activa;
+    }
+
+    private static String requerido(String valor, String campo) {
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException(campo + " es obligatorio.");
+        }
+        return valor.strip();
     }
 
     public String getId() {
