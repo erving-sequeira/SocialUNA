@@ -1,13 +1,14 @@
 
-package cr.ac.una.est.socialuna.service;
+package cr.ac.una.est.socialuna.logic.service;
 
-import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
-import cr.ac.una.est.socialuna.model.entity.Publicacion;
-import cr.ac.una.est.socialuna.model.entity.TipoPublicacion;
-import cr.ac.una.est.socialuna.model.entity.Usuario;
+import cr.ac.una.est.socialuna.logic.service.contract.IServicioAmistad;
+import cr.ac.una.est.socialuna.logic.service.contract.IServicioUsuarios;
+import cr.ac.una.est.socialuna.logic.model.entity.AmbitoPublicacion;
+import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.logic.model.entity.TipoPublicacion;
+import cr.ac.una.est.socialuna.logic.model.entity.Usuario;
 import cr.ac.una.est.socialuna.persistence.RepositorioPublicacionesJSON;
-import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
-import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,7 +24,8 @@ public class ServicioPublicacion {
     public ServicioPublicacion(
             IServicioUsuarios servicioUsuarios,
             IServicioAmistad servicioAmistad,
-            RepositorioPublicacionesJSON repositorioPublicaciones) {
+            RepositorioPublicacionesJSON repositorioPublicaciones)
+    {
 
         if (servicioUsuarios == null || servicioAmistad == null
                 || repositorioPublicaciones == null) {
@@ -72,6 +74,7 @@ public class ServicioPublicacion {
         ArrayList<Publicacion> feed = new ArrayList<>();
 
         for (Publicacion publicacion : todas) {
+            if (publicacion.getAmbito() != AmbitoPublicacion.MURO) continue;
 
             boolean esPropia =
                     publicacion.getAutorId().equals(usuario.getId());

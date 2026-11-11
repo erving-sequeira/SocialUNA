@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna.model.graph;
+package cr.ac.una.est.socialuna.logic.model.graph;
 
 import java.util.ArrayList;
 
@@ -14,22 +14,25 @@ public class VerticeAmigos {
         this.usuarioId = usuarioId.strip();
     }
 
-    /** Agrega sin duplicar; la autoamistad la rechaza GrafoAmigos. */
+    /** Agrega un vecino válido sin duplicar ni crear autoamistades. */
     public void agregarAdyacente(String destinoId) {
+        if (destinoId == null || destinoId.isBlank() || usuarioId.equals(destinoId.strip())) {
+            throw new IllegalArgumentException("El ID del vecino debe pertenecer a otro usuario.");
+        }
         if (!contieneAdyacente(destinoId)) {
-            adyacentes.add(destinoId);
+            adyacentes.add(destinoId.strip());
         }
     }
 
     /** Retira la adyacencia si existe; no es un error que falte. */
     public void eliminarAdyacente(String destinoId) {
-        adyacentes.remove(destinoId);
+        if (destinoId != null) adyacentes.remove(destinoId.strip());
     }
 
     public boolean contieneAdyacente(String destinoId) {
-        return adyacentes.contains(destinoId);
+        return destinoId != null && adyacentes.contains(destinoId.strip());
     }
 
     public String getUsuarioId() { return usuarioId; }
-    public ArrayList<String> getAdyacentes() { return adyacentes; }
+    public ArrayList<String> getAdyacentes() { return new ArrayList<>(adyacentes); }
 }

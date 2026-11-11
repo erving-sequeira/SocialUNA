@@ -1,8 +1,10 @@
 
 package cr.ac.una.est.socialuna.persistence;
 
-import cr.ac.una.est.socialuna.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.logic.model.entity.Comentario;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Repositorio de publicaciones con persistencia
@@ -26,11 +28,27 @@ public class RepositorioPublicacionesJSON {
 
     // Cargar publicaciones desde el archivo
     public void cargar() {
-        datos = gestor.leer(
-                ARCHIVO,
-                DocumentoPublicaciones.class,
-                new DocumentoPublicaciones()
-        );
+        DocumentoPublicaciones leido = gestor.leer(ARCHIVO, DocumentoPublicaciones.class, new DocumentoPublicaciones());
+        var publicaciones = new ArrayList<Publicacion>();
+        var ids = new HashSet<String>();
+        try {
+            for (Publicacion registro : leido.getPublicaciones()) {
+                Publicacion publicacion = new Publicacion(registro.getId(), registro.getAutorId(),
+                        registro.getTexto(), registro.getCreadoEn(), registro.getAmbito(), registro.getTipo(),
+                        registro.getCarreraId(), registro.getSedeId());
+                if (!ids.add(publicacion.getId())) {
+                    throw new IllegalArgumentException("ID de publicación repetido.");
+                }
+                for (Comentario comentario : registro.getComentarios()) {
+                    publicacion.agregarComentario(new Comentario(comentario.getId(), comentario.getAutorId(),
+                            comentario.getTexto(), comentario.getCreadoEn()));
+                }
+                publicaciones.add(publicacion);
+            }
+        } catch (IllegalArgumentException | NullPointerException error) {
+            throw new IllegalStateException(ARCHIVO + " contiene publicaciones inválidas.", error);
+        }
+        datos = new DocumentoPublicaciones(publicaciones);
     }
 
     // Guardar publicaciones en el archivo
