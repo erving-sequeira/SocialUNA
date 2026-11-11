@@ -48,11 +48,16 @@ src/
 │   │       ├── model/
 │   │       │   ├── entity/                  # Usuario, RelacionAmistad, Carrera, SedeCampus
 │   │       │   └── graph/
+│   │       │       ├── VerticeAmigos.java    # ID del usuario y sus IDs de vecinos
+│   │       │       └── GrafoAmigos.java      # Amistades por listas de adyacencia
 │   │       │
 │   │       ├── service/
 │   │       │   └── contract/                # IServicioUsuarios, IServicioAmistad
 │   │       │
 │   │       ├── persistence/
+│   │       │   ├── GestorJSON.java           # Lectura/escritura común con Gson
+│   │       │   ├── DocumentoAmistades.java   # Raíz de amistades.json
+│   │       │   └── RepositorioAmistadesJSON.java  # Relaciones en amistades.json
 │   │       │
 │   │       └── ui/
 │   │           ├── controller/
@@ -66,5 +71,8 @@ src/
 └── test/
     └── java/cr/ac/una/est/socialuna/
         ├── app/AppSocialUNATest.java        # Arranque gráfico
-        └── model/entity/                    # UsuarioTest, RelacionAmistadTest, CatalogosTest
+        ├── model/entity/                    # UsuarioTest, RelacionAmistadTest, CatalogosTest
+        ├── model/graph/GrafoAmigosTest.java # Conexión recíproca, duplicados y borrado
+        └── persistence/
+            └── RepositorioAmistadesJSONTest.java  # Guardar, reabrir y errores de archivo
 ```
