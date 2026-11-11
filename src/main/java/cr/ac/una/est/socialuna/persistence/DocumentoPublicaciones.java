@@ -21,7 +21,6 @@ public class DocumentoPublicaciones {
     public ArrayList<Publicacion> getPublicaciones() {
         return publicaciones;
     }
-
     public void setPublicaciones(ArrayList<Publicacion> publicaciones) {
         this.publicaciones = publicaciones == null
                 ? new ArrayList<>()
