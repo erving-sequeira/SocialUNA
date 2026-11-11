@@ -94,7 +94,7 @@ public class ServicioPublicacion {
     }
 
     // Verificar que exista una sesión activa
-    public Usuario exigirSesion() {
+    private Usuario exigirSesion() {
 
         Usuario usuario = servicioUsuarios.getUsuarioActual();
 
@@ -107,7 +107,7 @@ public class ServicioPublicacion {
     }
 
     // Validar el texto de una publicación
-    public void validarTexto(String texto) {
+    private void validarTexto(String texto) {
 
         if (texto == null || texto.isBlank()) {
             throw new IllegalArgumentException(
@@ -116,7 +116,7 @@ public class ServicioPublicacion {
     }
 
     // Ordenar publicaciones de la más reciente a la más antigua
-    public ArrayList<Publicacion> ordenarRecientes(
+    private ArrayList<Publicacion> ordenarRecientes(
             ArrayList<Publicacion> publicaciones) {
 
         if (publicaciones == null) {
@@ -135,4 +135,6 @@ public class ServicioPublicacion {
         return ordenadas;
     }
 }
+
+
 
