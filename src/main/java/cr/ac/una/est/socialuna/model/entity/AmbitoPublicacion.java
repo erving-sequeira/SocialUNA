@@ -5,4 +5,3 @@ public enum AmbitoPublicacion {
     CARRERA,
     SEDE
 }
-

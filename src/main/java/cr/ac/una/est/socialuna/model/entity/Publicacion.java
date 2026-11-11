@@ -4,7 +4,6 @@ package cr.ac.una.est.socialuna.model.entity;
 import java.util.ArrayList;
 
 public class Publicacion {
-
     // Atributos
     private String id;
     private String autorId;
