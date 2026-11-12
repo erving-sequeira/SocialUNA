@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna.model.entity;
+package cr.ac.una.est.socialuna.logic.model.entity;
 
 /** Identidad del estudiante. Solo los datos académicos se pueden cambiar. */
 public class Usuario {

@@ -1,5 +1,6 @@
 package cr.ac.una.est.socialuna.model.entity;
 
+import cr.ac.una.est.socialuna.logic.model.entity.RelacionAmistad;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
