@@ -5,7 +5,7 @@ public class Carrera {
     private String nombre;
     private boolean activa;
 
-    /** Reservado para reconstrucción de datos persistidos. */
+    //reservado para reconstrucción de datos persistidos
     protected Carrera() { }
 
     public Carrera(String id, String nombre, boolean activa) {
