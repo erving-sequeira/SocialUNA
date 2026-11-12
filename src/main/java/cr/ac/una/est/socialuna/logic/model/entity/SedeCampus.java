@@ -7,7 +7,7 @@ public class SedeCampus {
     private String tipo;
     private boolean activa;
 
-    /** Reservado para reconstrucción de datos persistidos. */
+    //reservado para reconstrucción de datos persistidos
     protected SedeCampus() { }
 
     public SedeCampus(String id, String nombre, String alias, String tipo, boolean activa) {
