@@ -44,7 +44,7 @@ Desarrollado para el curso EIF207 - Estructuras de Datos (UNA).
 
 `GestorJSON` recibe el directorio de datos. Los repositorios de usuarios y catálogos cargan al construirse y permiten recargar explícitamente. Para amistades se llama a `cargar()` antes de usar el repositorio. Los archivos ausentes equivalen a listas vacías y se crean al guardar. Cada catálogo tiene su propio repositorio. Se actualizan con `guardarCarreras` y `guardarSedes`, y un archivo inválido solo afecta la carga de su repositorio. Si cambia el nombre de una carrera o sede, conservar su ID mantiene la referencia de los perfiles.
 
-Los servicios de registro, inicio de sesión y edición de perfil todavía están pendientes. El futuro `ServicioUsuarios` consultará los catálogos para comprobar que una carrera o sede seleccionada existe y está activa. La ventana inicial de JavaFX aún no carga los repositorios.
+`ServicioUsuarios` requiere una carrera y una sede activas para registrar una cuenta o actualizar sus datos académicos. El nombre de usuario se guarda en minúsculas y sin espacios exteriores. Los perfiles existentes pueden cargar referencias académicas vacías. La ventana inicial de JavaFX aún no carga los repositorios.
 
 ## Estructura del proyecto
 

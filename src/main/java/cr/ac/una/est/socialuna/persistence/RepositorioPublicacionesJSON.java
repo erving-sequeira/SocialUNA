@@ -105,6 +105,25 @@ public class RepositorioPublicacionesJSON {
         }
     }
 
+    /** Persiste el comentario antes de actualizar la publicación en memoria. */
+    public void agregarComentario(String publicacionId, Comentario comentario) {
+        exigirCarga();
+        int indice = buscarIndicePorId(publicacionId);
+        if (indice < 0) throw new IllegalArgumentException("No existe la publicación indicada.");
+        var publicaciones = listar();
+        Publicacion anterior = publicaciones.get(indice);
+        var actualizada = new Publicacion(anterior.getId(), anterior.getAutorId(), anterior.getTexto(),
+                anterior.getCreadoEn(), anterior.getAmbito(), anterior.getTipo(), anterior.getCarreraId(), anterior.getSedeId());
+        for (Comentario guardado : anterior.getComentarios()) {
+            actualizada.agregarComentario(guardado);
+        }
+        actualizada.agregarComentario(comentario);
+        publicaciones.set(indice, actualizada);
+        var actualizado = new DocumentoPublicaciones(publicaciones);
+        gestor.escribir(ARCHIVO, actualizado, DocumentoPublicaciones.class);
+        datos = actualizado;
+    }
+
     // Buscar la posición de una publicación por ID
     private int buscarIndicePorId(String id) {
         for (int i = 0; i < datos.getPublicaciones().size(); i++) {

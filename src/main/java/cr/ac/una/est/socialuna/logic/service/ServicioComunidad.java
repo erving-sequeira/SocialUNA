@@ -41,16 +41,18 @@ public class ServicioComunidad implements IServicioComunidad {
     public ArrayList<Publicacion> obtenerPorCarrera(String sedeFiltroId) {
         Usuario usuario = exigirSesion();
         //para consultar por carrera, el usuario debe tener una carrera configurada.
-        validarTexto(usuario.getCarreraId());
+        exigirDatoAcademico(usuario.getCarreraId(), "carrera");
 
         ArrayList<Publicacion> resultado = new ArrayList<>();
+
+        String filtro = sedeFiltroId == null || sedeFiltroId.isBlank() ? null : sedeFiltroId.strip();
 
         //recorre las publicaciones almacenadas y conserva las de la carrera del usuario
         for (Publicacion publicacion : repositorioPublicaciones.listar()) {
             boolean mismaCarrera = publicacion.getAmbito() == AmbitoPublicacion.CARRERA && usuario.getCarreraId().equals(publicacion.getCarreraId());
 
             //un filtro null significa que se incluyen todas las sedes de la carrera.
-            boolean sedeCoincide = sedeFiltroId == null || sedeFiltroId.equals(publicacion.getSedeId());
+            boolean sedeCoincide = filtro == null || filtro.equals(publicacion.getSedeId());
 
             if (mismaCarrera && sedeCoincide) {
                 resultado.add(publicacion);
@@ -66,7 +68,7 @@ public class ServicioComunidad implements IServicioComunidad {
     public ArrayList<Publicacion> obtenerPorSede() {
         Usuario usuario = exigirSesion();
         //para consultar por sede, el usuario debe tener una sede configurada
-        validarTexto(usuario.getSedeId());
+        exigirDatoAcademico(usuario.getSedeId(), "sede");
 
         ArrayList<Publicacion> resultado = new ArrayList<>();
 
@@ -86,9 +88,9 @@ public class ServicioComunidad implements IServicioComunidad {
         Usuario usuario = exigirSesion();
 
         //impide publicar en una carrera si el perfil no tiene carrera configurada
-        validarTexto(usuario.getCarreraId());
+        exigirDatoAcademico(usuario.getCarreraId(), "carrera");
 
-        //crea la publicación con ámbito de carrera y sin sede específica
+        //conserva la sede de origen para el filtro de la comunidad de carrera
         Publicacion publicacion = new Publicacion(
                 UUID.randomUUID().toString(),
                 usuario.getId(),
@@ -97,7 +99,7 @@ public class ServicioComunidad implements IServicioComunidad {
                 AmbitoPublicacion.CARRERA,
                 validarTipo(tipo),
                 usuario.getCarreraId(),
-                null
+                usuario.getSedeId()
         );
         //el repositorio agrega la publicación y persiste el cambio
         repositorioPublicaciones.guardar(publicacion);
@@ -110,7 +112,7 @@ public class ServicioComunidad implements IServicioComunidad {
         Usuario usuario = exigirSesion();
 
         //impide publicar en una sede si el perfil no tiene sede configurada
-        validarTexto(usuario.getSedeId());
+        exigirDatoAcademico(usuario.getSedeId(), "sede");
 
         //crea la publicación con el ámbito y los datos académicos del usuario
         Publicacion publicacion = new Publicacion(
@@ -143,8 +145,7 @@ public class ServicioComunidad implements IServicioComunidad {
                 System.currentTimeMillis()
         );
         //agrega el comentario a la publicación y guarda el documento actualizado
-        publicacion.agregarComentario(comentario);
-        repositorioPublicaciones.guardarEnArchivo();
+        repositorioPublicaciones.agregarComentario(publicacion.getId(), comentario);
         return comentario;
     }
 
@@ -154,8 +155,7 @@ public class ServicioComunidad implements IServicioComunidad {
         Usuario usuario = exigirSesion();
         //no permite consultar comentarios de una publicación fuera de su ámbito
         Publicacion publicacion = exigirPublicacionVisible(publicacionId, usuario);
-        //devuelve una lista nueva para no exponer directamente la lista interna
-        return new ArrayList<>(publicacion.getComentarios());
+        return publicacion.getComentarios();
     }
 
     //obtiene el usuario con sesión activa
@@ -169,10 +169,16 @@ public class ServicioComunidad implements IServicioComunidad {
 
     //comprueba que un texto no sea null ni esté vacío y elimina espacios externos
     private String validarTexto(String texto) {
-        if (texto == null || texto.trim().isEmpty()) {
+        if (texto == null || texto.isBlank()) {
             throw new IllegalArgumentException("El texto es obligatorio.");
         }
-        return texto.trim();
+        return texto.strip();
+    }
+
+    private void exigirDatoAcademico(String id, String dato) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalStateException("Configura tu " + dato + " para usar esta comunidad.");
+        }
     }
 
     //comprueba que se haya seleccionado un tipo de publicación
@@ -187,8 +193,8 @@ public class ServicioComunidad implements IServicioComunidad {
     //una publicación de carrera es visible si coincide la carrera
     //una publicación de sede es visible si coincide la sede
     private Publicacion exigirPublicacionVisible(String publicacionId, Usuario usuario) {
-        validarTexto(publicacionId);
-        Publicacion publicacion = repositorioPublicaciones.buscarPorId(publicacionId);
+        String id = validarTexto(publicacionId);
+        Publicacion publicacion = repositorioPublicaciones.buscarPorId(id);
 
         if (publicacion == null) {
             throw new IllegalArgumentException("No existe la publicación indicada.");
@@ -206,7 +212,8 @@ public class ServicioComunidad implements IServicioComunidad {
 
     //ordena las publicaciones por fecha, de la más reciente a la más antigua
     private ArrayList<Publicacion> ordenarRecientes(ArrayList<Publicacion> publicaciones) {
-        publicaciones.sort(Comparator.comparingLong(Publicacion::getCreadoEn).reversed());
+        publicaciones.sort(Comparator.comparingLong(Publicacion::getCreadoEn).reversed()
+                .thenComparing(Publicacion::getId));
         return publicaciones;
     }
 }

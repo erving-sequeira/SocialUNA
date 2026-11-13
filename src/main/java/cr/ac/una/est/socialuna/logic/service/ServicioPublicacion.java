@@ -69,7 +69,7 @@ public class ServicioPublicacion {
                 repositorioPublicaciones.listar();
 
         ArrayList<Usuario> amigos =
-                servicioAmistad.listarAmigos();
+                servicioAmistad.listarMisAmigos();
 
         ArrayList<Publicacion> feed = new ArrayList<>();
 
@@ -133,6 +133,7 @@ public class ServicioPublicacion {
         ordenadas.sort(
                 Comparator.comparingLong(Publicacion::getCreadoEn)
                         .reversed()
+                        .thenComparing(Publicacion::getId)
         );
 
         return ordenadas;
