@@ -69,11 +69,16 @@ public class ServicioPublicacion implements IServicioPublicacion {
                 repositorioPublicaciones.listar();
 
         ArrayList<Usuario> amigos =
-                servicioAmistad.listarAmigos();
+                servicioAmistad.listarMisAmigos();
 
         ArrayList<Publicacion> feed = new ArrayList<>();
 
         for (Publicacion publicacion : todas) {
+
+            // El feed solo muestra publicaciones del muro
+            if (publicacion.getAmbito() != AmbitoPublicacion.MURO) {
+                continue;
+            }
 
             boolean esPropia =
                     publicacion.getAutorId().equals(usuario.getId());
@@ -131,6 +136,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
         ordenadas.sort(
                 Comparator.comparingLong(Publicacion::getCreadoEn)
                         .reversed()
+                        .thenComparing(Publicacion::getId)
         );
 
         return ordenadas;

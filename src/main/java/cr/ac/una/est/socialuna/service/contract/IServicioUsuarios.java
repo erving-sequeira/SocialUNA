@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /** Operaciones de registro, sesión y datos académicos de los usuarios. */
 public interface IServicioUsuarios {
 
-    Usuario registrar(String nombre, String nombreUsuario, String contrasena);
+    Usuario registrar(String nombre, String nombreUsuario, String contrasena, String carreraId, String sedeId);
 
     Usuario iniciarSesion(String nombreUsuario, String contrasena);
 

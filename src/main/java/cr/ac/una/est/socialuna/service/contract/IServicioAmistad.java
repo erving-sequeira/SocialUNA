@@ -10,7 +10,14 @@ public interface IServicioAmistad {
 
     void eliminarAmigo(String amigoId);
 
-    ArrayList<Usuario> listarAmigos();
+    /** Lista de amistades del usuario en sesión. */
+    ArrayList<Usuario> listarMisAmigos();
+
+    /** Lista de amistades del perfil indicado, consultada por un usuario en sesión. */
+    ArrayList<Usuario> listarAmigosDe(String perfilId);
+
+    /** Total de amistades del perfil indicado en el grafo. */
+    int contarAmigosDe(String perfilId);
 
     boolean sonAmigos(String usuarioId, String otroId);
 }
