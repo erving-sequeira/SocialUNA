@@ -1,5 +1,4 @@
 package cr.ac.una.est.socialuna.service.contract;
-
 import cr.ac.una.est.socialuna.model.entity.Publicacion;
 import java.util.ArrayList;
 

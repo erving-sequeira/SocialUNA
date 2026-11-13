@@ -56,7 +56,6 @@ public class ServicioPublicacion implements IServicioPublicacion {
         );
 
         repositorioPublicaciones.guardar(publicacion);
-
         return publicacion;
     }
 
