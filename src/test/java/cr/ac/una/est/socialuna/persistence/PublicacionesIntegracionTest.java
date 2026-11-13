@@ -1,14 +1,14 @@
 package cr.ac.una.est.socialuna.persistence;
 
-import cr.ac.una.est.socialuna.logic.model.entity.AmbitoPublicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.Comentario;
-import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.TipoPublicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.Usuario;
-import cr.ac.una.est.socialuna.logic.service.ServicioPublicacion;
-import cr.ac.una.est.socialuna.logic.service.ServicioComunidad;
-import cr.ac.una.est.socialuna.logic.service.contract.IServicioAmistad;
-import cr.ac.una.est.socialuna.logic.service.contract.IServicioUsuarios;
+import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
+import cr.ac.una.est.socialuna.model.entity.Comentario;
+import cr.ac.una.est.socialuna.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.model.entity.TipoPublicacion;
+import cr.ac.una.est.socialuna.model.entity.Usuario;
+import cr.ac.una.est.socialuna.service.ServicioPublicacion;
+import cr.ac.una.est.socialuna.service.ServicioComunidad;
+import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
+import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;

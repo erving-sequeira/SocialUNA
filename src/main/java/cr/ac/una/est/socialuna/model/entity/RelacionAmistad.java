@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna.logic.model.entity;
+package cr.ac.una.est.socialuna.model.entity;
 
 /** Una arista no dirigida persistida por par de usuarios, sin autoamistad. */
 public class RelacionAmistad {

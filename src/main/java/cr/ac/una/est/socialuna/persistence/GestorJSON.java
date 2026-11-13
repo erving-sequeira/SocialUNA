@@ -3,18 +3,15 @@ package cr.ac.una.est.socialuna.persistence;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import com.google.gson.Strictness;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 /** Lectura y escritura de JSON con Gson, sin adaptador propio de listas. */
 public class GestorJSON {
-    private final Path directorioDatos;
-    private final Gson gson;
+    private Path directorioDatos;
+    private Gson gson;
 
     public GestorJSON(Path directorioDatos) {
         if (directorioDatos == null) {
@@ -53,33 +50,16 @@ public class GestorJSON {
 
     /** Un fallo de escritura nunca se presenta como guardado exitoso. */
     public <T> void escribir(String nombreArchivo, T documento, Type tipo) {
-        Path destino = resolverRuta(nombreArchivo);
-        Path temporal = null;
         try {
-            String contenido = gson.toJson(documento, tipo);
             Files.createDirectories(directorioDatos);
-            temporal = Files.createTempFile(directorioDatos, ".socialuna-", ".tmp");
-            Files.writeString(temporal, contenido);
-            try {
-                Files.move(temporal, destino, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException error) {
-                Files.move(temporal, destino, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (IOException | UnsupportedOperationException error) {
-            throw new IllegalStateException("No se pudo guardar " + nombreArchivo + ".", error);
-        } finally {
-            if (temporal != null) {
-                try {
-                    Files.deleteIfExists(temporal);
-                } catch (IOException ignorado) {
-                    // El error de limpieza no debe ocultar el resultado del guardado.
-                }
-            }
+            Files.writeString(resolverRuta(nombreArchivo), gson.toJson(documento, tipo));
+        } catch (IOException | UnsupportedOperationException e) {
+            throw new IllegalStateException("No se pudo guardar " + nombreArchivo + ".", e);
         }
     }
 
     private Gson configurarGson() {
-        return new GsonBuilder().setStrictness(Strictness.STRICT).setPrettyPrinting().create();
+        return new GsonBuilder().setPrettyPrinting().create();
     }
 
     private Path resolverRuta(String nombreArchivo) {

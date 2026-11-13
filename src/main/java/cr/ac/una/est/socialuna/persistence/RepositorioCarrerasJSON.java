@@ -1,7 +1,7 @@
-package cr.ac.una.est.socialuna.logic.repository;
+package cr.ac.una.est.socialuna.persistence;
 
 import com.google.gson.reflect.TypeToken;
-import cr.ac.una.est.socialuna.logic.model.entity.Carrera;
+import cr.ac.una.est.socialuna.model.entity.Carrera;
 import cr.ac.una.est.socialuna.persistence.GestorJSON;
 
 import java.lang.reflect.Type;

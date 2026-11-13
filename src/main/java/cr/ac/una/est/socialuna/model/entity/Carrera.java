@@ -1,11 +1,11 @@
-package cr.ac.una.est.socialuna.logic.model.entity;
+package cr.ac.una.est.socialuna.model.entity;
 
 public class Carrera {
     private String id;
     private String nombre;
     private boolean activa;
 
-    //reservado para reconstrucción de datos persistidos
+    /** Reservado para reconstrucción de datos persistidos. */
     protected Carrera() { }
 
     public Carrera(String id, String nombre, boolean activa) {

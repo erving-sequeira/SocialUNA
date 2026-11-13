@@ -1,8 +1,8 @@
 
 package cr.ac.una.est.socialuna.persistence;
 
-import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.Comentario;
+import cr.ac.una.est.socialuna.model.entity.Comentario;
+import cr.ac.una.est.socialuna.model.entity.Publicacion;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -26,28 +26,52 @@ public class RepositorioPublicacionesJSON {
         this.gestor = gestor;
     }
 
-    // Cargar publicaciones desde el archivo
+    // Cargar publicaciones desde el archivo, validando su contenido
     public void cargar() {
-        DocumentoPublicaciones leido = gestor.leer(ARCHIVO, DocumentoPublicaciones.class, new DocumentoPublicaciones());
+        DocumentoPublicaciones leido = gestor.leer(
+                ARCHIVO,
+                DocumentoPublicaciones.class,
+                new DocumentoPublicaciones()
+        );
+
         var publicaciones = new ArrayList<Publicacion>();
         var ids = new HashSet<String>();
+
         try {
             for (Publicacion registro : leido.getPublicaciones()) {
-                Publicacion publicacion = new Publicacion(registro.getId(), registro.getAutorId(),
-                        registro.getTexto(), registro.getCreadoEn(), registro.getAmbito(), registro.getTipo(),
-                        registro.getCarreraId(), registro.getSedeId());
+
+                Publicacion publicacion = new Publicacion(
+                        registro.getId(),
+                        registro.getAutorId(),
+                        registro.getTexto(),
+                        registro.getCreadoEn(),
+                        registro.getAmbito(),
+                        registro.getTipo(),
+                        registro.getCarreraId(),
+                        registro.getSedeId()
+                );
+
                 if (!ids.add(publicacion.getId())) {
-                    throw new IllegalArgumentException("ID de publicación repetido.");
+                    throw new IllegalArgumentException(
+                            "ID de publicación repetido.");
                 }
+
                 for (Comentario comentario : registro.getComentarios()) {
-                    publicacion.agregarComentario(new Comentario(comentario.getId(), comentario.getAutorId(),
-                            comentario.getTexto(), comentario.getCreadoEn()));
+                    publicacion.agregarComentario(new Comentario(
+                            comentario.getId(),
+                            comentario.getAutorId(),
+                            comentario.getTexto(),
+                            comentario.getCreadoEn()
+                    ));
                 }
+
                 publicaciones.add(publicacion);
             }
         } catch (IllegalArgumentException | NullPointerException error) {
-            throw new IllegalStateException(ARCHIVO + " contiene publicaciones inválidas.", error);
+            throw new IllegalStateException(
+                    ARCHIVO + " contiene publicaciones inválidas.", error);
         }
+
         datos = new DocumentoPublicaciones(publicaciones);
     }
 
@@ -105,23 +129,43 @@ public class RepositorioPublicacionesJSON {
         }
     }
 
-    /** Persiste el comentario antes de actualizar la publicación en memoria. */
+    // Agregar un comentario a una publicación existente
     public void agregarComentario(String publicacionId, Comentario comentario) {
         exigirCarga();
+
         int indice = buscarIndicePorId(publicacionId);
-        if (indice < 0) throw new IllegalArgumentException("No existe la publicación indicada.");
-        var publicaciones = listar();
-        Publicacion anterior = publicaciones.get(indice);
-        var actualizada = new Publicacion(anterior.getId(), anterior.getAutorId(), anterior.getTexto(),
-                anterior.getCreadoEn(), anterior.getAmbito(), anterior.getTipo(), anterior.getCarreraId(), anterior.getSedeId());
+
+        if (indice < 0) {
+            throw new IllegalArgumentException(
+                    "No existe la publicación indicada.");
+        }
+
+        Publicacion anterior = datos.getPublicaciones().get(indice);
+
+        Publicacion actualizada = new Publicacion(
+                anterior.getId(),
+                anterior.getAutorId(),
+                anterior.getTexto(),
+                anterior.getCreadoEn(),
+                anterior.getAmbito(),
+                anterior.getTipo(),
+                anterior.getCarreraId(),
+                anterior.getSedeId()
+        );
+
         for (Comentario guardado : anterior.getComentarios()) {
             actualizada.agregarComentario(guardado);
         }
         actualizada.agregarComentario(comentario);
-        publicaciones.set(indice, actualizada);
-        var actualizado = new DocumentoPublicaciones(publicaciones);
-        gestor.escribir(ARCHIVO, actualizado, DocumentoPublicaciones.class);
-        datos = actualizado;
+
+        datos.getPublicaciones().set(indice, actualizada);
+
+        try {
+            guardarEnArchivo();
+        } catch (RuntimeException fallo) {
+            datos.getPublicaciones().set(indice, anterior);
+            throw fallo;
+        }
     }
 
     // Buscar la posición de una publicación por ID

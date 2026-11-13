@@ -1,7 +1,7 @@
 
 package cr.ac.una.est.socialuna.persistence;
 
-import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.model.entity.Publicacion;
 import java.util.ArrayList;
 
 public class DocumentoPublicaciones {

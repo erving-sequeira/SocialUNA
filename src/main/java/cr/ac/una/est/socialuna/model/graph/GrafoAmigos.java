@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna.logic.model.graph;
+package cr.ac.una.est.socialuna.model.graph;
 
 import java.util.ArrayList;
 
@@ -32,10 +32,8 @@ public class GrafoAmigos {
     /** Retira las dos adyacencias; si no hay amistad no hace nada. */
     public void desconectar(String usuarioAId, String usuarioBId) {
         exigirParDistinto(usuarioAId, usuarioBId);
-        VerticeAmigos a = exigirVertice(usuarioAId);
-        VerticeAmigos b = exigirVertice(usuarioBId);
-        a.eliminarAdyacente(b.getUsuarioId());
-        b.eliminarAdyacente(a.getUsuarioId());
+        exigirVertice(usuarioAId).eliminarAdyacente(usuarioBId);
+        exigirVertice(usuarioBId).eliminarAdyacente(usuarioAId);
     }
 
     /** Usuario desconocido o sin sesión no es amigo de nadie. */
@@ -47,7 +45,7 @@ public class GrafoAmigos {
     /** Lista copia para que el llamador no altere las adyacencias del vértice. */
     public ArrayList<String> obtenerAmigos(String usuarioId) {
         VerticeAmigos vertice = buscarVertice(usuarioId);
-        return vertice == null ? new ArrayList<>() : vertice.getAdyacentes();
+        return vertice == null ? new ArrayList<>() : new ArrayList<>(vertice.getAdyacentes());
     }
 
     private VerticeAmigos buscarVertice(String usuarioId) {

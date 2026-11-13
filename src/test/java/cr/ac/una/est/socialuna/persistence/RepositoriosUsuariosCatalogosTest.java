@@ -1,12 +1,12 @@
 package cr.ac.una.est.socialuna.persistence;
 
 import com.google.gson.JsonParser;
-import cr.ac.una.est.socialuna.logic.model.entity.Carrera;
-import cr.ac.una.est.socialuna.logic.model.entity.SedeCampus;
-import cr.ac.una.est.socialuna.logic.model.entity.Usuario;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioCarrerasJSON;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioSedesJSON;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioUsuariosJSON;
+import cr.ac.una.est.socialuna.model.entity.Carrera;
+import cr.ac.una.est.socialuna.model.entity.SedeCampus;
+import cr.ac.una.est.socialuna.model.entity.Usuario;
+import cr.ac.una.est.socialuna.persistence.RepositorioCarrerasJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioSedesJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioUsuariosJSON;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

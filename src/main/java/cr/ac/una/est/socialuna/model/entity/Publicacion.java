@@ -1,5 +1,5 @@
 
-package cr.ac.una.est.socialuna.logic.model.entity;
+package cr.ac.una.est.socialuna.model.entity;
 
 import java.util.ArrayList;
 
@@ -28,17 +28,21 @@ public class Publicacion {
 
         if (id == null || id.isBlank() || autorId == null || autorId.isBlank()
                 || texto == null || texto.isBlank() || creadoEn < 0 || ambito == null || tipo == null) {
-            throw new IllegalArgumentException("La publicación requiere ID, autor, texto, fecha, ámbito y tipo válidos.");
+            throw new IllegalArgumentException(
+                    "La publicación requiere ID, autor, texto, fecha, ámbito y tipo válidos.");
         }
         if (ambito == AmbitoPublicacion.CARRERA && (carreraId == null || carreraId.isBlank())) {
-            throw new IllegalArgumentException("Una publicación de carrera requiere su carrera.");
+            throw new IllegalArgumentException(
+                    "Una publicación de carrera requiere su carrera.");
         }
         if (ambito == AmbitoPublicacion.SEDE && (sedeId == null || sedeId.isBlank())) {
-            throw new IllegalArgumentException("Una publicación de sede requiere su sede.");
+            throw new IllegalArgumentException(
+                    "Una publicación de sede requiere su sede.");
         }
-        this.id = id.strip();
-        this.autorId = autorId.strip();
-        this.texto = texto.strip();
+
+        this.id = id;
+        this.autorId = autorId;
+        this.texto = texto;
         this.creadoEn = creadoEn;
         this.ambito = ambito;
         this.tipo = tipo;
@@ -49,7 +53,10 @@ public class Publicacion {
 
     // Metodo para agregar comentarios
     public void agregarComentario(Comentario comentario) {
-        if (comentario == null) throw new IllegalArgumentException("El comentario es obligatorio.");
+        if (comentario == null) {
+            throw new IllegalArgumentException(
+                    "El comentario es obligatorio.");
+        }
         this.comentarios.add(comentario);
     }
 

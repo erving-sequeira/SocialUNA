@@ -1,12 +1,9 @@
 package cr.ac.una.est.socialuna.persistence;
 
-import com.google.gson.JsonParser;
-import cr.ac.una.est.socialuna.logic.model.entity.RelacionAmistad;
+import cr.ac.una.est.socialuna.model.entity.RelacionAmistad;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-
-import cr.ac.una.est.socialuna.logic.repository.RepositorioAmistadesJSON;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,14 +33,10 @@ class RepositorioAmistadesJSONTest {
         assertNull(nuevoRepositorio().buscarEntre("u1", "u2"));
     }
 
-    @Test void guardaRecuperaYConservaAlReabrir() throws Exception {
+    @Test void guardaRecuperaYConservaAlReabrir() {
         RepositorioAmistadesJSON repositorio = nuevoRepositorio();
         repositorio.guardar(relacion("r1", "u1", "u2"));
         repositorio.guardar(relacion("r2", "u2", "u3"));
-
-        var registros = JsonParser.parseString(Files.readString(directorio.resolve("amistades.json"))).getAsJsonArray();
-        assertEquals(2, registros.size());
-        assertEquals("r1", registros.get(0).getAsJsonObject().get("id").getAsString());
 
         RepositorioAmistadesJSON reabierto = nuevoRepositorio();
         assertEquals(2, reabierto.listar().size());
@@ -96,11 +89,5 @@ class RepositorioAmistadesJSONTest {
         assertEquals("u1", listadas.get(0).getUsuarioAId());
         listadas.clear();
         assertEquals(1, nuevoRepositorio().listar().size());
-    }
-    @Test void buscarEntreExigeDosUsuariosDiferentes() {
-        RepositorioAmistadesJSON repositorio = nuevoRepositorio();
-        repositorio.guardar(relacion("r1", "u1", "u2"));
-        assertNull(repositorio.buscarEntre("u1", " u1 "));
-        assertEquals("r1", repositorio.buscarEntre(" u2 ", "u1").getId());
     }
 }

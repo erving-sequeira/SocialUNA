@@ -1,12 +1,12 @@
-package cr.ac.una.est.socialuna.logic.service;
+package cr.ac.una.est.socialuna.service;
 
-import cr.ac.una.est.socialuna.logic.model.entity.Carrera;
-import cr.ac.una.est.socialuna.logic.model.entity.SedeCampus;
-import cr.ac.una.est.socialuna.logic.model.entity.Usuario;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioCarrerasJSON;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioSedesJSON;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioUsuariosJSON;
-import cr.ac.una.est.socialuna.logic.service.contract.IServicioUsuarios;
+import cr.ac.una.est.socialuna.model.entity.Carrera;
+import cr.ac.una.est.socialuna.model.entity.SedeCampus;
+import cr.ac.una.est.socialuna.model.entity.Usuario;
+import cr.ac.una.est.socialuna.persistence.RepositorioCarrerasJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioSedesJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioUsuariosJSON;
+import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

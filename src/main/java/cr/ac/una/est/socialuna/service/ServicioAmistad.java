@@ -1,12 +1,12 @@
-package cr.ac.una.est.socialuna.logic.service;
+package cr.ac.una.est.socialuna.service;
 
-import cr.ac.una.est.socialuna.logic.model.entity.RelacionAmistad;
-import cr.ac.una.est.socialuna.logic.model.entity.Usuario;
-import cr.ac.una.est.socialuna.logic.model.graph.GrafoAmigos;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioAmistadesJSON;
-import cr.ac.una.est.socialuna.logic.repository.RepositorioUsuariosJSON;
-import cr.ac.una.est.socialuna.logic.service.contract.IServicioAmistad;
-import cr.ac.una.est.socialuna.logic.service.contract.IServicioUsuarios;
+import cr.ac.una.est.socialuna.model.entity.RelacionAmistad;
+import cr.ac.una.est.socialuna.model.entity.Usuario;
+import cr.ac.una.est.socialuna.model.graph.GrafoAmigos;
+import cr.ac.una.est.socialuna.persistence.RepositorioAmistadesJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioUsuariosJSON;
+import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
+import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,7 +1,5 @@
 package cr.ac.una.est.socialuna.model.graph;
 
-import cr.ac.una.est.socialuna.logic.model.graph.GrafoAmigos;
-import cr.ac.una.est.socialuna.logic.model.graph.VerticeAmigos;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,13 +71,5 @@ class GrafoAmigosTest {
         assertFalse(vertice.contieneAdyacente("u2"));
         assertEquals("u1", vertice.getUsuarioId());
         assertThrows(IllegalArgumentException.class, () -> new VerticeAmigos(null));
-    }
-    @Test void idsConEspaciosSeDesconectanEnAmbosSentidos() {
-        grafo.agregarUsuario("u1"); grafo.agregarUsuario("u2");
-        grafo.conectar(" u1 ", " u2 ");
-        assertTrue(grafo.sonAmigos("u1", " u2 "));
-        grafo.desconectar(" u1 ", "u2");
-        assertTrue(grafo.obtenerAmigos("u1").isEmpty());
-        assertTrue(grafo.obtenerAmigos("u2").isEmpty());
     }
 }

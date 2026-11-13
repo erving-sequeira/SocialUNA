@@ -1,7 +1,7 @@
-package cr.ac.una.est.socialuna.logic.service.contract;
-import cr.ac.una.est.socialuna.logic.model.entity.Publicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.TipoPublicacion;
-import cr.ac.una.est.socialuna.logic.model.entity.Comentario;
+package cr.ac.una.est.socialuna.service.contract;
+import cr.ac.una.est.socialuna.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.model.entity.TipoPublicacion;
+import cr.ac.una.est.socialuna.model.entity.Comentario;
 import java.util.ArrayList;
 
 public interface IServicioComunidad {

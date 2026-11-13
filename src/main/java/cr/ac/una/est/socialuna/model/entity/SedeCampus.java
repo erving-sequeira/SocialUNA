@@ -1,4 +1,4 @@
-package cr.ac.una.est.socialuna.logic.model.entity;
+package cr.ac.una.est.socialuna.model.entity;
 
 public class SedeCampus {
     private String id;
@@ -7,7 +7,7 @@ public class SedeCampus {
     private String tipo;
     private boolean activa;
 
-    //reservado para reconstrucción de datos persistidos
+    /** Reservado para reconstrucción de datos persistidos. */
     protected SedeCampus() { }
 
     public SedeCampus(String id, String nombre, String alias, String tipo, boolean activa) {
