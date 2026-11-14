@@ -9,4 +9,7 @@ module cr.ac.una.est.socialuna.socialuna {
     // Gson necesita reflejar los campos privados de los documentos y las entidades.
     opens cr.ac.una.est.socialuna.persistence to com.google.gson;
     opens cr.ac.una.est.socialuna.model.entity to com.google.gson;
+
+    // FXMLLoader necesita reflejar los controladores del paquete UI.
+    opens cr.ac.una.est.socialuna.ui to javafx.fxml;
 }
