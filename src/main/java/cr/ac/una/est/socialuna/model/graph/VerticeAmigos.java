@@ -2,11 +2,11 @@ package cr.ac.una.est.socialuna.model.graph;
 
 import java.util.ArrayList;
 
-/** Vértice del grafo de amistades: un usuario y sus IDs de vecinos, sin duplicados. */
 public class VerticeAmigos {
     private String usuarioId;
     private ArrayList<String> adyacentes = new ArrayList<>();
 
+    //Recibe el ID del usuario y crea su vértice sin amigos.
     public VerticeAmigos(String usuarioId) {
         if (usuarioId == null || usuarioId.isBlank()) {
             throw new IllegalArgumentException("El ID del usuario es obligatorio.");
@@ -14,22 +14,28 @@ public class VerticeAmigos {
         this.usuarioId = usuarioId.strip();
     }
 
-    /** Agrega sin duplicar; la autoamistad la rechaza GrafoAmigos. */
+    //Agrega el ID de otro usuario como vecino si todavía no está en la lista.
     public void agregarAdyacente(String destinoId) {
+        if (destinoId == null || destinoId.isBlank() || usuarioId.equals(destinoId.strip())) {
+            throw new IllegalArgumentException("El ID del vecino debe pertenecer a otro usuario.");
+        }
         if (!contieneAdyacente(destinoId)) {
-            adyacentes.add(destinoId);
+            adyacentes.add(destinoId.strip());
         }
     }
 
-    /** Retira la adyacencia si existe; no es un error que falte. */
+    //Recibe el ID de un vecino y lo quita de la lista si está.
     public void eliminarAdyacente(String destinoId) {
-        adyacentes.remove(destinoId);
+        if (destinoId != null) adyacentes.remove(destinoId.strip());
     }
 
+    //Recibe un ID y devuelve true si está en la lista de vecinos.
     public boolean contieneAdyacente(String destinoId) {
-        return adyacentes.contains(destinoId);
+        return destinoId != null && adyacentes.contains(destinoId.strip());
     }
 
+    //Devuelve el ID del usuario al que pertenece el vértice.
     public String getUsuarioId() { return usuarioId; }
-    public ArrayList<String> getAdyacentes() { return adyacentes; }
+    //Devuelve una copia de los IDs de los vecinos.
+    public ArrayList<String> getAdyacentes() { return new ArrayList<>(adyacentes); }
 }

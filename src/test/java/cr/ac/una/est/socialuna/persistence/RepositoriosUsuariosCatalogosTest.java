@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RepositoriosUsuariosCatalogosTest {
     @TempDir Path directorio;
 
+    //Prueba que usuarios, carreras y sedes queden en archivos separados y que los IDs coincidan al reabrir.
     @Test void guardaTresArchivosIndependientesYResuelveIdsAlReabrir() throws Exception {
         var gestor = new GestorJSON(directorio);
         var usuarios = new RepositorioUsuariosJSON(gestor);
@@ -62,6 +63,7 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals(2, reabiertos.listarUsuarios().size());
     }
 
+    //Prueba que un nombre de usuario duplicado falle y conserve la cuenta previa.
     @Test void rechazaDuplicadosYConservaElUsuarioPrevio() {
         var repo = new RepositorioUsuariosJSON(new GestorJSON(directorio));
         repo.guardar(usuario("u1", "ana", null, null));
@@ -70,6 +72,7 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals("u1", repo.buscarUsuarioPorNombre("Persona u1").getId());
     }
 
+    //Prueba que editar y guardar una copia no cambie el perfil original si falla la escritura.
     @Test void editarUnaCopiaNoAlteraElRepositorioSiFallaElGuardado() throws Exception {
         var repo = new RepositorioUsuariosJSON(new GestorJSON(directorio));
         repo.guardar(usuario("u1", "ana", "c1", null));
@@ -88,6 +91,7 @@ class RepositoriosUsuariosCatalogosTest {
         }
     }
 
+    //Prueba que una recarga fallida deje intactos los datos en memoria y el archivo.
     @Test void recargaInvalidaConservaElUltimoEstadoYElArchivo() throws Exception {
         var gestor = new GestorJSON(directorio);
         var usuarios = new RepositorioUsuariosJSON(gestor);
@@ -102,6 +106,7 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals(1, usuarios.listarUsuarios().size());
     }
 
+    //Prueba que un catálogo con IDs repetidos no reemplace el archivo guardado.
     @Test void rechazaCatalogosConIdRepetidoSinReescribirElArchivo() throws Exception {
         var repo = new RepositorioCarrerasJSON(new GestorJSON(directorio));
         var inicial = new Carrera("c1", "Informática", true);
@@ -112,6 +117,7 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals(1, repo.listarCarreras().size());
     }
 
+    //Prueba que un JSON de sedes inválido no bloquee el catálogo de carreras.
     @Test void sedesInvalidasNoImpidenCargarNiGuardarCarreras() throws Exception {
         Files.writeString(directorio.resolve("sedes.json"), "{");
         var gestor = new GestorJSON(directorio);
@@ -122,6 +128,7 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals("{", leer("sedes.json"));
     }
 
+    //Prueba que un JSON de carreras inválido no bloquee el catálogo de sedes.
     @Test void carrerasInvalidasNoImpidenCargarNiGuardarSedes() throws Exception {
         Files.writeString(directorio.resolve("carreras.json"), "{");
         var gestor = new GestorJSON(directorio);
@@ -132,10 +139,12 @@ class RepositoriosUsuariosCatalogosTest {
         assertEquals("{", leer("carreras.json"));
     }
 
+    //Recibe el nombre del archivo y devuelve su texto desde la carpeta temporal.
     private String leer(String archivo) throws Exception {
         return Files.readString(directorio.resolve(archivo));
     }
 
+    //Recibe ID, alias, carrera y sede. Devuelve un perfil de prueba con esos datos.
     private Usuario usuario(String id, String alias, String carreraId, String sedeId) {
         return new Usuario(id, "Persona " + id, alias, "a".repeat(64), carreraId, sedeId);
     }

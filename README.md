@@ -16,7 +16,10 @@ Desarrollado para el curso EIF207 - Estructuras de Datos (UNA).
 1. Abrir el proyecto en IntelliJ (requiere JDK 21 o superior con `JAVA_HOME`).
 2. Ejecutar la clase `Launcher` (`cr.ac.una.est.socialuna.app.Launcher`), o
    `.\mvnw.cmd javafx:run` desde la terminal.
-3. Al arrancar se abre la ventana SocialUNA (800×600).
+3. Al arrancar se abre Login. Usa **Crear cuenta** para abrir Registro y seleccionar una carrera y una sede activas.
+4. Una vez creada la cuenta, vuelve a Login e ingresa. La ventana provisional de Inicio permite cerrar sesión mientras se integra el feed.
+
+Los archivos de acceso se leen desde el directorio `datos/`. Al faltar un archivo de catálogo, la aplicación guarda un catálogo inicial de ejemplo. Puedes ampliar los arreglos de `carreras.json` y `sedes.json` según las opciones del proyecto.
 
 ## Funcionalidades
 
@@ -31,7 +34,7 @@ Desarrollado para el curso EIF207 - Estructuras de Datos (UNA).
 - **MVC**: JavaFX con FXML (vistas separadas de controladores), modelo en `model`.
 - **Contratos**: interfaces de servicio (`service/contract`) que dividen el trabajo por responsables.
 - **Grafo propio**: `GrafoAmigos` con vertices y adyacencias; `ArrayList` solo como soporte.
-- **Persistencia**: tres archivos JSON serializados con Gson, cargados una vez al iniciar.
+- **Persistencia**: usuarios, carreras, sedes, amistades y publicaciones en archivos JSON separados. El repositorio de amistades admite el arreglo y el objeto anterior con `relaciones`.
 
 ## Estructura del proyecto
 
@@ -56,16 +59,15 @@ src/
 │   │       │
 │   │       ├── persistence/
 │   │       │   ├── GestorJSON.java           # Lectura/escritura común con Gson
-│   │       │   ├── DocumentoAmistades.java   # Raíz de amistades.json
 │   │       │   └── RepositorioAmistadesJSON.java  # Relaciones en amistades.json
 │   │       │
 │   │       └── ui/
-│   │           ├── controller/
+│   │           ├── controller/             # Login y Registro
 │   │           ├── component/
-│   │           └── navigation/
+│   │           └── NavegadorVistas.java
 │   │
 │   └── resources/cr/ac/una/est/socialuna/ui/
-│       ├── fxml/
+│       ├── fxml/                           # Login.fxml y Registro.fxml
 │       └── css/
 │
 └── test/

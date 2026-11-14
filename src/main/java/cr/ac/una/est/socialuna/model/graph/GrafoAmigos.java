@@ -2,25 +2,25 @@ package cr.ac.una.est.socialuna.model.graph;
 
 import java.util.ArrayList;
 
-/** Grafo no dirigido de amistades por listas de adyacencia sobre IDs de usuario. */
 public class GrafoAmigos {
     private ArrayList<VerticeAmigos> vertices = new ArrayList<>();
 
+    //Crea un grafo que empieza sin usuarios ni amistades.
     public GrafoAmigos() { }
 
-    /** Deja el grafo vacío; se usa antes de reconstruirlo desde el repositorio. */
+    //Borra todos los usuarios y conexiones del grafo.
     public void vaciar() {
         vertices.clear();
     }
 
-    /** Idempotente: un usuario repetido no crea un vértice duplicado. */
+    //Recibe el ID de un usuario y lo agrega al grafo si todavía no está.
     public void agregarUsuario(String usuarioId) {
         if (buscarVertice(usuarioId) == null) {
             vertices.add(new VerticeAmigos(usuarioId));
         }
     }
 
-    /** Une en ambos sentidos; repetir la conexión no duplica adyacencias. */
+    //Recibe dos IDs y conecta a los usuarios en ambos sentidos sin duplicar la amistad.
     public void conectar(String usuarioAId, String usuarioBId) {
         exigirParDistinto(usuarioAId, usuarioBId);
         VerticeAmigos a = exigirVertice(usuarioAId);
@@ -29,25 +29,28 @@ public class GrafoAmigos {
         b.agregarAdyacente(a.getUsuarioId());
     }
 
-    /** Retira las dos adyacencias; si no hay amistad no hace nada. */
+    //Recibe dos IDs y quita la conexión en ambos sentidos si existe.
     public void desconectar(String usuarioAId, String usuarioBId) {
         exigirParDistinto(usuarioAId, usuarioBId);
-        exigirVertice(usuarioAId).eliminarAdyacente(usuarioBId);
-        exigirVertice(usuarioBId).eliminarAdyacente(usuarioAId);
+        VerticeAmigos a = exigirVertice(usuarioAId);
+        VerticeAmigos b = exigirVertice(usuarioBId);
+        a.eliminarAdyacente(b.getUsuarioId());
+        b.eliminarAdyacente(a.getUsuarioId());
     }
 
-    /** Usuario desconocido o sin sesión no es amigo de nadie. */
+    //Dado un par de IDs, devuelve true si los usuarios están conectados.
     public boolean sonAmigos(String usuarioId, String otroId) {
         VerticeAmigos vertice = buscarVertice(usuarioId);
         return vertice != null && vertice.contieneAdyacente(otroId);
     }
 
-    /** Lista copia para que el llamador no altere las adyacencias del vértice. */
+    //Recibe un ID y devuelve una copia de los IDs de sus amigos, o una lista vacía si no está.
     public ArrayList<String> obtenerAmigos(String usuarioId) {
         VerticeAmigos vertice = buscarVertice(usuarioId);
-        return vertice == null ? new ArrayList<>() : new ArrayList<>(vertice.getAdyacentes());
+        return vertice == null ? new ArrayList<>() : vertice.getAdyacentes();
     }
 
+    //Busca el ID y devuelve su vértice, o null si no está en el grafo.
     private VerticeAmigos buscarVertice(String usuarioId) {
         if (usuarioId == null) {
             return null;
@@ -60,6 +63,7 @@ public class GrafoAmigos {
         return null;
     }
 
+    //Devuelve el vértice del ID recibido. Da error si ese usuario no está en el grafo.
     private VerticeAmigos exigirVertice(String usuarioId) {
         VerticeAmigos vertice = buscarVertice(usuarioId);
         if (vertice == null) {
@@ -68,6 +72,7 @@ public class GrafoAmigos {
         return vertice;
     }
 
+    //Revisa que los dos IDs tengan texto y pertenezcan a usuarios distintos.
     private static void exigirParDistinto(String usuarioAId, String usuarioBId) {
         if (usuarioAId == null || usuarioAId.isBlank() || usuarioBId == null || usuarioBId.isBlank()) {
             throw new IllegalArgumentException("Se requieren dos usuarios para la operación de amistad.");

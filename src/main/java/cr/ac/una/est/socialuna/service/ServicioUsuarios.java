@@ -23,6 +23,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
     private final RepositorioCarrerasJSON repositorioCarreras;
     private Usuario usuarioActual;
 
+    //Recibe los repositorios de usuarios, sedes y carreras para manejar cuentas y datos académicos.
     public ServicioUsuarios(RepositorioUsuariosJSON repositorioUsuarios,
                             RepositorioSedesJSON repositorioSedes,
                             RepositorioCarrerasJSON repositorioCarreras) {
@@ -31,6 +32,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         this.repositorioCarreras = Objects.requireNonNull(repositorioCarreras);
     }
 
+    //Recibe nombre, usuario, contraseña e IDs de carrera y sede. Valida los datos, guarda la cuenta y la devuelve.
     @Override
     public Usuario registrar(String nombre, String nombreUsuario, String contrasena, String carreraId, String sedeId) {
         String alias = normalizarNombreUsuario(exigirTexto(nombreUsuario, "El nombre de usuario"));
@@ -44,6 +46,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return nuevo;
     }
 
+    //Recibe el usuario y la contraseña. Si coinciden, abre la sesión y devuelve una copia del perfil.
     @Override
     public Usuario iniciarSesion(String nombreUsuario, String contrasena) {
         if (usuarioActual != null) {
@@ -61,16 +64,19 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return getUsuarioActual();
     }
 
+    //Quita el perfil de la sesión activa.
     @Override
     public void cerrarSesion() {
         usuarioActual = null;
     }
 
+    //Devuelve una copia del perfil en sesión, o null si nadie ha entrado.
     @Override
     public Usuario getUsuarioActual() {
         return usuarioActual == null ? null : copiar(usuarioActual);
     }
 
+    //Recibe texto y devuelve los perfiles cuyo nombre o usuario lo contiene, sin importar mayúsculas.
     @Override
     public ArrayList<Usuario> buscarUsuarios(String texto) {
         var resultados = new ArrayList<Usuario>();
@@ -85,11 +91,13 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return resultados;
     }
 
+    //Busca por ID y devuelve el perfil, o null si no existe.
     @Override
     public Usuario obtenerPerfil(String id) {
         return repositorioUsuarios.buscarUsuarioPorId(id);
     }
 
+    //Recibe los IDs de carrera y sede, guarda el cambio y devuelve una copia del perfil actualizado.
     @Override
     public Usuario actualizarDatosAcademicos(String carreraId, String sedeId) {
         Usuario actual = exigirSesion();
@@ -105,6 +113,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return getUsuarioActual();
     }
 
+    //Devuelve las carreras activas para que se puedan seleccionar.
     @Override
     public ArrayList<Carrera> listarCarreras() {
         ArrayList<Carrera> carreras = repositorioCarreras.listarCarreras();
@@ -112,6 +121,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return carreras;
     }
 
+    //Devuelve las sedes activas para que se puedan seleccionar.
     @Override
     public ArrayList<SedeCampus> listarSedes() {
         ArrayList<SedeCampus> sedes = repositorioSedes.listarSedes();
@@ -119,6 +129,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return sedes;
     }
 
+    //Devuelve el perfil en sesión o da error si nadie ha entrado.
     private Usuario exigirSesion() {
         if (usuarioActual == null) {
             throw new IllegalStateException("Debes iniciar sesión para actualizar tus datos.");
@@ -126,8 +137,8 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return usuarioActual;
     }
 
+    //Busca el usuario tal como llegó. Si no hay coincidencia exacta, devuelve la única que coincide sin importar mayúsculas, o null.
     private Usuario buscarParaInicioSesion(String alias) {
-        // Conserva el acceso con la grafía original si ya existían cuentas con mayúsculas.
         Usuario exacto = repositorioUsuarios.buscarUsuarioPorNombreUsuario(alias);
         if (exacto != null) return exacto;
 
@@ -142,10 +153,12 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return coincidencia;
     }
 
+    //Recibe texto y lo devuelve en minúsculas y sin espacios en los bordes.
     private static String normalizarNombreUsuario(String nombre) {
         return nombre.strip().toLowerCase(Locale.ROOT);
     }
 
+    //Recibe la contraseña y devuelve su hash SHA-256 en hexadecimal.
     private static String calcularHash(String contrasena) {
         try {
             byte[] hash = MessageDigest.getInstance("SHA-256").digest(contrasena.getBytes(StandardCharsets.UTF_8));
@@ -155,6 +168,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         }
     }
 
+    //Revisa que el nombre y la contraseña tengan texto y que el nombre de usuario no esté ocupado.
     private void validarRegistro(String nombre, String alias, String contrasena) {
         exigirTexto(nombre, "El nombre");
         exigirTexto(contrasena, "La contraseña");
@@ -165,6 +179,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         }
     }
 
+    //Revisa que los IDs recibidos sean de una carrera y una sede activas.
     private void validarDatosAcademicos(String carreraId, String sedeId) {
         Carrera carrera = repositorioCarreras.buscarCarreraPorId(carreraId);
         if (carrera == null || !carrera.isActiva()) {
@@ -176,6 +191,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         }
     }
 
+    //Recibe un valor y el nombre del campo. Devuelve el texto sin espacios en los bordes o avisa si falta.
     private static String exigirTexto(String valor, String campo) {
         if (valor == null || valor.isBlank()) {
             throw new IllegalArgumentException(campo + " es obligatorio.");
@@ -183,6 +199,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return valor.strip();
     }
 
+    //Recibe un perfil y devuelve una copia con los mismos datos.
     private static Usuario copiar(Usuario usuario) {
         return new Usuario(usuario.getId(), usuario.getNombre(), usuario.getNombreUsuario(),
                 usuario.getPasswordHash(), usuario.getCarreraId(), usuario.getSedeId());

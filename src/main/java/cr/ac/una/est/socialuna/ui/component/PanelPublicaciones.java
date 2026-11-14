@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-/** Construye tarjetas dentro de un VBox y delega las acciones al controlador. */
 public class PanelPublicaciones {
     private final VBox contenedor = new VBox(12);
     private final IServicioUsuarios servicioUsuarios;
@@ -32,10 +31,12 @@ public class PanelPublicaciones {
     private final ObjectProperty<Consumer<String>> accionVerComentarios = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<String>> accionVerPerfil = new SimpleObjectProperty<>();
 
+    //Recibe el servicio de usuarios para buscar el nombre de cada autor.
     public PanelPublicaciones(IServicioUsuarios servicioUsuarios) {
         this.servicioUsuarios = Objects.requireNonNull(servicioUsuarios);
     }
 
+    //Recibe la lista de posts y si se puede comentar. Redibuja las tarjetas con esa configuración.
     public void mostrar(ArrayList<Publicacion> publicaciones, boolean permitirComentarios) {
         contenedor.getChildren().clear();
         comentariosPorPublicacion.clear();
@@ -48,6 +49,7 @@ public class PanelPublicaciones {
         }
     }
 
+    //Recibe el ID del post y la lista de comentarios. Actualiza los comentarios de su tarjeta.
     public void mostrarComentarios(String publicacionId, ArrayList<Comentario> comentarios) {
         VBox lista = comentariosPorPublicacion.get(publicacionId);
         if (lista == null) return;
@@ -61,22 +63,27 @@ public class PanelPublicaciones {
         }
     }
 
+    //Registra qué hacer al enviar un comentario. La acción recibe el ID del post y el texto.
     public void alComentar(BiConsumer<String, String> accion) {
         accionComentar.set(accion);
     }
 
+    //Registra qué hacer al pulsar Ver comentarios. La acción recibe el ID del post.
     public void alVerComentarios(Consumer<String> accion) {
         accionVerComentarios.set(accion);
     }
 
+    //Registra qué hacer al pulsar un autor. La acción recibe el ID de su perfil.
     public void alAbrirPerfil(Consumer<String> accion) {
         accionVerPerfil.set(accion);
     }
 
+    //Devuelve el VBox donde se muestran las tarjetas.
     public VBox getContenedor() {
         return contenedor;
     }
 
+    //Recibe el post y si se puede comentar. Devuelve la tarjeta armada con los controles que toquen.
     private VBox crearTarjeta(Publicacion publicacion, boolean permitirComentarios) {
         Label texto = new Label(publicacion.getTexto());
         texto.setWrapText(true);
@@ -87,6 +94,7 @@ public class PanelPublicaciones {
         return tarjeta;
     }
 
+    //Recibe la tarjeta y el ID del post. Agrega la lista, el campo de texto y los botones de comentarios.
     private void agregarControlesDeComentarios(VBox tarjeta, String publicacionId) {
         var lista = new VBox(6);
         lista.visibleProperty().bind(Bindings.isNotEmpty(lista.getChildren()));
@@ -118,6 +126,7 @@ public class PanelPublicaciones {
         tarjeta.getChildren().addAll(ver, lista, new HBox(6, entrada, enviar));
     }
 
+    //Recibe un comentario y devuelve una fila con su autor y texto.
     private HBox crearFilaComentario(Comentario comentario) {
         Label texto = new Label(comentario.getTexto());
         texto.setWrapText(true);
@@ -126,6 +135,7 @@ public class PanelPublicaciones {
         return new HBox(6, crearAutor(comentario.getAutorId()), texto);
     }
 
+    //Busca al autor por ID y devuelve un enlace a su perfil, o un aviso si no aparece.
     private Node crearAutor(String autorId) {
         Usuario autor = servicioUsuarios.obtenerPerfil(autorId);
         if (autor == null) return new Label("Autor no disponible");

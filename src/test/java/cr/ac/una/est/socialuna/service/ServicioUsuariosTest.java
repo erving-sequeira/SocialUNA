@@ -26,6 +26,7 @@ class ServicioUsuariosTest {
     private RepositorioSedesJSON sedes;
     private ServicioUsuarios servicio;
 
+    //Crea los catálogos temporales que se usan para registrar y editar perfiles.
     @BeforeEach void prepararCatalogos() {
         var gestor = new GestorJSON(datos);
         usuarios = new RepositorioUsuariosJSON(gestor);
@@ -39,6 +40,7 @@ class ServicioUsuariosTest {
         servicio = new ServicioUsuarios(usuarios, sedes, carreras);
     }
 
+    //Prueba que el registro guarde UUID, hash y referencias sin reemplazar otra cuenta.
     @Test void registraConUuidHashYReferenciasSinSobrescribirOtraCuenta() {
         var ana = servicio.registrar("Ana María", " ANA ", "abc", " c1 ", " s1 ");
         var beto = servicio.registrar("Beto", "beto", "abc", "c2", "s2");
@@ -53,6 +55,7 @@ class ServicioUsuariosTest {
         assertNull(servicio.getUsuarioActual());
     }
 
+    //Prueba que no se pueda registrar un alias repetido ni usar una carrera o sede inválida.
     @Test void registroRechazaAliasRepetidoYCatalogosInvalidos() {
         servicio.registrar("Ana", "Ana", "abc", "c1", "s1");
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Otra", " ANA ", "abc", "c1", "s1"));
@@ -67,6 +70,7 @@ class ServicioUsuariosTest {
         assertEquals(List.of("s1", "s2"), servicio.listarSedes().stream().map(SedeCampus::getId).toList());
     }
 
+    //Prueba que el login valide la contraseña y maneje la sesión activa.
     @Test void loginExigeContrasenaCorrectaYControlaLaSesion() {
         var ana = servicio.registrar("Ana", "ANA", " abc ", "c1", "s1");
         assertThrows(IllegalArgumentException.class, () -> servicio.iniciarSesion("ana", "abc"));
@@ -77,12 +81,14 @@ class ServicioUsuariosTest {
         assertNull(servicio.getUsuarioActual());
     }
 
+    //Prueba que una cuenta anterior pueda entrar con su alias y conserve el ID.
     @Test void permiteLoginDeUnAliasAnteriorSinCambiarSuId() {
         usuarios.guardar(new Usuario("id-anterior", "Ana", "Ana", HASH_ABC, null, null));
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Otra", "ana", "abc", "c1", "s1"));
         assertEquals("id-anterior", servicio.iniciarSesion("ana", "abc").getId());
     }
 
+    //Prueba que la búsqueda use nombre o alias y que el perfil se pueda abrir por ID.
     @Test void buscaPorNombreOAliasYObtienePerfilPorId() {
         var ana = servicio.registrar("Ana María", "estudiante", "abc", "c1", "s1");
         servicio.registrar("Beto", "beto", "abc", "c1", "s1");
@@ -93,6 +99,7 @@ class ServicioUsuariosTest {
         assertNull(servicio.obtenerPerfil("id-inexistente"));
     }
 
+    //Prueba que los cambios de carrera y sede se vean en sesión y al reabrir el repositorio.
     @Test void actualizaElPerfilDeLaSesionYLoConservaAlReabrir() {
         var ana = servicio.registrar("Ana", "ana", "abc", "c1", "s1");
         assertThrows(IllegalStateException.class, () -> servicio.actualizarDatosAcademicos("c2", "s2"));
@@ -106,6 +113,7 @@ class ServicioUsuariosTest {
         assertEquals("s2", new RepositorioUsuariosJSON(new GestorJSON(datos)).buscarUsuarioPorId(ana.getId()).getSedeId());
     }
 
+    //Prueba que un fallo de guardado conserve los datos previos en sesión y en el repositorio.
     @Test void falloAlGuardarElPerfilConservaLaSesionYElRepositorio() throws Exception {
         var ana = servicio.registrar("Ana", "ana", "abc", "c1", "s1");
         servicio.iniciarSesion("ana", "abc");

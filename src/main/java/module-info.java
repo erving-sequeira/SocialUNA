@@ -11,5 +11,5 @@ module cr.ac.una.est.socialuna.socialuna {
     opens cr.ac.una.est.socialuna.model.entity to com.google.gson;
 
     // FXMLLoader necesita reflejar los controladores del paquete UI.
-    opens cr.ac.una.est.socialuna.ui to javafx.fxml;
+    opens cr.ac.una.est.socialuna.ui.controller to javafx.fxml;
 }

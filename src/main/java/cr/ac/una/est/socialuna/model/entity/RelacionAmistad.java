@@ -1,15 +1,15 @@
 package cr.ac.una.est.socialuna.model.entity;
 
-/** Una arista no dirigida persistida por par de usuarios, sin autoamistad. */
 public class RelacionAmistad {
     private String id;
     private String usuarioAId;
     private String usuarioBId;
     private long creadoEn;
 
-    /** Reservado para la reconstrucción de datos persistidos. */
+    //Deja que Gson arme la amistad al leer el JSON.
     protected RelacionAmistad() { }
 
+    //Crea una amistad con su ID, los IDs de dos usuarios distintos y la fecha.
     public RelacionAmistad(String id, String usuarioAId, String usuarioBId, long creadoEn) {
         this.id = requerido(id, "ID");
         this.usuarioAId = requerido(usuarioAId, "Primer usuario");
@@ -23,6 +23,7 @@ public class RelacionAmistad {
         this.creadoEn = creadoEn;
     }
 
+    //Recibe un valor y el nombre del campo. Devuelve el texto limpio o avisa si falta.
     private static String requerido(String valor, String campo) {
         if (valor == null || valor.isBlank()) {
             throw new IllegalArgumentException(campo + " es obligatorio.");
@@ -30,12 +31,12 @@ public class RelacionAmistad {
         return valor.strip();
     }
 
-    /** null y los usuarios ajenos a esta amistad devuelven false. */
+    //Recibe un ID y devuelve true si es de alguno de los dos amigos.
     public boolean involucra(String usuarioId) {
         return usuarioId != null && (usuarioId.equals(usuarioAId) || usuarioId.equals(usuarioBId));
     }
 
-    /** Devuelve el extremo opuesto; un usuario ajeno es un argumento inválido. */
+    //Dado el ID de uno de los amigos, devuelve el del otro. Si el ID es ajeno, da error.
     public String obtenerOtroUsuario(String usuarioId) {
         if (!involucra(usuarioId)) {
             throw new IllegalArgumentException("El usuario no pertenece a esta amistad.");
@@ -43,8 +44,12 @@ public class RelacionAmistad {
         return usuarioId.equals(usuarioAId) ? usuarioBId : usuarioAId;
     }
 
+    //Devuelve el ID de la amistad.
     public String getId() { return id; }
+    //Devuelve el ID del primer usuario de la amistad.
     public String getUsuarioAId() { return usuarioAId; }
+    //Devuelve el ID del segundo usuario de la amistad.
     public String getUsuarioBId() { return usuarioBId; }
+    //Devuelve la fecha de la amistad en milisegundos.
     public long getCreadoEn() { return creadoEn; }
 }

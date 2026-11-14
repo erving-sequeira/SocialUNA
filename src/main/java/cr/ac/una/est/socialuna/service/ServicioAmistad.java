@@ -19,7 +19,7 @@ public class ServicioAmistad implements IServicioAmistad {
     private final RepositorioAmistadesJSON repositorioAmistades;
     private final GrafoAmigos grafo;
 
-    /** Recibe los repositorios con sus datos ya cargados. */
+    //Recibe el servicio de usuarios, los repositorios cargados y el grafo. Deja listas las conexiones.
     public ServicioAmistad(IServicioUsuarios servicioUsuarios, RepositorioUsuariosJSON repositorioUsuarios,
                            RepositorioAmistadesJSON repositorioAmistades, GrafoAmigos grafo) {
         this.servicioUsuarios = Objects.requireNonNull(servicioUsuarios);
@@ -29,6 +29,7 @@ public class ServicioAmistad implements IServicioAmistad {
         reconstruirGrafo();
     }
 
+    //Vuelve a armar el grafo con los perfiles y amistades guardados. Salta las relaciones con perfiles que ya no están.
     public void reconstruirGrafo() {
         var relaciones = repositorioAmistades.listar();
         var perfiles = repositorioUsuarios.listarUsuarios();
@@ -47,6 +48,7 @@ public class ServicioAmistad implements IServicioAmistad {
         }
     }
 
+    //Recibe el ID del otro perfil, guarda la amistad con el usuario actual y actualiza el grafo.
     @Override
     public void agregarAmigo(String amigoId) {
         String propioId = exigirSesion().getId();
@@ -56,6 +58,7 @@ public class ServicioAmistad implements IServicioAmistad {
         reconstruirGrafo();
     }
 
+    //Recibe el ID del otro perfil, borra la amistad del usuario actual y actualiza el grafo.
     @Override
     public void eliminarAmigo(String amigoId) {
         String propioId = exigirSesion().getId();
@@ -68,29 +71,34 @@ public class ServicioAmistad implements IServicioAmistad {
         reconstruirGrafo();
     }
 
+    //Devuelve los perfiles de los amigos del usuario en sesión.
     @Override
     public ArrayList<Usuario> listarMisAmigos() {
         return listarVecinos(exigirSesion().getId());
     }
 
+    //Con una sesión activa, recibe el ID de un perfil y devuelve los perfiles de sus amigos.
     @Override
     public ArrayList<Usuario> listarAmigosDe(String perfilId) {
         exigirSesion();
         return listarVecinos(exigirPerfil(perfilId).getId());
     }
 
+    //Con una sesión activa, recibe el ID de un perfil y devuelve su número de amigos.
     @Override
     public int contarAmigosDe(String perfilId) {
         exigirSesion();
         return grafo.obtenerAmigos(exigirPerfil(perfilId).getId()).size();
     }
 
+    //Con una sesión activa, recibe dos IDs y devuelve true si están conectados en el grafo.
     @Override
     public boolean sonAmigos(String usuarioId, String amigoId) {
         exigirSesion();
         return grafo.sonAmigos(usuarioId, amigoId);
     }
 
+    //Recibe un ID, busca sus amigos en el grafo y devuelve los perfiles que todavía existen.
     private ArrayList<Usuario> listarVecinos(String perfilId) {
         var amigos = new ArrayList<Usuario>();
         for (String id : grafo.obtenerAmigos(perfilId)) {
@@ -100,6 +108,7 @@ public class ServicioAmistad implements IServicioAmistad {
         return amigos;
     }
 
+    //Recibe un ID y devuelve el perfil. Da error si falta el ID o el perfil no existe.
     private Usuario exigirPerfil(String id) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("El ID del perfil es obligatorio.");
@@ -111,6 +120,7 @@ public class ServicioAmistad implements IServicioAmistad {
         return perfil;
     }
 
+    //Devuelve el usuario en sesión. Da error si nadie ha entrado.
     private Usuario exigirSesion() {
         Usuario actual = servicioUsuarios.getUsuarioActual();
         if (actual == null) {
