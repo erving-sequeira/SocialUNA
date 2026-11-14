@@ -10,18 +10,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-/** Catálogo de carreras respaldado por carreras.json. */
 public class RepositorioCarrerasJSON {
     private static final String ARCHIVO = "carreras.json";
     private static final Type TIPO = new TypeToken<ArrayList<Carrera>>() { }.getType();
     private final GestorJSON gestor;
     private ArrayList<Carrera> carreras;
 
+    //Recibe el gestor JSON y carga el catálogo de carreras.
     public RepositorioCarrerasJSON(GestorJSON gestor) {
         this.gestor = Objects.requireNonNull(gestor);
         cargar();
     }
 
+    //Lee carreras.json y reemplaza el catálogo en memoria si los datos son válidos.
     public void cargar() {
         List<Carrera> leidas = gestor.leer(ARCHIVO, TIPO, new ArrayList<>());
         try {
@@ -31,19 +32,23 @@ public class RepositorioCarrerasJSON {
         }
     }
 
+    //Devuelve una copia de la lista de carreras.
     public ArrayList<Carrera> listarCarreras() { return new ArrayList<>(carreras); }
 
+    //Recibe un ID y devuelve la carrera que coincide, o null si no está.
     public Carrera buscarCarreraPorId(String id) {
         for (Carrera carrera : carreras) if (carrera.getId().equals(id)) return carrera;
         return null;
     }
 
+    //Valida la lista recibida, la escribe en carreras.json y actualiza el catálogo en memoria.
     public void guardarCarreras(List<Carrera> valores) {
         ArrayList<Carrera> actualizadas = validarCarreras(valores);
         gestor.escribir(ARCHIVO, actualizadas, TIPO);
         carreras = actualizadas;
     }
 
+    //Recibe una lista y devuelve una copia de sus carreras si todas son válidas y tienen IDs distintos.
     private static ArrayList<Carrera> validarCarreras(List<Carrera> valores) {
         if (valores == null) throw new IllegalArgumentException("Falta la lista de carreras.");
         var resultado = new ArrayList<Carrera>();

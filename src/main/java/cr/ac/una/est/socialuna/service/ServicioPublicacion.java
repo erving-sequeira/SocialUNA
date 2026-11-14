@@ -20,7 +20,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
     private IServicioAmistad servicioAmistad;
     private RepositorioPublicacionesJSON repositorioPublicaciones;
 
-    // Constructor
+    //Recibe los servicios de usuarios y amistades junto con el repositorio de publicaciones.
     public ServicioPublicacion(
             IServicioUsuarios servicioUsuarios,
             IServicioAmistad servicioAmistad,
@@ -37,8 +37,8 @@ public class ServicioPublicacion implements IServicioPublicacion {
         this.repositorioPublicaciones = repositorioPublicaciones;
     }
 
+    //Recibe el texto, lo guarda como post general en el muro del usuario y devuelve el post.
     @Override
-    // Crear una nueva publicación
     public Publicacion publicar(String texto) {
 
         Usuario usuario = exigirSesion();
@@ -59,7 +59,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
         return publicacion;
     }
 
-    // Obtener las publicaciones del usuario y sus amigos
+    //Devuelve los posts del muro propio y de amigos, con los más nuevos primero.
     @Override
     public ArrayList<Publicacion> obtenerFeed() {
 
@@ -75,7 +75,6 @@ public class ServicioPublicacion implements IServicioPublicacion {
 
         for (Publicacion publicacion : todas) {
 
-            // El feed solo muestra publicaciones del muro
             if (publicacion.getAmbito() != AmbitoPublicacion.MURO) {
                 continue;
             }
@@ -100,7 +99,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
         return ordenarRecientes(feed);
     }
 
-    // Verificar que exista una sesión activa
+    //Devuelve el usuario que entró. Da error si se intenta usar el muro sin sesión.
     private Usuario exigirSesion() {
 
         Usuario usuario = servicioUsuarios.getUsuarioActual();
@@ -113,7 +112,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
         return usuario;
     }
 
-    // Validar el texto de una publicación
+    //Revisa que el texto recibido tenga contenido. Da error si llega vacío.
     private void validarTexto(String texto) {
 
         if (texto == null || texto.isBlank()) {
@@ -122,7 +121,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
         }
     }
 
-    // Ordenar publicaciones de la más reciente a la más antigua
+    //Recibe una lista y devuelve una copia ordenada de más nueva a más vieja. En empates usa el ID.
     private ArrayList<Publicacion> ordenarRecientes(
             ArrayList<Publicacion> publicaciones) {
 

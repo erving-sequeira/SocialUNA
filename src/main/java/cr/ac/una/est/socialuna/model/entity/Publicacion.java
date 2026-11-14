@@ -4,7 +4,6 @@ package cr.ac.una.est.socialuna.model.entity;
 import java.util.ArrayList;
 
 public class Publicacion {
-    // Atributos
     private String id;
     private String autorId;
     private String texto;
@@ -15,12 +14,12 @@ public class Publicacion {
     private String sedeId;
     private ArrayList<Comentario> comentarios;
 
-    // Constructor protegido sin parametros
+    //Deja la lista de comentarios vacía al crear la publicación desde el JSON.
     protected Publicacion() {
         this.comentarios = new ArrayList<>();
     }
 
-    // Constructor publico
+    //Crea la publicación con ID, autor, texto, fecha, ámbito y tipo. Pide carrera o sede según el ámbito.
     public Publicacion(String id, String autorId, String texto,
                        long creadoEn, AmbitoPublicacion ambito,
                        TipoPublicacion tipo, String carreraId,
@@ -51,7 +50,7 @@ public class Publicacion {
         this.comentarios = new ArrayList<>();
     }
 
-    // Metodo para agregar comentarios
+    //Recibe un comentario y lo agrega a la lista de esta publicación.
     public void agregarComentario(Comentario comentario) {
         if (comentario == null) {
             throw new IllegalArgumentException(
@@ -60,39 +59,47 @@ public class Publicacion {
         this.comentarios.add(comentario);
     }
 
-    // Getters
+    //Devuelve el ID de la publicación.
     public String getId() {
         return id;
     }
 
+    //Devuelve el ID de quien publicó.
     public String getAutorId() {
         return autorId;
     }
 
+    //Devuelve el texto de la publicación.
     public String getTexto() {
         return texto;
     }
 
+    //Devuelve la fecha de la publicación en milisegundos.
     public long getCreadoEn() {
         return creadoEn;
     }
 
+    //Devuelve si la publicación pertenece al muro, a una carrera o a una sede.
     public AmbitoPublicacion getAmbito() {
         return ambito;
     }
 
+    //Devuelve si la publicación es general o una pregunta.
     public TipoPublicacion getTipo() {
         return tipo;
     }
 
+    //Devuelve el ID de la carrera asociado a la publicación.
     public String getCarreraId() {
         return carreraId;
     }
 
+    //Devuelve el ID de la sede asociado a la publicación.
     public String getSedeId() {
         return sedeId;
     }
 
+    //Devuelve una copia de la lista de comentarios.
     public ArrayList<Comentario> getComentarios() {
         return new ArrayList<>(comentarios);
     }

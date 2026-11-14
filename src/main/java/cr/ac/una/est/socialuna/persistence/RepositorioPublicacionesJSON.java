@@ -6,10 +6,6 @@ import cr.ac.una.est.socialuna.model.entity.Publicacion;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-/**
- * Repositorio de publicaciones con persistencia
- * en el archivo publicaciones.json.
- */
 public class RepositorioPublicacionesJSON {
 
     private static final String ARCHIVO = "publicaciones.json";
@@ -17,7 +13,7 @@ public class RepositorioPublicacionesJSON {
     private GestorJSON gestor;
     private DocumentoPublicaciones datos;
 
-    // Constructor
+    //Recibe el gestor JSON para poder cargar y guardar las publicaciones.
     public RepositorioPublicacionesJSON(GestorJSON gestor) {
         if (gestor == null) {
             throw new IllegalArgumentException(
@@ -26,7 +22,7 @@ public class RepositorioPublicacionesJSON {
         this.gestor = gestor;
     }
 
-    // Cargar publicaciones desde el archivo, validando su contenido
+    //Lee publicaciones.json y reconstruye la lista con sus comentarios después de validarlos.
     public void cargar() {
         DocumentoPublicaciones leido = gestor.leer(
                 ARCHIVO,
@@ -75,7 +71,7 @@ public class RepositorioPublicacionesJSON {
         datos = new DocumentoPublicaciones(publicaciones);
     }
 
-    // Guardar publicaciones en el archivo
+    //Guarda en publicaciones.json el documento que está en memoria.
     public void guardarEnArchivo() {
         exigirCarga();
         gestor.escribir(
@@ -85,13 +81,13 @@ public class RepositorioPublicacionesJSON {
         );
     }
 
-    // Obtener todas las publicaciones
+    //Devuelve una copia de la lista de publicaciones cargada.
     public ArrayList<Publicacion> listar() {
         exigirCarga();
         return new ArrayList<>(datos.getPublicaciones());
     }
 
-    // Buscar una publicación por su ID
+    //Recibe un ID y devuelve la publicación que coincide, o null si no está.
     public Publicacion buscarPorId(String id) {
         exigirCarga();
 
@@ -104,7 +100,7 @@ public class RepositorioPublicacionesJSON {
         return datos.getPublicaciones().get(indice);
     }
 
-    // Guardar una nueva publicación
+    //Recibe una publicación nueva, revisa su ID y la guarda.
     public void guardar(Publicacion publicacion) {
         exigirCarga();
 
@@ -129,7 +125,7 @@ public class RepositorioPublicacionesJSON {
         }
     }
 
-    // Agregar un comentario a una publicación existente
+    //Recibe el ID de una publicación y el comentario que se agrega y guarda.
     public void agregarComentario(String publicacionId, Comentario comentario) {
         exigirCarga();
 
@@ -168,7 +164,7 @@ public class RepositorioPublicacionesJSON {
         }
     }
 
-    // Buscar la posición de una publicación por ID
+    //Busca el ID de la publicación y devuelve su posición en la lista, o -1 si no está.
     private int buscarIndicePorId(String id) {
         for (int i = 0; i < datos.getPublicaciones().size(); i++) {
             if (datos.getPublicaciones().get(i).getId().equals(id)) {
@@ -179,7 +175,7 @@ public class RepositorioPublicacionesJSON {
         return -1;
     }
 
-    // Comprobar que el repositorio haya cargado los datos
+    //Da error si se intenta usar el repositorio antes de cargarlo.
     private void exigirCarga() {
         if (datos == null) {
             throw new IllegalStateException(

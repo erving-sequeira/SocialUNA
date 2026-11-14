@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PublicacionesIntegracionTest {
     @TempDir Path datos;
 
+    //Prueba que el feed solo muestre posts del muro propio y de amigos, con los más nuevos primero.
     @Test void feedSoloIncluyeMuroPropioYDeAmigosPorFechaDescendente() {
         var repo = repositorio();
         repo.guardar(new Publicacion("propia", "ana", "Hola", 1, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null));
@@ -33,6 +34,7 @@ class PublicacionesIntegracionTest {
         assertEquals(List.of("amigo", "propia"), servicio.obtenerFeed().stream().map(Publicacion::getId).toList());
     }
 
+    //Prueba que el post del muro conserve al autor al reabrir el repositorio.
     @Test void publicarGuardaMuroGeneralYRecuperaElAutorAlReabrir() {
         var servicio = servicio(repositorio(), List.of());
         assertThrows(IllegalArgumentException.class, () -> servicio.publicar("  "));
@@ -44,6 +46,7 @@ class PublicacionesIntegracionTest {
         assertEquals(TipoPublicacion.GENERAL, reabierta.getTipo());
     }
 
+    //Prueba que un post inválido deje igual el archivo y la lista en memoria.
     @Test void rechazaPublicacionesInvalidasSinCambiarDiscoNiMemoria() throws Exception {
         var repo = repositorio();
         repo.guardar(new Publicacion("p1", "ana", "Hola", 1, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null));
@@ -56,6 +59,7 @@ class PublicacionesIntegracionTest {
         }
     }
 
+    //Prueba que al reabrir los posts se recuperen sus comentarios válidos.
     @Test void cargaLosComentariosValidosDeUnaPublicacion() {
         var repo = repositorio();
         var publicacion = new Publicacion("p1", "ana", "Consulta", 1, AmbitoPublicacion.CARRERA, TipoPublicacion.PREGUNTA, "c1", null);
@@ -66,6 +70,7 @@ class PublicacionesIntegracionTest {
         assertEquals("Respuesta", comentario.getTexto());
     }
 
+    //Prueba que los posts de carrera se puedan filtrar por sede después de reabrir el repositorio.
     @Test void publicarEnCarreraConservaSedeParaFiltrarInclusoAlReabrir() {
         var repo = repositorio();
         var ana = comunidad(repo, usuario("ana"));
@@ -81,6 +86,7 @@ class PublicacionesIntegracionTest {
         assertEquals(1, reabierta.obtenerPorSede().size());
     }
 
+    //Prueba que se guarde un comentario permitido y que no se pueda comentar en el muro ni en otra carrera.
     @Test void comentarioVisiblePersisteYElMuroYOtrasCarrerasQuedanFuera() {
         var repo = repositorio();
         var ana = comunidad(repo, usuario("ana"));
@@ -98,6 +104,7 @@ class PublicacionesIntegracionTest {
         assertEquals("Respuesta", guardado.getTexto());
     }
 
+    //Prueba que un comentario no quede en memoria si falló la escritura.
     @Test void comentarioQueNoSeGuardaNoApareceEnMemoria() throws Exception {
         var repo = repositorio();
         var ana = comunidad(repo, usuario("ana"));
@@ -111,6 +118,7 @@ class PublicacionesIntegracionTest {
         assertEquals(List.of("Guardado"), ana.obtenerComentarios(publicacion.getId()).stream().map(Comentario::getTexto).toList());
     }
 
+    //Prueba que muro y comunidad usen el ID para ordenar posts con la misma fecha.
     @Test void publicacionesConIgualFechaSeOrdenanPorIdEnMuroYComunidad() {
         var repo = repositorio();
         for (String id : List.of("b", "a")) {
@@ -121,25 +129,30 @@ class PublicacionesIntegracionTest {
         assertEquals(List.of("sede-a", "sede-b"), comunidad(repo, usuario("ana")).obtenerPorSede().stream().map(Publicacion::getId).toList());
     }
 
+    //Recibe un repositorio y un usuario. Devuelve un servicio de comunidad con ese usuario en sesión.
     private ServicioComunidad comunidad(RepositorioPublicacionesJSON repo, Usuario usuario) {
         return new ServicioComunidad(doble(IServicioUsuarios.class, "getUsuarioActual", usuario), repo);
     }
 
+    //Abre y devuelve el repositorio de publicaciones en la carpeta temporal de la prueba.
     private RepositorioPublicacionesJSON repositorio() {
         var repo = new RepositorioPublicacionesJSON(new GestorJSON(datos));
         repo.cargar();
         return repo;
     }
 
+    //Recibe el repositorio y la lista de amigos. Devuelve el servicio del muro con Ana en sesión.
     private ServicioPublicacion servicio(RepositorioPublicacionesJSON repo, List<Usuario> amigos) {
         return new ServicioPublicacion(doble(IServicioUsuarios.class, "getUsuarioActual", usuario("ana")),
                 doble(IServicioAmistad.class, "listarMisAmigos", new ArrayList<>(amigos)), repo);
     }
 
+    //Recibe un ID y devuelve un usuario de prueba con carrera y sede fijas.
     private static Usuario usuario(String id) {
         return new Usuario(id, id, id, "a".repeat(64), "c1", "s1");
     }
 
+    //Recibe la interfaz, el nombre del método y una respuesta. Devuelve un sustituto que responde a ese método.
     private static <T> T doble(Class<T> tipo, String operacion, Object respuesta) {
         return tipo.cast(Proxy.newProxyInstance(tipo.getClassLoader(), new Class<?>[]{tipo}, (proxy, metodo, args) -> {
             if (!operacion.equals(metodo.getName())) throw new AssertionError("Operación inesperada: " + metodo.getName());

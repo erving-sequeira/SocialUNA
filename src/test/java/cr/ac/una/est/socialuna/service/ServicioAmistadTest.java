@@ -28,6 +28,7 @@ class ServicioAmistadTest {
     private ServicioAmistad amistad;
     private Usuario ana, beto, cata;
 
+    //Deja listos los usuarios, la sesión y el grafo para probar amistades.
     @BeforeEach void preparar() {
         var gestor = new GestorJSON(directorio);
         perfiles = new RepositorioUsuariosJSON(gestor);
@@ -44,6 +45,7 @@ class ServicioAmistadTest {
         amistad = new ServicioAmistad(usuarios, perfiles, relaciones, new GrafoAmigos());
     }
 
+    //Prueba que cada perfil tenga su propia lista y su propio total de amigos.
     @Test void distingueMiListaDeLaDelPerfilConsultadoYCalculaAmbosTotales() {
         usuarios.iniciarSesion("beto", "abc");
         amistad.agregarAmigo(cata.getId());
@@ -64,6 +66,7 @@ class ServicioAmistadTest {
         assertFalse(amistad.sonAmigos(beto.getId(), ana.getId()));
     }
 
+    //Prueba que reabrir el repositorio reconstruya las amistades entre perfiles que todavía existen.
     @Test void alReabrirReconstruyeLasAmistadesYOmiteReferenciasAUsuariosAusentes() {
         usuarios.iniciarSesion("ana", "abc");
         amistad.agregarAmigo(beto.getId());
@@ -80,6 +83,7 @@ class ServicioAmistadTest {
         assertEquals(2, reabiertas.listar().size());
     }
 
+    //Prueba que se necesite sesión y que no se acepten amistades repetidas, con uno mismo o con perfiles que faltan.
     @Test void exigeSesionYRechazaAutoamistadDuplicadosYPerfilesInexistentes() {
         assertThrows(IllegalStateException.class, amistad::listarMisAmigos);
         assertThrows(IllegalStateException.class, () -> amistad.contarAmigosDe(ana.getId()));
@@ -92,6 +96,7 @@ class ServicioAmistadTest {
         assertEquals(1, amistad.contarAmigosDe(beto.getId()));
     }
 
+    //Prueba que un fallo al guardar deje iguales las listas y los totales de amigos.
     @Test void alFallarEscrituraConservaListasYContadores() throws Exception {
         usuarios.iniciarSesion("ana", "abc");
         amistad.agregarAmigo(beto.getId());
@@ -106,6 +111,7 @@ class ServicioAmistadTest {
         assertEquals(0, amistad.contarAmigosDe(cata.getId()));
     }
 
+    //Recibe una lista de perfiles y devuelve solo sus IDs.
     private static List<String> ids(List<Usuario> perfiles) {
         return perfiles.stream().map(Usuario::getId).toList();
     }
