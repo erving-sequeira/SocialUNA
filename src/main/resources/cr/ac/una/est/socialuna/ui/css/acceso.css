@@ -1,8 +1,19 @@
-/* Estilos de las pantallas de acceso, definidos sobre las variables de AtlantaFX
-   para que el tema claro y el oscuro funcionen con este mismo archivo. */
-
+/* Rojo UNA para la marca y las acciones principales. Verde para enlaces y selección. */
 .acceso {
-    -fx-background-color: -color-bg-inset;
+    -una-rojo: #d50032;
+    -una-verde: ladder(-color-bg-default, #91d8ad 49%, #216747 51%);
+    -una-verde-suave: ladder(-color-bg-default, #24382e 49%, #eaf4ec 51%);
+    -una-fondo: ladder(-color-bg-default, #191617 49%, #f7f3f2 51%);
+    -una-superficie: ladder(-color-bg-default, #252021 49%, #ffffff 51%);
+    -una-borde: ladder(-color-bg-default, #4a3b3e 49%, #e3d6d6 51%);
+
+    -color-accent-fg: ladder(-color-bg-default, #ff8a9f 49%, #b4002a 51%);
+    -color-accent-emphasis: -una-rojo;
+    -color-accent-6: #a50027;
+    -color-accent-muted: rgba(213, 0, 50, 0.45);
+    -color-accent-subtle: ladder(-color-bg-default, #3f242d 49%, #fce8ed 51%);
+
+    -fx-background-color: -una-fondo;
 }
 
 .acceso .marco {
@@ -10,23 +21,42 @@
 }
 
 .acceso .tarjeta {
-    -fx-background-color: -color-bg-default;
-    -fx-background-radius: 14;
-    -fx-border-color: -color-border-default;
-    -fx-border-radius: 14;
+    -fx-background-color: -una-superficie;
+    -fx-background-radius: 14px;
+    -fx-border-color: -una-rojo -una-borde -una-borde -una-borde;
+    -fx-border-width: 3px 1px 1px 1px;
+    -fx-border-radius: 14px;
     -fx-padding: 32;
 }
 
 .acceso .marca {
     -fx-font-size: 30px;
     -fx-font-weight: bold;
-    -fx-text-fill: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
 }
 
 .acceso .titulo {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-fg-default;
+}
+
+.acceso .hyperlink {
+    -color-link-fg: -una-verde;
+    -color-link-fg-visited: -una-verde;
+}
+
+.acceso .tab-pane {
+    -color-tab-bg-selected: -una-verde-suave;
+    -color-tab-fg-selected: -una-verde;
+    -color-tab-border-selected: -una-verde;
+}
+
+.acceso .contador-amigos {
+    -fx-background-color: -una-verde-suave;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 10px;
+    -fx-text-fill: -una-verde;
 }
 
 .acceso .error {

@@ -9,7 +9,9 @@ import cr.ac.una.est.socialuna.ui.component.PanelPublicaciones;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,6 +22,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import cr.ac.una.est.socialuna.persistence.GestorJSON;
 import cr.ac.una.est.socialuna.persistence.RepositorioUsuariosJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioCarrerasJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioSedesJSON;
+import cr.ac.una.est.socialuna.persistence.RepositorioPublicacionesJSON;
+import cr.ac.una.est.socialuna.service.ServicioUsuarios;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -104,12 +110,16 @@ class AppSocialUNATest {
                 assertEquals("", clave.getText());
                 clave.setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
+                assertEquals("vistaFeed", escena.getRoot().getId());
+                ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNotNull(control(escena, "#btnCerrarSesion"));
                 ((Button) control(escena, "#btnCerrarSesion")).fire();
                 assertEquals("vistaLogin", escena.getRoot().getId());
                 ((TextField) control(escena, "#nombreUsuario")).setText("ana");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
+                assertEquals("vistaFeed", escena.getRoot().getId());
+                ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNotNull(control(escena, "#btnCerrarSesion"));
                 resultado.complete(null);
             } catch (Throwable error) {
@@ -147,6 +157,91 @@ class AppSocialUNATest {
             }
         });
         resultado.get(10, TimeUnit.SECONDS);
+    }
+
+    //Prueba la búsqueda, la amistad y los datos del perfil desde el muro conectado al JSON.
+    @Test void abrePerfilesDesdeLaBusquedaYElMuro() throws Exception {
+        var resultado = new CompletableFuture<Void>();
+        Platform.runLater(() -> {
+            Stage stage = new Stage();
+            try {
+                stage.setOpacity(0);
+                new AppSocialUNA(datos).start(stage);
+                var gestor = new GestorJSON(datos);
+                var repo = new RepositorioUsuariosJSON(gestor);
+                var usuarios = new ServicioUsuarios(repo, new RepositorioSedesJSON(gestor),
+                        new RepositorioCarrerasJSON(gestor));
+                var ana = usuarios.registrar("Ana", "ana", "prueba", "informatica", "central");
+                var beto = usuarios.registrar("Beto", "beto", "prueba", "informatica", "central");
+                var publicaciones = new RepositorioPublicacionesJSON(gestor);
+                publicaciones.cargar();
+                publicaciones.guardar(new Publicacion("beto-muro", beto.getId(), "Hola desde el muro",
+                        100, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null));
+
+                new AppSocialUNA(datos).start(stage);
+                var escena = stage.getScene();
+                ((TextField) control(escena, "#nombreUsuario")).setText("ana");
+                ((TextField) control(escena, "#contrasena")).setText("prueba");
+                ((Button) control(escena, "#btnIngresar")).fire();
+                var muro = escena.getRoot();
+                var publicacionesVisibles = (VBox) control(escena, "#contenedorPanel");
+                var tarjetas = (VBox) publicacionesVisibles.getChildren().getFirst();
+                assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
+
+                ((Button) control(escena, "#btnBuscarEstudiantes")).fire();
+                var busqueda = escena.getRoot();
+                assertEquals("vistaBusqueda", busqueda.getId());
+                ((TextField) control(escena, "#campoBusqueda")).setText(" BET ");
+                ((Button) control(escena, "#btnBuscar")).fire();
+                var resultados = (VBox) control(escena, "#contenedorResultados");
+                var fila = (HBox) resultados.getChildren().getFirst();
+                ((Button) fila.getChildren().getLast()).fire();
+
+                var amistad = (Button) control(escena, "#btnAmistad");
+                assertNull(control(escena, "#btnCerrarSesion"));
+                var total = (Label) control(escena, "#cantidadAmigos");
+                assertEquals("Amigos · 0", total.getText());
+                amistad.fire();
+                assertEquals("Amigos · 1", total.getText());
+                ((Hyperlink) control(escena, "#volverPerfil")).fire();
+                assertSame(busqueda, escena.getRoot());
+                var amigos = (VBox) control(escena, "#contenedorAmigos");
+                assertInstanceOf(HBox.class, amigos.getChildren().getFirst());
+                ((Hyperlink) control(escena, "#volverBusqueda")).fire();
+                assertSame(muro, escena.getRoot());
+
+                var tarjeta = (VBox) tarjetas.getChildren().getFirst();
+                var autor = (Hyperlink) tarjeta.getChildren().getFirst();
+                assertEquals("Beto", autor.getText());
+                autor.fire();
+                ((Button) control(escena, "#btnAmistad")).fire();
+                assertEquals("Amigos · 0", ((Label) control(escena, "#cantidadAmigos")).getText());
+                ((Hyperlink) control(escena, "#volverPerfil")).fire();
+                assertSame(muro, escena.getRoot());
+                assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
+
+                ((TextArea) control(escena, "#textoPublicacion")).setText("Hola desde mi cuenta");
+                ((Button) control(escena, "#btnPublicar")).fire();
+                assertInstanceOf(VBox.class, tarjetas.getChildren().getFirst());
+
+                ((Button) control(escena, "#btnMiPerfil")).fire();
+                assertNull(control(escena, "#btnAmistad"));
+                ((ChoiceBox<?>) control(escena, "#editarCarrera")).getSelectionModel().selectLast();
+                ((ChoiceBox<?>) control(escena, "#editarSede")).getSelectionModel().selectLast();
+                ((Button) control(escena, "#btnGuardarPerfil")).fire();
+                var guardado = new RepositorioUsuariosJSON(gestor).buscarUsuarioPorId(ana.getId());
+                assertEquals("administracion", guardado.getCarreraId());
+                assertEquals("siua", guardado.getSedeId());
+                ((Button) control(escena, "#btnCerrarSesion")).fire();
+                assertEquals("vistaLogin", escena.getRoot().getId());
+                resultado.complete(null);
+            } catch (Throwable error) {
+                resultado.completeExceptionally(error);
+            } finally {
+                stage.close();
+            }
+        });
+        resultado.get(15, TimeUnit.SECONDS);
     }
 
     //Recibe la escena y un selector. Prepara el contenido de ScrollPane y devuelve el nodo que coincide.

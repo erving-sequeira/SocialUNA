@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class ControladorFeed {
     private final IServicioComunidad servicioComunidad;
     private final NavegadorVistas navegador;
     private final PanelPublicaciones panel;
+
+    @FXML private ScrollPane vistaFeed;
 
     @FXML
     private TabPane pestañas;
@@ -57,9 +60,7 @@ public class ControladorFeed {
         this.panel = Objects.requireNonNull(panel);
     }
 
-    // No recibe parámetros.
-    // Obtiene las publicaciones según la pestaña seleccionada y las muestra en pantalla.
-    // No devuelve ningún valor.
+    //Carga y muestra las publicaciones del muro que está seleccionado.
     @FXML
     public void cargarFeed() {
 
@@ -96,13 +97,12 @@ public class ControladorFeed {
             panel.mostrar(publicaciones, false);
 
         } catch (RuntimeException error) {
+            panel.mostrar(new ArrayList<>(), false);
             mostrarError(error.getMessage());
         }
     }
 
-    // No recibe parámetros.
-    // Toma el texto escrito y lo publica en el muro o comunidad seleccionada.
-    // Después limpia el campo y actualiza las publicaciones.
+    //Publica el texto en el muro activo. Si se guarda, limpia el campo y recarga la lista.
     @FXML
     public void publicar() {
 
@@ -150,9 +150,7 @@ public class ControladorFeed {
         }
     }
 
-    // Recibe el ámbito que queremos visualizar.
-    // Selecciona la pestaña correspondiente y actualiza sus publicaciones.
-    // No devuelve ningún valor.
+    //Recibe el ámbito y selecciona la pestaña que le toca.
     public void seleccionarMuro(AmbitoPublicacion ambito) {
 
         if (ambito == null) {
@@ -190,9 +188,7 @@ public class ControladorFeed {
         mostrarError("No se encontró la pestaña solicitada.");
     }
 
-    // No recibe parámetros.
-    // Le pide al navegador que abra la pantalla de búsqueda de estudiantes.
-    // No devuelve ningún valor.
+    //Abre la búsqueda de estudiantes desde el muro.
     @FXML
     public void abrirBusqueda() {
 
@@ -204,9 +200,7 @@ public class ControladorFeed {
         }
     }
 
-    // No recibe parámetros.
-    // Obtiene el usuario que inició sesión y solicita abrir su propio perfil.
-    // No devuelve ningún valor.
+    //Abre el perfil del usuario que inició sesión.
     @FXML
     public void abrirMiPerfil() {
 
@@ -220,17 +214,13 @@ public class ControladorFeed {
 
             navegador.mostrarPerfil(usuario.getId());
 
-        } catch (UnsupportedOperationException error) {
-            mostrarError("La pantalla de perfiles todavía está en desarrollo.");
 
         } catch (RuntimeException error) {
             mostrarError("No se pudo abrir tu perfil.");
         }
     }
 
-    // Recibe el ID del autor de una publicación.
-    // Solicita al navegador que abra el perfil de ese estudiante.
-    // No devuelve ningún valor.
+    //Recibe el ID del autor y abre su perfil desde el post.
     public void abrirPerfilAutor(String autorId) {
 
         if (autorId == null || autorId.isBlank()) {
@@ -241,17 +231,13 @@ public class ControladorFeed {
         try {
             navegador.mostrarPerfil(autorId);
 
-        } catch (UnsupportedOperationException error) {
-            mostrarError("La pantalla de perfiles todavía está en desarrollo.");
 
         } catch (RuntimeException error) {
             mostrarError("No se pudo abrir el perfil del autor.");
         }
     }
 
-    // No recibe parámetros.
-    // Conecta el panel de publicaciones, configura los enlaces de los autores
-    // y carga las publicaciones iniciales del usuario.
+    //Conecta las acciones del panel y recarga las publicaciones al entrar o cambiar de pestaña.
     @FXML
     public void initialize() {
 
@@ -262,8 +248,9 @@ public class ControladorFeed {
         pestañas.getSelectionModel().selectedItemProperty().addListener(
                 (observable, anterior, nueva) -> cargarFeed()
         );
-
-        cargarFeed();
+        vistaFeed.sceneProperty().addListener((propiedad, anterior, actual) -> {
+            if (actual != null) cargarFeed();
+        });
     }
 
     // Recibe el mensaje que queremos mostrar.

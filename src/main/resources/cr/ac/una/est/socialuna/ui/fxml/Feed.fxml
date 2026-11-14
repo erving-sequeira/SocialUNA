@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true"
+<ScrollPane fx:id="vistaFeed" fitToWidth="true"
             styleClass="acceso"
             stylesheets="@../css/acceso.css"
             xmlns="http://javafx.com/javafx/21"
@@ -28,10 +28,10 @@
 
                 <HBox HBox.hgrow="ALWAYS"/>
 
-                <Button text="Buscar estudiantes"
+                <Button id="btnBuscarEstudiantes" text="Buscar estudiantes"
                         onAction="#abrirBusqueda"/>
 
-                <Button text="Mi perfil"
+                <Button id="btnMiPerfil" text="Mi perfil"
                         onAction="#abrirMiPerfil"/>
 
             </HBox>
@@ -92,7 +92,7 @@
                           maxHeight="120"/>
 
                 <HBox alignment="CENTER_RIGHT">
-                    <Button text="Publicar"
+                    <Button id="btnPublicar" text="Publicar"
                             onAction="#publicar"
                             defaultButton="true"/>
                 </HBox>

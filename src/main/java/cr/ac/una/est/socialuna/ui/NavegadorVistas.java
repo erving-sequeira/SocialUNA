@@ -1,9 +1,12 @@
 package cr.ac.una.est.socialuna.ui;
 
 import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
+import cr.ac.una.est.socialuna.ui.component.PanelPerfil;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +24,7 @@ public class NavegadorVistas {
 
     private final Stage stage;
     private final Map<Class<?>, Supplier<?>> fabricas = new HashMap<>();
-    private Parent vistaAnterior;
+    private final Deque<Parent> historial = new ArrayDeque<>();
 
     //Recibe la ventana donde se van a mostrar las pantallas.
     public NavegadorVistas(Stage stage) {
@@ -36,7 +39,7 @@ public class NavegadorVistas {
     //Abre el login y borra la vista anterior.
     public void mostrarLogin() {
         cambiarEscena("Login.fxml");
-        vistaAnterior = null;
+        historial.clear();
     }
 
     //Abre el formulario de registro.
@@ -68,7 +71,7 @@ public class NavegadorVistas {
             vista.getStylesheets().add(getClass().getResource("css/acceso.css").toExternalForm());
             presentar(vista);
         }
-        vistaAnterior = null;
+        historial.clear();
     }
 
     //Abre la pantalla de búsqueda de perfiles.
@@ -76,9 +79,10 @@ public class NavegadorVistas {
         cambiarEscena("Busqueda.fxml");
     }
 
-    //Recibe el ID del perfil. Falta abrirlo con PanelPerfil dentro de Feed.fxml y por ahora da error.
+    //Recibe el ID y muestra el perfil, guardando la pantalla desde la que se abrió.
     public void mostrarPerfil(String perfilId) {
-        throw new UnsupportedOperationException("pendiente: PanelPerfil (Dev 2)");
+        var panel = PanelPerfil.class.cast(crearControlador(PanelPerfil.class));
+        presentar(panel.mostrarPerfil(perfilId));
     }
 
     //Recibe el ámbito para un panel de Inicio. Falta cargar Comunidad.fxml y por ahora da error.
@@ -88,11 +92,10 @@ public class NavegadorVistas {
 
     //Recupera la vista anterior. Da error si no quedó ninguna guardada.
     public void volver() {
-        if (vistaAnterior == null) {
+        if (historial.isEmpty()) {
             throw new IllegalStateException("No hay vista anterior a la que volver.");
         }
-        stage.getScene().setRoot(vistaAnterior);
-        vistaAnterior = null;
+        stage.getScene().setRoot(historial.pop());
     }
 
     //Recibe el tipo y devuelve un controlador creado por su fábrica. Da error si no hay una fábrica válida.
@@ -121,7 +124,7 @@ public class NavegadorVistas {
         if (scene == null) {
             stage.setScene(new Scene(nueva, 800, 600));
         } else {
-            vistaAnterior = scene.getRoot();
+            historial.push(scene.getRoot());
             scene.setRoot(nueva);
         }
     }
