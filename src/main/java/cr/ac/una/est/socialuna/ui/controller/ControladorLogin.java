@@ -2,6 +2,7 @@ package cr.ac.una.est.socialuna.ui.controller;
 
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
+import cr.ac.una.est.socialuna.ui.Tema;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -53,6 +54,11 @@ public class ControladorLogin {
     //Abre el formulario de registro desde el login.
     @FXML private void abrirRegistro() {
         navegador.mostrarRegistro();
+    }
+
+    //Alterna entre el tema claro y el oscuro.
+    @FXML private void alternarTema() {
+        Tema.alternar();
     }
 
     //Cierra la sesión y vuelve al login.

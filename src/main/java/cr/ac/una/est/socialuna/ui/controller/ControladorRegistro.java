@@ -4,6 +4,7 @@ import cr.ac.una.est.socialuna.model.entity.Carrera;
 import cr.ac.una.est.socialuna.model.entity.SedeCampus;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
+import cr.ac.una.est.socialuna.ui.Tema;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -70,6 +71,11 @@ public class ControladorRegistro {
     //Regresa al login desde el registro.
     @FXML private void volverLogin() {
         navegador.mostrarLogin();
+    }
+
+    //Alterna entre el tema claro y el oscuro.
+    @FXML private void alternarTema() {
+        Tema.alternar();
     }
 
     //Recibe un combo y una función para sacar el nombre. Usa ese nombre en las opciones y en la selección.

@@ -1,5 +1,6 @@
 package cr.ac.una.est.socialuna.app;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import cr.ac.una.est.socialuna.model.entity.*;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import org.kordamp.ikonli.javafx.FontIcon;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named="pruebas.javafx",matches="true")
@@ -117,6 +119,34 @@ class AppSocialUNATest {
             }
         });
         resultado.get(15, TimeUnit.SECONDS);
+    }
+
+    //Prueba que el botón de tema alterne entre el estilo claro y el oscuro.
+    @Test void botonDeTemaAlternaElEstiloDeLaApp() throws Exception {
+        var resultado = new CompletableFuture<Void>();
+        Platform.runLater(() -> {
+            Stage stage = new Stage();
+            try {
+                stage.setOpacity(0);
+                new AppSocialUNA(datos).start(stage);
+                var escena = stage.getScene();
+                var inicial = Application.getUserAgentStylesheet();
+                var icono = (FontIcon) control(escena, ".ikonli-font-icon");
+                assertNotNull(icono);
+                assertNotEquals(0, icono.getIconCode());
+                ((Button) control(escena, "#btnTema")).fire();
+                var alternado = Application.getUserAgentStylesheet();
+                assertNotEquals(inicial, alternado);
+                ((Button) control(escena, "#btnTema")).fire();
+                assertEquals(inicial, Application.getUserAgentStylesheet());
+                resultado.complete(null);
+            } catch (Throwable error) {
+                resultado.completeExceptionally(error);
+            } finally {
+                stage.close();
+            }
+        });
+        resultado.get(10, TimeUnit.SECONDS);
     }
 
     //Recibe la escena y un selector. Prepara el contenido de ScrollPane y devuelve el nodo que coincide.
