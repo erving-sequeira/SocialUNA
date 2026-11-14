@@ -1,6 +1,8 @@
 module cr.ac.una.est.socialuna.socialuna {
     requires javafx.controls;
     requires javafx.fxml;
+    requires atlantafx.base;
+    requires org.kordamp.ikonli.javafx;
     requires com.google.gson;
 
     exports cr.ac.una.est.socialuna.app;

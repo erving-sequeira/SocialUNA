@@ -8,6 +8,7 @@ import cr.ac.una.est.socialuna.persistence.RepositorioSedesJSON;
 import cr.ac.una.est.socialuna.persistence.RepositorioUsuariosJSON;
 import cr.ac.una.est.socialuna.service.ServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
+import cr.ac.una.est.socialuna.ui.Tema;
 import cr.ac.una.est.socialuna.ui.controller.ControladorLogin;
 import cr.ac.una.est.socialuna.ui.controller.ControladorRegistro;
 import javafx.application.Application;
@@ -37,6 +38,7 @@ public class AppSocialUNA extends Application {
     //Recibe la ventana de JavaFX, carga los datos y muestra el login o un aviso si algo falla.
     @Override
     public void start(Stage stage) {
+        Tema.aplicar();
         stage.setTitle("SocialUNA");
         stage.setMinWidth(520);
         stage.setMinHeight(560);
