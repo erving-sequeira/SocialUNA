@@ -1,0 +1,15 @@
+[
+  {
+    "id": "central",
+    "nombre": "Campus Omar Dengo",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "siua",
+    "nombre": "Sede Interuniversitaria de Alajuela",
+    "alias": "SIUA",
+    "tipo": "Sede",
+    "activa": true
+  }
+]
