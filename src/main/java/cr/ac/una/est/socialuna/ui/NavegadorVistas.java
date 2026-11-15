@@ -2,6 +2,7 @@ package cr.ac.una.est.socialuna.ui;
 
 import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
 import cr.ac.una.est.socialuna.ui.component.PanelPerfil;
+import cr.ac.una.est.socialuna.ui.controller.ControladorComunidad;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -87,9 +88,11 @@ public class NavegadorVistas {
         }
     }
 
-    //Recibe el ámbito para un panel de Inicio. Falta cargar Comunidad.fxml y por ahora da error.
-    public Parent cargarComunidad(AmbitoPublicacion ambito) {
-        throw new UnsupportedOperationException("pendiente: ControladorComunidad (Dev 4)");
+    //Recibe el ámbito y devuelve su vista de comunidad lista para insertarla en Inicio.
+    public ControladorComunidad cargarComunidad(AmbitoPublicacion ambito) {
+        var comunidad = ControladorComunidad.class.cast(crearControlador(ControladorComunidad.class));
+        comunidad.cambiarAmbito(ambito);
+        return comunidad;
     }
 
     //Recibe la vista y su posición en el menú. Cambia el contenido y marca la sección activa.
@@ -115,15 +118,7 @@ public class NavegadorVistas {
         }
 
         for (int i = 0; i < menuInferior.getChildren().size(); i++) {
-            var boton = menuInferior.getChildren().get(i);
-            boton.pseudoClassStateChanged(SELECCIONADO, i == seccion);
-            if (i == seccion) {
-                if (!boton.getStyleClass().contains("selected")) {
-                    boton.getStyleClass().add("selected");
-                }
-            } else {
-                boton.getStyleClass().remove("selected");
-            }
+            menuInferior.getChildren().get(i).pseudoClassStateChanged(SELECCIONADO, i == seccion);
         }
         if (espacioSocial.getCenter() != vista) espacioSocial.setCenter(vista);
         presentar(espacioSocial);
@@ -136,15 +131,6 @@ public class NavegadorVistas {
         boton.setMaxWidth(Double.MAX_VALUE);
         boton.getStyleClass().add("opcion-menu");
         boton.setOnAction(evento -> accion.run());
-        boton.focusedProperty().addListener((obs, oldVal, isFocused) -> {
-            if (isFocused) {
-                if (!boton.getStyleClass().contains("focused")) {
-                    boton.getStyleClass().add("focused");
-                }
-            } else {
-                boton.getStyleClass().remove("focused");
-            }
-        });
         return boton;
     }
 

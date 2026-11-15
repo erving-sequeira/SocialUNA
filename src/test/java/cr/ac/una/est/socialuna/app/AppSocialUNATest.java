@@ -16,6 +16,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -179,6 +180,8 @@ class AppSocialUNATest {
                 publicaciones.cargar();
                 publicaciones.guardar(new Publicacion("beto-muro", beto.getId(), "Hola desde el muro",
                         100, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null));
+                publicaciones.guardar(new Publicacion("beto-carrera", beto.getId(), "Desde la SIUA",
+                        101, AmbitoPublicacion.CARRERA, TipoPublicacion.GENERAL, "informatica", "siua"));
 
                 new AppSocialUNA(datos).start(stage);
                 var escena = stage.getScene();
@@ -188,8 +191,7 @@ class AppSocialUNATest {
                 var seleccionado = javafx.css.PseudoClass.getPseudoClass("selected");
                 var menu = control(escena, "#menuInferior");
                 assertNotNull(menu);
-                var publicacionesVisibles = (VBox) control(escena, "#contenedorPanel");
-                var tarjetas = (VBox) publicacionesVisibles.getChildren().getFirst();
+                var tarjetas = (VBox) control(escena, "#listaTarjetas");
                 assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
 
                 ((Button) control(escena, "#btnBuscarEstudiantes")).fire();
@@ -255,15 +257,42 @@ class AppSocialUNATest {
                     ((TextArea) control(escena, "#textoPublicacion")).setText("¿Una pregunta en " + tab.getText() + "?");
                     ((Button) control(escena, "#btnPublicar")).fire();
                     assertFalse(formulario.isVisible());
-                    var pregunta = (VBox) tarjetas.getChildren().getFirst();
+                    var listaActual = (VBox) control(escena, "#listaTarjetas");
+                    var pregunta = (VBox) listaActual.getChildren().getFirst();
                     assertTrue(pregunta.getStyleClass().contains("tarjeta-pregunta"));
                     assertEquals("Pregunta", ((Label) pregunta.lookup(".tipo-pregunta")).getText());
+                    if ("tabMuro".equals(tab.getId())) {
+                        assertEquals(2, pregunta.getChildren().size());
+                    } else {
+                        comprobarComentarios(pregunta);
+                    }
                 }
                 publicaciones.cargar();
                 for (var ambito : AmbitoPublicacion.values()) {
-                    assertTrue(publicaciones.listar().stream().anyMatch(publicacion ->
-                            publicacion.getAmbito() == ambito && publicacion.getTipo() == TipoPublicacion.PREGUNTA));
+                    var pregunta = publicaciones.listar().stream()
+                            .filter(publicacion -> publicacion.getAmbito() == ambito
+                                    && publicacion.getTipo() == TipoPublicacion.PREGUNTA)
+                            .findFirst().orElseThrow();
+                    if (ambito != AmbitoPublicacion.MURO) {
+                        assertEquals("Respuesta de prueba", pregunta.getComentarios().getFirst().getTexto());
+                    }
                 }
+
+                pestanas.getSelectionModel().select(1);
+                var filtro = (MenuButton) control(escena, "#filtroSede");
+                filtro.getItems().getLast().fire();
+                var filtradas = (VBox) control(escena, "#listaTarjetas");
+                assertEquals(1, filtradas.getChildren().size());
+                var postFiltrado = (VBox) filtradas.getChildren().getFirst();
+                assertEquals("Desde la SIUA", ((Label) postFiltrado.getChildren().get(1)).getText());
+                pestanas.getSelectionModel().select(2);
+                assertFalse(control(escena, "#filtroSede").isVisible()
+                        && control(escena, "#filtroSede").getParent().isVisible());
+                pestanas.getSelectionModel().select(1);
+                assertSame(filtro, control(escena, "#filtroSede"));
+                assertEquals(1, filtradas.getChildren().size());
+                filtro.getItems().getFirst().fire();
+                assertEquals(2, filtradas.getChildren().size());
 
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNull(control(escena, "#btnAmistad"));
@@ -298,6 +327,22 @@ class AppSocialUNATest {
             }
         });
         resultado.get(15, TimeUnit.SECONDS);
+    }
+
+    //Recibe una tarjeta de comunidad y prueba que su comentario se vea sin recargar la lista.
+    private static void comprobarComentarios(VBox tarjeta) {
+        var ver = (Button) tarjeta.getChildren().get(2);
+        assertFalse(ver.isDisabled());
+        ver.fire();
+        var comentarios = (VBox) tarjeta.getChildren().get(3);
+        assertEquals("Todavía no hay comentarios.", ((Label) comentarios.getChildren().getFirst()).getText());
+        var editor = (HBox) tarjeta.getChildren().get(4);
+        var campo = (TextField) editor.getChildren().getFirst();
+        campo.setText("Respuesta de prueba");
+        ((Button) editor.getChildren().getLast()).fire();
+        assertTrue(campo.getText().isEmpty());
+        var fila = (HBox) comentarios.getChildren().getFirst();
+        assertEquals("Respuesta de prueba", ((Label) fila.getChildren().getLast()).getText());
     }
 
     //Recibe la escena y un selector. Prepara el contenido de ScrollPane y devuelve el nodo que coincide.
@@ -356,7 +401,14 @@ class AppSocialUNATest {
                 var texto = (TextField) editor.getChildren().getFirst();
                 var enviar = (Button) editor.getChildren().get(1);
                 var enviado = new AtomicReference<List<String>>();
-                panel.alComentar((id, valor) -> enviado.set(List.of(id, valor)));
+                panel.alComentar((id, valor) -> false);
+                texto.setText("Borrador pendiente");
+                enviar.fire();
+                assertEquals("Borrador pendiente", texto.getText());
+                panel.alComentar((id, valor) -> {
+                    enviado.set(List.of(id, valor));
+                    return true;
+                });
                 texto.setText("  ");
                 assertTrue(enviar.isDisabled());
                 texto.setText(" Mi comentario ");

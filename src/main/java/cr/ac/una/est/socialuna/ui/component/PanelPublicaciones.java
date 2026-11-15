@@ -23,20 +23,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 public class PanelPublicaciones {
     private final VBox contenedor = new VBox(12);
     private final IServicioUsuarios servicioUsuarios;
     private final Map<String, VBox> comentariosPorPublicacion = new HashMap<>();
-    private final ObjectProperty<BiConsumer<String, String>> accionComentar = new SimpleObjectProperty<>();
+    private final ObjectProperty<BiPredicate<String, String>> accionComentar = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<String>> accionVerComentarios = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<String>> accionVerPerfil = new SimpleObjectProperty<>();
 
     //Recibe el servicio de usuarios para buscar el nombre de cada autor.
     public PanelPublicaciones(IServicioUsuarios servicioUsuarios) {
         this.servicioUsuarios = Objects.requireNonNull(servicioUsuarios);
+        contenedor.setId("listaTarjetas");
     }
 
     //Recibe la lista de posts y si se puede comentar. Redibuja las tarjetas con esa configuración.
@@ -66,8 +67,8 @@ public class PanelPublicaciones {
         }
     }
 
-    //Registra qué hacer al enviar un comentario. La acción recibe el ID del post y el texto.
-    public void alComentar(BiConsumer<String, String> accion) {
+    //Registra una acción que recibe el ID y el texto y devuelve true si guardó el comentario.
+    public void alComentar(BiPredicate<String, String> accion) {
         accionComentar.set(accion);
     }
 
@@ -130,8 +131,8 @@ public class PanelPublicaciones {
         enviar.setOnAction(evento -> {
             var accion = accionComentar.get();
             String comentario = entrada.getText();
-            if (accion != null && comentario != null && !comentario.isBlank()) {
-                accion.accept(publicacionId, comentario.strip());
+            if (accion != null && comentario != null && !comentario.isBlank()
+                    && accion.test(publicacionId, comentario.strip())) {
                 entrada.clear();
             }
         });
