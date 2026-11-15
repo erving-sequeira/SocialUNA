@@ -1,17 +1,17 @@
 /* Rojo UNA para la marca y las acciones principales. Verde para enlaces y selección. */
 .acceso {
     -una-rojo: #d50032;
-    -una-verde: ladder(-color-bg-default, #91d8ad 49%, #216747 51%);
-    -una-verde-suave: ladder(-color-bg-default, #24382e 49%, #eaf4ec 51%);
-    -una-fondo: ladder(-color-bg-default, #191617 49%, #f7f3f2 51%);
-    -una-superficie: ladder(-color-bg-default, #252021 49%, #ffffff 51%);
-    -una-borde: ladder(-color-bg-default, #4a3b3e 49%, #e3d6d6 51%);
+    -una-verde: -color-success-fg;
+    -una-verde-suave: -color-success-subtle;
+    -una-fondo: -color-bg-default;
+    -una-superficie: -color-bg-subtle;
+    -una-borde: -color-border-default;
 
-    -color-accent-fg: ladder(-color-bg-default, #ff8a9f 49%, #b4002a 51%);
+    -color-accent-fg: -una-rojo;
     -color-accent-emphasis: -una-rojo;
     -color-accent-6: #a50027;
     -color-accent-muted: rgba(213, 0, 50, 0.45);
-    -color-accent-subtle: ladder(-color-bg-default, #3f242d 49%, #fce8ed 51%);
+    -color-accent-subtle: -color-danger-subtle;
 
     -fx-background-color: -una-fondo;
 }
@@ -102,16 +102,19 @@
     -fx-background-color: -una-fondo;
 }
 
-.espacio-social .menu-inferior .opcion-menu:selected {
+.espacio-social .menu-inferior .opcion-menu.selected,
+.espacio-social .menu-inferior .opcion-menu:checked {
     -fx-background-color: -una-verde-suave;
     -fx-text-fill: -una-verde;
 }
 
-.espacio-social .menu-inferior .opcion-menu:selected .ikonli-font-icon {
+.espacio-social .menu-inferior .opcion-menu.selected .ikonli-font-icon,
+.espacio-social .menu-inferior .opcion-menu:checked .ikonli-font-icon {
     -fx-icon-color: -una-verde;
 }
 
-.espacio-social .menu-inferior .opcion-menu:focused {
+.espacio-social .menu-inferior .opcion-menu:focus,
+.espacio-social .menu-inferior .opcion-menu.focused {
     -fx-border-color: -una-verde;
 }
 
@@ -120,6 +123,9 @@
     -fx-background-radius: 10px;
     -fx-border-color: -una-borde;
     -fx-border-radius: 10px;
+    -color-tab-bg-selected: -una-verde-suave;
+    -color-tab-fg-selected: -una-verde;
+    -color-tab-border-selected: -una-verde;
 }
 
 .espacio-social .selector-muros > .tab-header-area > .tab-header-background {
@@ -134,17 +140,6 @@
 .espacio-social .selector-muros .tab .tab-label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-}
-
-.espacio-social .selector-muros .tab:selected {
-    -fx-background-color: -una-verde-suave;
-    -fx-background-radius: 8px 8px 0 0;
-    -fx-border-color: transparent transparent -una-verde transparent;
-    -fx-border-width: 0 0 3px 0;
-}
-
-.espacio-social .selector-muros .tab:selected .tab-label {
-    -fx-text-fill: -una-verde;
 }
 
 .espacio-social .detalle-muro {

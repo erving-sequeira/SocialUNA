@@ -115,7 +115,15 @@ public class NavegadorVistas {
         }
 
         for (int i = 0; i < menuInferior.getChildren().size(); i++) {
-            menuInferior.getChildren().get(i).pseudoClassStateChanged(SELECCIONADO, i == seccion);
+            var boton = menuInferior.getChildren().get(i);
+            boton.pseudoClassStateChanged(SELECCIONADO, i == seccion);
+            if (i == seccion) {
+                if (!boton.getStyleClass().contains("selected")) {
+                    boton.getStyleClass().add("selected");
+                }
+            } else {
+                boton.getStyleClass().remove("selected");
+            }
         }
         if (espacioSocial.getCenter() != vista) espacioSocial.setCenter(vista);
         presentar(espacioSocial);
@@ -128,6 +136,15 @@ public class NavegadorVistas {
         boton.setMaxWidth(Double.MAX_VALUE);
         boton.getStyleClass().add("opcion-menu");
         boton.setOnAction(evento -> accion.run());
+        boton.focusedProperty().addListener((obs, oldVal, isFocused) -> {
+            if (isFocused) {
+                if (!boton.getStyleClass().contains("focused")) {
+                    boton.getStyleClass().add("focused");
+                }
+            } else {
+                boton.getStyleClass().remove("focused");
+            }
+        });
         return boton;
     }
 
