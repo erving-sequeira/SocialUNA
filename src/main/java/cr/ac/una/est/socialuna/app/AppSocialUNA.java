@@ -30,6 +30,7 @@ import cr.ac.una.est.socialuna.ui.controller.ControladorAmigos;
 import cr.ac.una.est.socialuna.ui.controller.ControladorLogin;
 import cr.ac.una.est.socialuna.ui.controller.ControladorRegistro;
 import cr.ac.una.est.socialuna.ui.controller.ControladorFeed;
+import cr.ac.una.est.socialuna.ui.controller.ControladorComunidad;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -137,11 +138,13 @@ public class AppSocialUNA extends Application {
         navegador.registrarFabrica(PanelPerfil.class,
                 () -> new PanelPerfil(usuarios, servicioAmistad, navegador));
 
+        navegador.registrarFabrica(ControladorComunidad.class,
+                () -> new ControladorComunidad(usuarios, servicioComunidad, navegador, new PanelPublicaciones(usuarios)));
+
         navegador.registrarFabrica(
                 ControladorFeed.class,
                 () -> new ControladorFeed(
                         servicioPublicacion,
-                        servicioComunidad,
                         navegador,
                         new PanelPublicaciones(usuarios)
                 )

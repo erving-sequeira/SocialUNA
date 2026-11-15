@@ -2,7 +2,7 @@ package cr.ac.una.est.socialuna.ui;
 
 import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
 import cr.ac.una.est.socialuna.ui.component.PanelPerfil;
-import javafx.css.PseudoClass;
+import cr.ac.una.est.socialuna.ui.controller.ControladorComunidad;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,7 +22,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public class NavegadorVistas {
-    private static final PseudoClass SELECCIONADO = PseudoClass.getPseudoClass("selected");
+    private static final String OPCION_SELECCIONADA = "opcion-seleccionada";
+    private static final String OPCION_CON_FOCO = "opcion-con-foco";
 
     private final Stage stage;
     private final Map<Class<?>, Supplier<?>> fabricas = new HashMap<>();
@@ -87,9 +88,11 @@ public class NavegadorVistas {
         }
     }
 
-    //Recibe el ámbito para un panel de Inicio. Falta cargar Comunidad.fxml y por ahora da error.
-    public Parent cargarComunidad(AmbitoPublicacion ambito) {
-        throw new UnsupportedOperationException("pendiente: ControladorComunidad (Dev 4)");
+    //Recibe el ámbito y devuelve su vista de comunidad lista para insertarla en Inicio.
+    public ControladorComunidad cargarComunidad(AmbitoPublicacion ambito) {
+        var comunidad = ControladorComunidad.class.cast(crearControlador(ControladorComunidad.class));
+        comunidad.cambiarAmbito(ambito);
+        return comunidad;
     }
 
     //Recibe la vista y su posición en el menú. Cambia el contenido y marca la sección activa.
@@ -115,15 +118,9 @@ public class NavegadorVistas {
         }
 
         for (int i = 0; i < menuInferior.getChildren().size(); i++) {
-            var boton = menuInferior.getChildren().get(i);
-            boton.pseudoClassStateChanged(SELECCIONADO, i == seccion);
-            if (i == seccion) {
-                if (!boton.getStyleClass().contains("selected")) {
-                    boton.getStyleClass().add("selected");
-                }
-            } else {
-                boton.getStyleClass().remove("selected");
-            }
+            var clases = menuInferior.getChildren().get(i).getStyleClass();
+            clases.remove(OPCION_SELECCIONADA);
+            if (i == seccion) clases.add(OPCION_SELECCIONADA);
         }
         if (espacioSocial.getCenter() != vista) espacioSocial.setCenter(vista);
         presentar(espacioSocial);
@@ -135,16 +132,11 @@ public class NavegadorVistas {
         boton.setId(id);
         boton.setMaxWidth(Double.MAX_VALUE);
         boton.getStyleClass().add("opcion-menu");
-        boton.setOnAction(evento -> accion.run());
-        boton.focusedProperty().addListener((obs, oldVal, isFocused) -> {
-            if (isFocused) {
-                if (!boton.getStyleClass().contains("focused")) {
-                    boton.getStyleClass().add("focused");
-                }
-            } else {
-                boton.getStyleClass().remove("focused");
-            }
+        boton.focusedProperty().addListener((propiedad, anterior, enfocado) -> {
+            if (enfocado) boton.getStyleClass().add(OPCION_CON_FOCO);
+            else boton.getStyleClass().remove(OPCION_CON_FOCO);
         });
+        boton.setOnAction(evento -> accion.run());
         return boton;
     }
 
