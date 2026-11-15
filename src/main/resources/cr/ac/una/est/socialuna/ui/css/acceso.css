@@ -102,16 +102,16 @@
     -fx-background-color: -una-fondo;
 }
 
-.espacio-social .menu-inferior .opcion-menu:selected {
+.espacio-social .menu-inferior .opcion-menu.opcion-seleccionada {
     -fx-background-color: -una-verde-suave;
     -fx-text-fill: -una-verde;
 }
 
-.espacio-social .menu-inferior .opcion-menu:selected .ikonli-font-icon {
+.espacio-social .menu-inferior .opcion-menu.opcion-seleccionada .ikonli-font-icon {
     -fx-icon-color: -una-verde;
 }
 
-.espacio-social .menu-inferior .opcion-menu:focused {
+.espacio-social .menu-inferior .opcion-menu.opcion-con-foco {
     -fx-border-color: -una-verde;
 }
 

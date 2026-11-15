@@ -188,7 +188,7 @@ class AppSocialUNATest {
                 ((TextField) control(escena, "#nombreUsuario")).setText("ana");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
-                var seleccionado = javafx.css.PseudoClass.getPseudoClass("selected");
+                String seleccionado = "opcion-seleccionada";
                 var menu = control(escena, "#menuInferior");
                 assertNotNull(menu);
                 var tarjetas = (VBox) control(escena, "#listaTarjetas");
@@ -205,8 +205,8 @@ class AppSocialUNATest {
                 ((Button) fila.getChildren().getLast()).fire();
                 assertNotNull(control(escena, "#vistaPerfil"));
                 assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnBuscarEstudiantes").getPseudoClassStates().contains(seleccionado));
-                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnBuscarEstudiantes").getStyleClass().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
 
                 var amistad = (Button) control(escena, "#btnAmistad");
                 assertNull(control(escena, "#btnCerrarSesion"));
@@ -229,8 +229,8 @@ class AppSocialUNATest {
                 autor.fire();
                 assertNotNull(control(escena, "#vistaPerfil"));
                 assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnMuro").getPseudoClassStates().contains(seleccionado));
-                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnMuro").getStyleClass().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
                 ((Button) control(escena, "#btnAmistad")).fire();
                 assertEquals("Amigos · 0", ((Label) control(escena, "#cantidadAmigos")).getText());
                 ((Button) control(escena, "#btnMuro")).fire();
@@ -297,7 +297,7 @@ class AppSocialUNATest {
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNull(control(escena, "#btnAmistad"));
                 assertEquals("Ana", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
                 assertSame(menu, control(escena, "#menuInferior"));
                 var editor = control(escena, "#formularioPerfil");
                 assertFalse(editor.isVisible());
