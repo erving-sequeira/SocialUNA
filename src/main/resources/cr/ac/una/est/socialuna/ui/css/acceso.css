@@ -69,3 +69,118 @@
     -fx-font-size: 18px;
     -fx-padding: 2 8;
 }
+
+.espacio-social .cabecera-social {
+    -fx-background-color: -una-superficie;
+    -fx-border-color: transparent transparent -una-borde transparent;
+    -fx-padding: 18px 24px 14px;
+}
+
+.espacio-social .cuerpo-social {
+    -fx-padding: 16px 24px 22px;
+}
+
+.espacio-social .menu-inferior {
+    -fx-background-color: -una-superficie;
+    -fx-border-color: -una-borde transparent transparent transparent;
+    -fx-padding: 8px 16px;
+    -fx-hgap: 8px;
+}
+
+.espacio-social .menu-inferior .opcion-menu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 9px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 9px;
+    -fx-font-weight: bold;
+    -fx-graphic-text-gap: 6px;
+    -fx-min-height: 42px;
+    -fx-padding: 6px 8px;
+}
+
+.espacio-social .menu-inferior .opcion-menu:hover {
+    -fx-background-color: -una-fondo;
+}
+
+.espacio-social .menu-inferior .opcion-menu:selected {
+    -fx-background-color: -una-verde-suave;
+    -fx-text-fill: -una-verde;
+}
+
+.espacio-social .menu-inferior .opcion-menu:selected .ikonli-font-icon {
+    -fx-icon-color: -una-verde;
+}
+
+.espacio-social .menu-inferior .opcion-menu:focused {
+    -fx-border-color: -una-verde;
+}
+
+.espacio-social .selector-muros {
+    -fx-background-color: -una-fondo;
+    -fx-background-radius: 10px;
+    -fx-border-color: -una-borde;
+    -fx-border-radius: 10px;
+}
+
+.espacio-social .selector-muros > .tab-header-area > .tab-header-background {
+    -fx-background-color: -una-fondo;
+}
+
+.espacio-social .selector-muros > .tab-header-area,
+.espacio-social .selector-muros .tab {
+    -fx-padding: 0;
+}
+
+.espacio-social .selector-muros .tab .tab-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.espacio-social .selector-muros .tab:selected {
+    -fx-background-color: -una-verde-suave;
+    -fx-background-radius: 8px 8px 0 0;
+    -fx-border-color: transparent transparent -una-verde transparent;
+    -fx-border-width: 0 0 3px 0;
+}
+
+.espacio-social .selector-muros .tab:selected .tab-label {
+    -fx-text-fill: -una-verde;
+}
+
+.espacio-social .detalle-muro {
+    -fx-padding: 8px 14px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.espacio-social .panel-social,
+.espacio-social .resultado-estudiante,
+.espacio-social .tarjeta-publicacion {
+    -fx-background-color: -una-superficie;
+    -fx-background-radius: 10px;
+    -fx-border-color: -una-borde;
+    -fx-border-radius: 10px;
+    -fx-padding: 14px 16px;
+}
+
+.espacio-social .tarjeta-pregunta {
+    -fx-border-color: -una-borde -una-borde -una-borde -una-verde;
+    -fx-border-width: 1px 1px 1px 3px;
+}
+
+.espacio-social .tipo-publicacion,
+.espacio-social .tipo-pregunta {
+    -fx-background-radius: 10px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+.espacio-social .tipo-publicacion {
+    -fx-background-color: -una-fondo;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.espacio-social .tipo-pregunta {
+    -fx-background-color: -una-verde-suave;
+    -fx-text-fill: -una-verde;
+}

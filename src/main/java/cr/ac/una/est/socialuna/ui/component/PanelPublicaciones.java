@@ -2,11 +2,13 @@ package cr.ac.una.est.socialuna.ui.component;
 
 import cr.ac.una.est.socialuna.model.entity.Comentario;
 import cr.ac.una.est.socialuna.model.entity.Publicacion;
+import cr.ac.una.est.socialuna.model.entity.TipoPublicacion;
 import cr.ac.una.est.socialuna.model.entity.Usuario;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -14,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -87,7 +90,17 @@ public class PanelPublicaciones {
     private VBox crearTarjeta(Publicacion publicacion, boolean permitirComentarios) {
         Label texto = new Label(publicacion.getTexto());
         texto.setWrapText(true);
-        var tarjeta = new VBox(6, crearAutor(publicacion.getAutorId()), texto);
+
+        boolean pregunta = publicacion.getTipo() == TipoPublicacion.PREGUNTA;
+        var tipo = new Label(pregunta ? "Pregunta" : "Publicación");
+        tipo.getStyleClass().add(pregunta ? "tipo-pregunta" : "tipo-publicacion");
+        var espacio = new Region();
+        HBox.setHgrow(espacio, Priority.ALWAYS);
+        var encabezado = new HBox(10, crearAutor(publicacion.getAutorId()), espacio, tipo);
+        encabezado.setAlignment(Pos.CENTER_LEFT);
+        var tarjeta = new VBox(10, encabezado, texto);
+        tarjeta.getStyleClass().add("tarjeta-publicacion");
+        if (pregunta) tarjeta.getStyleClass().add("tarjeta-pregunta");
         if (permitirComentarios) {
             agregarControlesDeComentarios(tarjeta, publicacion.getId());
         }

@@ -7,9 +7,10 @@ import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class ControladorAmigos {
     private final IServicioAmistad servicioAmistad;
     private final NavegadorVistas navegador;
 
-    @FXML private ScrollPane vistaBusqueda;
+    @FXML private VBox vistaBusqueda;
     @FXML private TextField campoBusqueda;
     @FXML private VBox contenedorResultados;
     @FXML private VBox contenedorAmigos;
@@ -79,11 +80,6 @@ public class ControladorAmigos {
         mostrarPerfiles(contenedorAmigos, servicioAmistad.listarMisAmigos(), "Todavía no tienes amigos.");
     }
 
-    //Vuelve al muro que estaba abierto antes de buscar.
-    @FXML private void volver() {
-        navegador.volver();
-    }
-
     //Recibe la lista, el contenedor y el texto vacío. Dibuja los botones para abrir cada perfil.
     private void mostrarPerfiles(VBox contenedor, List<Usuario> perfiles, String textoVacio) {
         contenedor.getChildren().clear();
@@ -96,7 +92,13 @@ public class ControladorAmigos {
             nombre.setWrapText(true);
             Button botonPerfil = new Button("Ver perfil");
             botonPerfil.setOnAction(evento -> abrirPerfil(usuario.getId()));
-            contenedor.getChildren().add(new HBox(12, nombre, botonPerfil));
+            HBox.setHgrow(nombre, Priority.ALWAYS);
+            nombre.setMaxWidth(Double.MAX_VALUE);
+            botonPerfil.setMinWidth(Button.USE_PREF_SIZE);
+            var fila = new HBox(12, nombre, botonPerfil);
+            fila.setAlignment(Pos.CENTER_LEFT);
+            fila.getStyleClass().add("resultado-estudiante");
+            contenedor.getChildren().add(fila);
         }
     }
 }

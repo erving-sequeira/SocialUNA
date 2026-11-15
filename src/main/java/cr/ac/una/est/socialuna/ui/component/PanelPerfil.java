@@ -8,7 +8,6 @@ import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
@@ -30,8 +29,8 @@ public class PanelPerfil {
         this.amistades = amistades;
         this.navegador = navegador;
         contenedor.setFitToWidth(true);
-        contenedor.getStyleClass().add("acceso");
-        contenedor.getStylesheets().add(getClass().getResource("/cr/ac/una/est/socialuna/ui/css/acceso.css").toExternalForm());
+        contenedor.setId("vistaPerfil");
+        contenedor.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mensaje.setWrapText(true);
         mensaje.visibleProperty().bind(mensaje.textProperty().isNotEmpty());
         mensaje.managedProperty().bind(mensaje.visibleProperty());
@@ -44,15 +43,10 @@ public class PanelPerfil {
         Usuario perfil = usuarios.obtenerPerfil(perfilId);
         if (perfil == null) throw new IllegalArgumentException("Ese perfil ya no está disponible.");
 
-        var volver = new Hyperlink("Volver");
-        volver.setId("volverPerfil");
-        volver.setOnAction(evento -> navegador.volver());
-
         var nombre = new Label(perfil.getNombre());
         nombre.setWrapText(true);
         nombre.getStyleClass().add("marca");
         var alias = new Label("@" + perfil.getNombreUsuario());
-        alias.getStyleClass().add("titulo");
 
         var carrera = new Label();
         carrera.setWrapText(true);
@@ -65,18 +59,26 @@ public class PanelPerfil {
         cantidad.getStyleClass().add("contador-amigos");
         mostrarTotal(perfilId, cantidad);
 
+        var tituloDatos = new Label("Datos académicos");
+        tituloDatos.getStyleClass().add("titulo");
+        var datos = new VBox(10, tituloDatos, carrera, sede);
+        datos.getStyleClass().add("panel-social");
+
         var acciones = new VBox(12);
-        if (actual.getId().equals(perfil.getId())) {
-            mostrarAccionesPropias(acciones, perfil, carrera, sede);
+        boolean propio = actual.getId().equals(perfil.getId());
+        if (propio) {
+            mostrarAccionesPropias(acciones, datos, carrera, sede);
         } else {
             mostrarAccionAmistad(acciones, actual.getId(), perfilId, cantidad);
         }
 
         mensaje.setText("");
-        var tarjeta = new VBox(10, nombre, alias, carrera, sede, cantidad, acciones, mensaje);
-        tarjeta.getStyleClass().add("tarjeta");
-        var cuerpo = new VBox(14, volver, tarjeta);
-        cuerpo.getStyleClass().add("marco");
+        var titulo = new Label(propio ? "Mi perfil" : "Perfil de estudiante");
+        titulo.getStyleClass().add("titulo");
+        var identidad = new VBox(6, nombre, alias, cantidad);
+        identidad.getStyleClass().add("panel-social");
+        var cuerpo = new VBox(14, titulo, identidad, datos, acciones, mensaje);
+        cuerpo.getStyleClass().add("cuerpo-social");
         contenedor.setContent(cuerpo);
         return contenedor;
     }
@@ -118,32 +120,60 @@ public class PanelPerfil {
         acciones.getChildren().add(boton);
     }
 
-    //Recibe el perfil y sus etiquetas. Agrega los controles para editar datos y cerrar sesión.
-    private void mostrarAccionesPropias(VBox acciones, Usuario perfil, Label carrera, Label sede) {
+    //Recibe el área de datos y sus etiquetas. Agrega los botones para editar o cerrar sesión.
+    private void mostrarAccionesPropias(VBox acciones, VBox datos, Label carrera, Label sede) {
         ChoiceBox<Carrera> carreras = new ChoiceBox<>();
         carreras.setId("editarCarrera");
         carreras.setAccessibleText("Carrera");
         usarNombre(carreras, Carrera::getNombre);
         carreras.getItems().setAll(usuarios.listarCarreras());
-        carreras.setValue(carreras.getItems().stream()
-                .filter(valor -> valor.getId().equals(perfil.getCarreraId())).findFirst().orElse(null));
 
         ChoiceBox<SedeCampus> sedes = new ChoiceBox<>();
         sedes.setId("editarSede");
         sedes.setAccessibleText("Sede");
         usarNombre(sedes, SedeCampus::getNombre);
         sedes.getItems().setAll(usuarios.listarSedes());
-        sedes.setValue(sedes.getItems().stream()
-                .filter(valor -> valor.getId().equals(perfil.getSedeId())).findFirst().orElse(null));
-
+        var editar = new Button("Editar datos");
+        editar.setId("btnEditarPerfil");
+        editar.getStyleClass().add("accent");
+        var cancelar = new Button("Cancelar");
+        cancelar.setId("btnCancelarPerfil");
         var guardar = new Button("Guardar cambios");
         guardar.setId("btnGuardarPerfil");
+        guardar.getStyleClass().add("accent");
+        var titulo = new Label("Editar datos académicos");
+        titulo.getStyleClass().add("titulo");
+        var formulario = new VBox(10, titulo, new Label("Carrera"), carreras, new Label("Sede"), sedes,
+                new FlowPane(10, 8, cancelar, guardar));
+        formulario.getStyleClass().add("panel-social");
+        formulario.setId("formularioPerfil");
+        formulario.setVisible(false);
+        formulario.managedProperty().bind(formulario.visibleProperty());
+        datos.visibleProperty().bind(formulario.visibleProperty().not());
+        datos.managedProperty().bind(datos.visibleProperty());
+        editar.setOnAction(evento -> {
+            Usuario perfil = usuarios.getUsuarioActual();
+            carreras.setValue(carreras.getItems().stream()
+                    .filter(valor -> valor.getId().equals(perfil.getCarreraId())).findFirst().orElse(null));
+            sedes.setValue(sedes.getItems().stream()
+                    .filter(valor -> valor.getId().equals(perfil.getSedeId())).findFirst().orElse(null));
+            mensaje.setText("");
+            formulario.setVisible(true);
+            carreras.requestFocus();
+        });
+        cancelar.setOnAction(evento -> {
+            formulario.setVisible(false);
+            mensaje.setText("");
+            editar.requestFocus();
+        });
         guardar.disableProperty().bind(carreras.valueProperty().isNull().or(sedes.valueProperty().isNull()));
         guardar.setOnAction(evento -> {
             try {
                 Usuario actualizado = usuarios.actualizarDatosAcademicos(carreras.getValue().getId(),
                         sedes.getValue().getId());
                 mostrarDatosAcademicos(actualizado, carrera, sede);
+                formulario.setVisible(false);
+                editar.requestFocus();
                 mensaje.getStyleClass().setAll("label");
                 mensaje.setText("Cambios guardados.");
             } catch (IllegalArgumentException | IllegalStateException error) {
@@ -157,7 +187,10 @@ public class PanelPerfil {
             usuarios.cerrarSesion();
             navegador.mostrarLogin();
         });
-        acciones.getChildren().addAll(new FlowPane(10, 8, carreras, sedes), new FlowPane(10, 8, guardar, salir));
+        var botones = new FlowPane(10, 8, editar, salir);
+        botones.visibleProperty().bind(formulario.visibleProperty().not());
+        botones.managedProperty().bind(botones.visibleProperty());
+        acciones.getChildren().addAll(botones, formulario);
     }
 
     //Recibe el selector y la función que saca el nombre. Hace que el selector muestre ese nombre.

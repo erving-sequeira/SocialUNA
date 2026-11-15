@@ -140,7 +140,6 @@ public class AppSocialUNA extends Application {
         navegador.registrarFabrica(
                 ControladorFeed.class,
                 () -> new ControladorFeed(
-                        usuarios,
                         servicioPublicacion,
                         servicioComunidad,
                         navegador,

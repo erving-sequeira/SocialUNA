@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -110,7 +112,7 @@ class AppSocialUNATest {
                 assertEquals("", clave.getText());
                 clave.setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
-                assertEquals("vistaFeed", escena.getRoot().getId());
+                assertNotNull(control(escena, "#vistaFeed"));
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNotNull(control(escena, "#btnCerrarSesion"));
                 ((Button) control(escena, "#btnCerrarSesion")).fire();
@@ -118,7 +120,7 @@ class AppSocialUNATest {
                 ((TextField) control(escena, "#nombreUsuario")).setText("ana");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
-                assertEquals("vistaFeed", escena.getRoot().getId());
+                assertNotNull(control(escena, "#vistaFeed"));
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNotNull(control(escena, "#btnCerrarSesion"));
                 resultado.complete(null);
@@ -183,19 +185,26 @@ class AppSocialUNATest {
                 ((TextField) control(escena, "#nombreUsuario")).setText("ana");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
-                var muro = escena.getRoot();
+                var seleccionado = javafx.css.PseudoClass.getPseudoClass("selected");
+                var menu = control(escena, "#menuInferior");
+                assertNotNull(menu);
                 var publicacionesVisibles = (VBox) control(escena, "#contenedorPanel");
                 var tarjetas = (VBox) publicacionesVisibles.getChildren().getFirst();
                 assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
 
                 ((Button) control(escena, "#btnBuscarEstudiantes")).fire();
-                var busqueda = escena.getRoot();
-                assertEquals("vistaBusqueda", busqueda.getId());
+                var busqueda = control(escena, "#vistaBusqueda");
+                assertNotNull(busqueda);
+                assertSame(menu, control(escena, "#menuInferior"));
                 ((TextField) control(escena, "#campoBusqueda")).setText(" BET ");
                 ((Button) control(escena, "#btnBuscar")).fire();
                 var resultados = (VBox) control(escena, "#contenedorResultados");
                 var fila = (HBox) resultados.getChildren().getFirst();
                 ((Button) fila.getChildren().getLast()).fire();
+                assertNotNull(control(escena, "#vistaPerfil"));
+                assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
+                assertTrue(control(escena, "#btnBuscarEstudiantes").getPseudoClassStates().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
 
                 var amistad = (Button) control(escena, "#btnAmistad");
                 assertNull(control(escena, "#btnCerrarSesion"));
@@ -203,32 +212,79 @@ class AppSocialUNATest {
                 assertEquals("Amigos · 0", total.getText());
                 amistad.fire();
                 assertEquals("Amigos · 1", total.getText());
-                ((Hyperlink) control(escena, "#volverPerfil")).fire();
-                assertSame(busqueda, escena.getRoot());
+                assertSame(menu, control(escena, "#menuInferior"));
+                ((Button) control(escena, "#btnBuscarEstudiantes")).fire();
+                assertSame(busqueda, control(escena, "#vistaBusqueda"));
                 var amigos = (VBox) control(escena, "#contenedorAmigos");
                 assertInstanceOf(HBox.class, amigos.getChildren().getFirst());
-                ((Hyperlink) control(escena, "#volverBusqueda")).fire();
-                assertSame(muro, escena.getRoot());
+                assertNull(control(escena, "#volverBusqueda"));
+                ((Button) control(escena, "#btnMuro")).fire();
+                assertNotNull(control(escena, "#vistaFeed"));
 
                 var tarjeta = (VBox) tarjetas.getChildren().getFirst();
-                var autor = (Hyperlink) tarjeta.getChildren().getFirst();
+                var autor = (Hyperlink) ((HBox) tarjeta.getChildren().getFirst()).getChildren().getFirst();
                 assertEquals("Beto", autor.getText());
                 autor.fire();
+                assertNotNull(control(escena, "#vistaPerfil"));
+                assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
+                assertTrue(control(escena, "#btnMuro").getPseudoClassStates().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
                 ((Button) control(escena, "#btnAmistad")).fire();
                 assertEquals("Amigos · 0", ((Label) control(escena, "#cantidadAmigos")).getText());
-                ((Hyperlink) control(escena, "#volverPerfil")).fire();
-                assertSame(muro, escena.getRoot());
+                ((Button) control(escena, "#btnMuro")).fire();
+                assertNotNull(control(escena, "#vistaFeed"));
                 assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
 
+                var formulario = control(escena, "#formularioPublicacion");
+                assertFalse(formulario.isVisible());
+                assertFalse(formulario.isManaged());
+                ((Button) control(escena, "#btnNuevaPublicacion")).fire();
+                assertTrue(formulario.isVisible());
                 ((TextArea) control(escena, "#textoPublicacion")).setText("Hola desde mi cuenta");
                 ((Button) control(escena, "#btnPublicar")).fire();
-                assertInstanceOf(VBox.class, tarjetas.getChildren().getFirst());
+                assertFalse(formulario.isVisible());
+                var normal = (VBox) tarjetas.getChildren().getFirst();
+                assertTrue(normal.getStyleClass().contains("tarjeta-publicacion"));
+                assertEquals("Publicación", ((Label) normal.lookup(".tipo-publicacion")).getText());
+
+                var pestanas = (TabPane) control(escena, "#pestanas");
+                for (var tab : pestanas.getTabs()) {
+                    pestanas.getSelectionModel().select(tab);
+                    ((Button) control(escena, "#btnNuevaPublicacion")).fire();
+                    ((RadioButton) control(escena, "#tipoPregunta")).fire();
+                    ((TextArea) control(escena, "#textoPublicacion")).setText("¿Una pregunta en " + tab.getText() + "?");
+                    ((Button) control(escena, "#btnPublicar")).fire();
+                    assertFalse(formulario.isVisible());
+                    var pregunta = (VBox) tarjetas.getChildren().getFirst();
+                    assertTrue(pregunta.getStyleClass().contains("tarjeta-pregunta"));
+                    assertEquals("Pregunta", ((Label) pregunta.lookup(".tipo-pregunta")).getText());
+                }
+                publicaciones.cargar();
+                for (var ambito : AmbitoPublicacion.values()) {
+                    assertTrue(publicaciones.listar().stream().anyMatch(publicacion ->
+                            publicacion.getAmbito() == ambito && publicacion.getTipo() == TipoPublicacion.PREGUNTA));
+                }
 
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNull(control(escena, "#btnAmistad"));
+                assertEquals("Ana", ((Label) control(escena, ".marca")).getText());
+                assertTrue(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertSame(menu, control(escena, "#menuInferior"));
+                var editor = control(escena, "#formularioPerfil");
+                assertFalse(editor.isVisible());
+                assertFalse(editor.isManaged());
+                ((Button) control(escena, "#btnEditarPerfil")).fire();
+                assertTrue(editor.isVisible());
                 ((ChoiceBox<?>) control(escena, "#editarCarrera")).getSelectionModel().selectLast();
+                ((Button) control(escena, "#btnCancelarPerfil")).fire();
+                assertFalse(editor.isVisible());
+                ((Button) control(escena, "#btnEditarPerfil")).fire();
+                var carreras = (ChoiceBox<?>) control(escena, "#editarCarrera");
+                assertEquals("informatica", ((Carrera) carreras.getValue()).getId());
+                carreras.getSelectionModel().selectLast();
                 ((ChoiceBox<?>) control(escena, "#editarSede")).getSelectionModel().selectLast();
                 ((Button) control(escena, "#btnGuardarPerfil")).fire();
+                assertFalse(editor.isVisible());
                 var guardado = new RepositorioUsuariosJSON(gestor).buscarUsuarioPorId(ana.getId());
                 assertEquals("administracion", guardado.getCarreraId());
                 assertEquals("siua", guardado.getSedeId());
@@ -266,7 +322,7 @@ class AppSocialUNATest {
                 var muro = new Publicacion("muro", "ana", "Hola", 1, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null);
                 panel.mostrar(new ArrayList<>(List.of(muro)), false);
                 var tarjetaMuro = (VBox) panel.getContenedor().getChildren().getFirst();
-                var autor = (Hyperlink) tarjetaMuro.getChildren().getFirst();
+                var autor = (Hyperlink) ((HBox) tarjetaMuro.getChildren().getFirst()).getChildren().getFirst();
                 assertTrue(autor.isDisabled());
                 autor.fire();
                 assertEquals(2, tarjetaMuro.getChildren().size());
@@ -283,7 +339,7 @@ class AppSocialUNATest {
                 panel.mostrar(new ArrayList<>(List.of(primera, segunda)), true);
                 var tarjetaUno = (VBox) panel.getContenedor().getChildren().get(0);
                 var tarjetaDos = (VBox) panel.getContenedor().getChildren().get(1);
-                assertEquals("Autor no disponible", ((Label) tarjetaDos.getChildren().getFirst()).getText());
+                assertEquals("Autor no disponible", ((Label) ((HBox) tarjetaDos.getChildren().getFirst()).getChildren().getFirst()).getText());
                 var ver = (Button) tarjetaDos.getChildren().get(2);
                 assertTrue(ver.isDisabled());
                 var vista = new AtomicReference<String>();

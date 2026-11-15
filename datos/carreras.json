@@ -1,0 +1,12 @@
+[
+  {
+    "id": "informatica",
+    "nombre": "Informática",
+    "activa": true
+  },
+  {
+    "id": "administracion",
+    "nombre": "Administración",
+    "activa": true
+  }
+]
