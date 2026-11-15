@@ -1,6 +1,18 @@
 package cr.ac.una.est.socialuna.ui;
 
 import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
+import cr.ac.una.est.socialuna.ui.component.PanelPerfil;
+import javafx.css.PseudoClass;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
@@ -8,77 +20,71 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class NavegadorVistas {
+    private static final PseudoClass SELECCIONADO = PseudoClass.getPseudoClass("selected");
 
     private final Stage stage;
     private final Map<Class<?>, Supplier<?>> fabricas = new HashMap<>();
-    private Parent vistaAnterior;
+
+    private BorderPane espacioSocial;
+    private GridPane menuInferior;
+    private Parent muro;
+    private Parent busqueda;
+    private String perfilPropioId;
 
     //Recibe la ventana donde se van a mostrar las pantallas.
     public NavegadorVistas(Stage stage) {
         this.stage = stage;
     }
 
-    //Recibe el tipo de controlador y la función que lo crea. Los guarda para cargar el FXML después.
+    //Recibe un tipo de controlador y la función que lo crea para poder cargar sus vistas.
     public <T> void registrarFabrica(Class<T> tipo, Supplier<T> fabrica) {
         fabricas.put(Objects.requireNonNull(tipo), Objects.requireNonNull(fabrica));
     }
 
-    //Abre el login y borra la vista anterior.
+    //Abre el login y descarta las vistas de la sesión anterior.
     public void mostrarLogin() {
-        cambiarEscena("Login.fxml");
-        vistaAnterior = null;
+        presentar(cargarVista("Login.fxml"));
+        espacioSocial = null;
+        menuInferior = null;
+        muro = null;
+        busqueda = null;
+        perfilPropioId = null;
     }
 
-    //Abre el formulario de registro.
+    //Abre el registro desde el login.
     public void mostrarRegistro() {
-        cambiarEscena("Registro.fxml");
+        presentar(cargarVista("Registro.fxml"));
     }
 
-    //Abre la pantalla de Inicio desde Feed.fxml.
+    //Recibe el ID de quien entró y abre el muro con la navegación de esa sesión.
+    public void mostrarInicio(String perfilId) {
+        perfilPropioId = Objects.requireNonNull(perfilId);
+        mostrarInicio();
+    }
+
+    //Abre el muro y conserva la pestaña elegida durante esta sesión.
     public void mostrarInicio() {
-        cambiarEscena("Feed.fxml");
+        if (muro == null) muro = cargarVista("Feed.fxml");
+        mostrarSeccion(muro, 0);
     }
 
-    //Recibe la acción de cerrar sesión. Abre Inicio o, si falta Feed.fxml, muestra una pantalla temporal con ese botón.
-    public void mostrarInicio(Runnable cerrarSesion) {
-        Objects.requireNonNull(cerrarSesion);
-        if (recursoVista("Feed.fxml") != null) {
-            mostrarInicio();
-        } else {
-            var titulo = new Label("Inicio");
-            titulo.getStyleClass().add("titulo");
-            var aviso = new Label("Sesión iniciada. La pantalla de Inicio está en preparación.");
-            aviso.setWrapText(true);
-            var salir = new Button("Cerrar sesión");
-            salir.setId("btnCerrarSesion");
-            salir.setOnAction(evento -> cerrarSesion.run());
-            var vista = new VBox(14, titulo, aviso, salir);
-            vista.setAlignment(Pos.CENTER);
-            vista.getStyleClass().add("acceso");
-            vista.getStylesheets().add(getClass().getResource("css/acceso.css").toExternalForm());
-            presentar(vista);
-        }
-        vistaAnterior = null;
-    }
-
-    //Abre la pantalla de búsqueda de perfiles.
+    //Abre la búsqueda y conserva la consulta que estaba escrita.
     public void mostrarBusqueda() {
-        cambiarEscena("Busqueda.fxml");
+        if (busqueda == null) busqueda = cargarVista("Busqueda.fxml");
+        mostrarSeccion(busqueda, 1);
     }
 
-    //Recibe el ID del perfil. Falta abrirlo con PanelPerfil dentro de Feed.fxml y por ahora da error.
+    //Recibe el ID del perfil. Si es ajeno, muestra el panel sin cambiar la sección activa.
     public void mostrarPerfil(String perfilId) {
-        throw new UnsupportedOperationException("pendiente: PanelPerfil (Dev 2)");
+        var panel = PanelPerfil.class.cast(crearControlador(PanelPerfil.class));
+        var vista = panel.mostrarPerfil(perfilId);
+        if (perfilPropioId.equals(perfilId)) {
+            mostrarSeccion(vista, 2);
+        } else {
+            espacioSocial.setCenter(vista);
+        }
     }
 
     //Recibe el ámbito para un panel de Inicio. Falta cargar Comunidad.fxml y por ahora da error.
@@ -86,16 +92,63 @@ public class NavegadorVistas {
         throw new UnsupportedOperationException("pendiente: ControladorComunidad (Dev 4)");
     }
 
-    //Recupera la vista anterior. Da error si no quedó ninguna guardada.
-    public void volver() {
-        if (vistaAnterior == null) {
-            throw new IllegalStateException("No hay vista anterior a la que volver.");
+    //Recibe la vista y su posición en el menú. Cambia el contenido y marca la sección activa.
+    private void mostrarSeccion(Parent vista, int seccion) {
+        if (espacioSocial == null) {
+            espacioSocial = new BorderPane();
+            espacioSocial.setId("espacioSocial");
+            espacioSocial.getStyleClass().addAll("acceso", "espacio-social");
+            espacioSocial.getStylesheets().add(getClass().getResource("css/acceso.css").toExternalForm());
+            menuInferior = new GridPane();
+            menuInferior.setId("menuInferior");
+            menuInferior.getStyleClass().add("menu-inferior");
+            menuInferior.addRow(0,
+                    opcion("Muro", "btnMuro", "oct-home-16", this::mostrarInicio),
+                    opcion("Buscar estudiantes", "btnBuscarEstudiantes", "oct-search-16", this::mostrarBusqueda),
+                    opcion("Mi perfil", "btnMiPerfil", "oct-person-16", () -> mostrarPerfil(perfilPropioId)));
+            for (int i = 0; i < menuInferior.getChildren().size(); i++) {
+                var columna = new ColumnConstraints();
+                columna.setPercentWidth(100.0 / menuInferior.getChildren().size());
+                menuInferior.getColumnConstraints().add(columna);
+            }
+            espacioSocial.setBottom(menuInferior);
         }
-        stage.getScene().setRoot(vistaAnterior);
-        vistaAnterior = null;
+
+        for (int i = 0; i < menuInferior.getChildren().size(); i++) {
+            var boton = menuInferior.getChildren().get(i);
+            boton.pseudoClassStateChanged(SELECCIONADO, i == seccion);
+            if (i == seccion) {
+                if (!boton.getStyleClass().contains("selected")) {
+                    boton.getStyleClass().add("selected");
+                }
+            } else {
+                boton.getStyleClass().remove("selected");
+            }
+        }
+        if (espacioSocial.getCenter() != vista) espacioSocial.setCenter(vista);
+        presentar(espacioSocial);
     }
 
-    //Recibe el tipo y devuelve un controlador creado por su fábrica. Da error si no hay una fábrica válida.
+    //Recibe el texto, ID, icono y acción. Devuelve un botón que llena su columna del menú.
+    private Button opcion(String texto, String id, String icono, Runnable accion) {
+        var boton = new Button(texto, new FontIcon(icono));
+        boton.setId(id);
+        boton.setMaxWidth(Double.MAX_VALUE);
+        boton.getStyleClass().add("opcion-menu");
+        boton.setOnAction(evento -> accion.run());
+        boton.focusedProperty().addListener((obs, oldVal, isFocused) -> {
+            if (isFocused) {
+                if (!boton.getStyleClass().contains("focused")) {
+                    boton.getStyleClass().add("focused");
+                }
+            } else {
+                boton.getStyleClass().remove("focused");
+            }
+        });
+        return boton;
+    }
+
+    //Recibe un tipo y devuelve el controlador creado por su fábrica registrada.
     Object crearControlador(Class<?> tipo) {
         Supplier<?> fabrica = fabricas.get(tipo);
         if (fabrica == null) {
@@ -110,18 +163,12 @@ public class NavegadorVistas {
         return controlador;
     }
 
-    //Recibe el nombre del FXML, lo carga y muestra su pantalla.
-    private void cambiarEscena(String vista) {
-        presentar(cargarVista(vista));
-    }
-
-    //Recibe la raíz de la vista y la muestra, guardando la anterior si ya había una.
+    //Recibe la raíz y la muestra en la ventana, creando la escena si hace falta.
     private void presentar(Parent nueva) {
         Scene scene = stage.getScene();
         if (scene == null) {
             stage.setScene(new Scene(nueva, 800, 600));
-        } else {
-            vistaAnterior = scene.getRoot();
+        } else if (scene.getRoot() != nueva) {
             scene.setRoot(nueva);
         }
     }

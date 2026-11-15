@@ -2,120 +2,66 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true"
-            styleClass="acceso"
-            stylesheets="@../css/acceso.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="cr.ac.una.est.socialuna.ui.controller.ControladorFeed">
-
-    <content>
-        <VBox spacing="18" styleClass="marco">
-
-            <!-- Encabezado -->
-            <HBox alignment="CENTER_LEFT" spacing="12">
-
-                <Label text="SocialUNA"
-                       styleClass="marca"/>
-
-                <HBox HBox.hgrow="ALWAYS"/>
-
-                <Button text="Buscar estudiantes"
-                        onAction="#abrirBusqueda"/>
-
-                <Button text="Mi perfil"
-                        onAction="#abrirMiPerfil"/>
-
-            </HBox>
-
-            <!-- Título -->
-            <VBox spacing="5">
-                <Label text="Inicio"
-                       styleClass="titulo"/>
-
-                <Label text="Conecta con la comunidad universitaria."
-                       wrapText="true"/>
-            </VBox>
-
-            <!-- Selección del muro -->
-            <TabPane fx:id="pestañas"
-                     tabClosingPolicy="UNAVAILABLE"
-                     prefHeight="75">
-
-                <tabs>
-
-                    <Tab id="tabMuro"
-                         text="Mi muro">
-                        <content>
-                            <Label text="Publicaciones tuyas y de tus amigos."
-                                   style="-fx-padding: 12;"/>
-                        </content>
-                    </Tab>
-
-                    <Tab id="tabCarrera"
-                         text="Mi carrera">
-                        <content>
-                            <Label text="Publicaciones de tu comunidad académica."
-                                   style="-fx-padding: 12;"/>
-                        </content>
-                    </Tab>
-
-                    <Tab id="tabSede"
-                         text="Mi sede">
-                        <content>
-                            <Label text="Publicaciones de tu sede universitaria."
-                                   style="-fx-padding: 12;"/>
-                        </content>
-                    </Tab>
-
-                </tabs>
-            </TabPane>
-
-            <!-- Crear publicación -->
-            <VBox spacing="10">
-
-                <Label text="¿Qué quieres compartir?"
-                       styleClass="titulo"/>
-
-                <TextArea fx:id="textoPublicacion"
-                          promptText="Escribe algo para compartir con la comunidad..."
-                          wrapText="true"
-                          prefRowCount="4"
-                          maxHeight="120"/>
-
-                <HBox alignment="CENTER_RIGHT">
-                    <Button text="Publicar"
-                            onAction="#publicar"
-                            defaultButton="true"/>
+<VBox fx:id="vistaFeed" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="cr.ac.una.est.socialuna.ui.controller.ControladorFeed">
+    <fx:define>
+        <ToggleGroup fx:id="tipoPublicacion"/>
+    </fx:define>
+    <VBox spacing="14" styleClass="cabecera-social">
+        <HBox alignment="CENTER_LEFT" spacing="14">
+            <Label text="SocialUNA" styleClass="marca"/>
+            <Label text="Inicio" styleClass="titulo"/>
+        </HBox>
+        <TabPane fx:id="pestanas" styleClass="selector-muros" tabClosingPolicy="UNAVAILABLE"
+                 tabMinHeight="40" minHeight="81" prefHeight="81" maxHeight="81">
+            <tabs>
+                <Tab id="tabMuro" text="Mi muro">
+                    <Label text="Publicaciones tuyas y de tus amigos." styleClass="detalle-muro"/>
+                </Tab>
+                <Tab id="tabCarrera" text="Mi carrera">
+                    <Label text="Publicaciones de tu comunidad académica." styleClass="detalle-muro"/>
+                </Tab>
+                <Tab id="tabSede" text="Mi sede">
+                    <Label text="Publicaciones de tu sede universitaria." styleClass="detalle-muro"/>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </VBox>
+    <ScrollPane fx:id="listaPublicaciones" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox spacing="12" styleClass="cuerpo-social">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Publicaciones recientes" styleClass="titulo" wrapText="true"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button id="btnNuevaPublicacion" text="Nueva publicación" styleClass="accent"
+                            onAction="#abrirPublicacion"/>
                 </HBox>
-
+                <VBox fx:id="formularioPublicacion" spacing="10" styleClass="panel-social" visible="false">
+                    <Label fx:id="tituloFormulario" styleClass="titulo"/>
+                    <HBox spacing="16">
+                        <RadioButton fx:id="tipoNormal" text="Normal" toggleGroup="$tipoPublicacion" selected="true"/>
+                        <RadioButton fx:id="tipoPregunta" text="Pregunta" toggleGroup="$tipoPublicacion"/>
+                    </HBox>
+                    <TextArea fx:id="textoPublicacion" promptText="Escribe tu publicación"
+                              wrapText="true" prefRowCount="3"/>
+                    <HBox alignment="CENTER_RIGHT" spacing="8">
+                        <Button id="btnCancelarPublicacion" text="Cancelar" onAction="#cancelarPublicacion"/>
+                        <Button id="btnPublicar" text="Publicar" styleClass="accent" onAction="#publicar"/>
+                    </HBox>
+                </VBox>
+                <Label fx:id="mensaje" styleClass="error" wrapText="true"/>
+                <VBox fx:id="contenedorPanel"/>
             </VBox>
-
-            <!-- Mensajes del sistema -->
-            <Label fx:id="mensaje"
-                   styleClass="error"
-                   wrapText="true"/>
-
-            <!-- Publicaciones -->
-            <VBox spacing="12">
-
-                <Label text="Publicaciones recientes"
-                       styleClass="titulo"/>
-
-                <VBox fx:id="contenedorPanel"
-                      spacing="12"/>
-
-            </VBox>
-
-        </VBox>
-    </content>
-
-</ScrollPane>
+        </content>
+    </ScrollPane>
+</VBox>

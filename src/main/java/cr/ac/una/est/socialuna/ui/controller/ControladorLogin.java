@@ -1,6 +1,7 @@
 
 package cr.ac.una.est.socialuna.ui.controller;
 
+import cr.ac.una.est.socialuna.model.entity.Usuario;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.Tema;
@@ -44,9 +45,10 @@ public class ControladorLogin {
     public void ingresar() {
 
         mensaje.setText("");
+        Usuario usuario;
 
         try {
-            servicioUsuarios.iniciarSesion(
+            usuario = servicioUsuarios.iniciarSesion(
                     nombreUsuario.getText(),
                     contrasena.getText()
             );
@@ -61,7 +63,7 @@ public class ControladorLogin {
         contrasena.clear();
 
         try {
-            navegador.mostrarInicio(this::cerrarSesion);
+            navegador.mostrarInicio(usuario.getId());
 
         } catch (RuntimeException error) {
 
@@ -118,12 +120,4 @@ public class ControladorLogin {
         Tema.alternar();
     }
 
-    // No recibe parámetros.
-    // Cierra la sesión actual y devuelve al usuario a la pantalla de login.
-    // No devuelve ningún valor.
-    private void cerrarSesion() {
-
-        servicioUsuarios.cerrarSesion();
-        navegador.mostrarLogin();
-    }
 }

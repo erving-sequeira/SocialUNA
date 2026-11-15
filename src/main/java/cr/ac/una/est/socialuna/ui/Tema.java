@@ -22,6 +22,7 @@ public class Tema {
         aplicar();
     }
 
+    //Devuelve true cuando el tema que está puesto es el claro.
     static boolean esClaro() {
         return claro;
     }

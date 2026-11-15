@@ -40,7 +40,12 @@ public class ServicioPublicacion implements IServicioPublicacion {
     //Recibe el texto, lo guarda como post general en el muro del usuario y devuelve el post.
     @Override
     public Publicacion publicar(String texto) {
+        return publicar(texto, TipoPublicacion.GENERAL);
+    }
 
+    //Recibe el texto y el tipo. Crea, guarda y devuelve la publicación del muro.
+    @Override
+    public Publicacion publicar(String texto, TipoPublicacion tipo) {
         Usuario usuario = exigirSesion();
         validarTexto(texto);
 
@@ -50,7 +55,7 @@ public class ServicioPublicacion implements IServicioPublicacion {
                 texto.strip(),
                 System.currentTimeMillis(),
                 AmbitoPublicacion.MURO,
-                TipoPublicacion.GENERAL,
+                tipo,
                 null,
                 null
         );

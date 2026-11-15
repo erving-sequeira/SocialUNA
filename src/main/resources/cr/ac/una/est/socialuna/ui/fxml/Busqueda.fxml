@@ -7,56 +7,30 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true"
-            fitToHeight="true"
-            styleClass="acceso"
-            stylesheets="@../css/acceso.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="cr.ac.una.est.socialuna.ui.controller.ControladorAmigos"
-            id="vistaBusqueda">
-
-    <content>
-        <VBox alignment="CENTER" styleClass="marco">
-
-            <VBox maxWidth="650"
-                  spacing="18"
-                  styleClass="tarjeta">
-
-                <Label text="SocialUNA"
-                       styleClass="marca"/>
-
-                <Label text="Buscar estudiantes"
-                       styleClass="titulo"/>
-
-                <Label text="Encuentra otros estudiantes de la comunidad universitaria."/>
-
-                <HBox spacing="10">
-
-                    <TextField fx:id="campoBusqueda"
-                               promptText="Escribe un nombre o usuario..."
-                               accessibleText="Buscar estudiantes"
-                               onAction="#buscarPorNombreUsuario"
-                               HBox.hgrow="ALWAYS"/>
-
-                    <Button text="Buscar"
-                            id="btnBuscar"
-                            onAction="#buscarPorNombreUsuario"/>
-
-                </HBox>
-
-                <Label text="Resultados de búsqueda"/>
-
-                <VBox fx:id="contenedorResultados"
-                      spacing="12"/>
-
-                <Label fx:id="mensaje"
-                       styleClass="error"
-                       wrapText="true"/>
-
+<VBox fx:id="vistaBusqueda" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="cr.ac.una.est.socialuna.ui.controller.ControladorAmigos">
+    <VBox spacing="12" styleClass="cabecera-social">
+        <Label text="Buscar estudiantes" styleClass="marca"/>
+        <HBox spacing="10">
+            <TextField fx:id="campoBusqueda" promptText="Nombre o nombre de usuario"
+                       accessibleText="Nombre o nombre de usuario" onAction="#buscarPorNombreUsuario"
+                       HBox.hgrow="ALWAYS"/>
+            <Button id="btnBuscar" text="Buscar" styleClass="accent" onAction="#buscarPorNombreUsuario"/>
+        </HBox>
+        <Label fx:id="mensaje" styleClass="error" wrapText="true"/>
+    </VBox>
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox spacing="16" styleClass="cuerpo-social">
+                <VBox spacing="10">
+                    <Label text="Resultados" styleClass="titulo"/>
+                    <VBox fx:id="contenedorResultados" spacing="8"/>
+                </VBox>
+                <VBox spacing="10">
+                    <Label text="Mis amigos" styleClass="titulo"/>
+                    <VBox fx:id="contenedorAmigos" spacing="8"/>
+                </VBox>
             </VBox>
-
-        </VBox>
-    </content>
-
-</ScrollPane>
+        </content>
+    </ScrollPane>
+</VBox>

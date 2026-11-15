@@ -23,8 +23,10 @@ import cr.ac.una.est.socialuna.service.contract.IServicioComunidad;
 
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.Tema;
+import cr.ac.una.est.socialuna.ui.component.PanelPerfil;
 import cr.ac.una.est.socialuna.ui.component.PanelPublicaciones;
 
+import cr.ac.una.est.socialuna.ui.controller.ControladorAmigos;
 import cr.ac.una.est.socialuna.ui.controller.ControladorLogin;
 import cr.ac.una.est.socialuna.ui.controller.ControladorRegistro;
 import cr.ac.una.est.socialuna.ui.controller.ControladorFeed;
@@ -118,9 +120,6 @@ public class AppSocialUNA extends Application {
                 repositorioPublicaciones
         );
 
-        // Crea el panel visual que se utilizará para mostrar las publicaciones.
-        PanelPublicaciones panel = new PanelPublicaciones(usuarios);
-
         // Registra el controlador del inicio de sesión.
         navegador.registrarFabrica(
                 ControladorLogin.class,
@@ -133,15 +132,18 @@ public class AppSocialUNA extends Application {
                 () -> new ControladorRegistro(usuarios, navegador)
         );
 
-        // Registra el controlador del Feed con todos los servicios necesarios.
+        navegador.registrarFabrica(ControladorAmigos.class,
+                () -> new ControladorAmigos(usuarios, servicioAmistad, navegador));
+        navegador.registrarFabrica(PanelPerfil.class,
+                () -> new PanelPerfil(usuarios, servicioAmistad, navegador));
+
         navegador.registrarFabrica(
                 ControladorFeed.class,
                 () -> new ControladorFeed(
-                        usuarios,
                         servicioPublicacion,
                         servicioComunidad,
                         navegador,
-                        panel
+                        new PanelPublicaciones(usuarios)
                 )
         );
 
