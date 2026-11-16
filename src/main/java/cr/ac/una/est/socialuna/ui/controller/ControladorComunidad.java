@@ -17,25 +17,26 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class ControladorComunidad extends VBox {
+    private static final String TODAS_LAS_SEDES = "Todas las sedes";
+    private final IServicioUsuarios servicioUsuarios;
     private final IServicioComunidad servicioComunidad;
     private final PanelPublicaciones panel;
-    private final MenuButton filtroSede = new MenuButton("Todas las sedes");
+    private final MenuButton filtroSede = new MenuButton(TODAS_LAS_SEDES);
     private final HBox filaFiltro = new HBox(10, new Label("Filtrar por sede"), filtroSede);
     private final Label mensaje = new Label();
 
     private AmbitoPublicacion ambito;
     private String sedeFiltroId;
 
-    //Recibe los servicios, el navegador y el panel para mostrar una comunidad dentro de Inicio.
+    //Recibe los servicios, el navegador y el panel para armar la comunidad y su filtro de sedes.
     public ControladorComunidad(IServicioUsuarios servicioUsuarios, IServicioComunidad servicioComunidad,
                                 NavegadorVistas navegador, PanelPublicaciones panel) {
+        this.servicioUsuarios = Objects.requireNonNull(servicioUsuarios);
         this.servicioComunidad = Objects.requireNonNull(servicioComunidad);
         this.panel = Objects.requireNonNull(panel);
         setSpacing(12);
 
         filtroSede.setId("filtroSede");
-        agregarOpcionSede(null, "Todas las sedes");
-        servicioUsuarios.listarSedes().forEach(sede -> agregarOpcionSede(sede.getId(), sede.getNombre()));
         filaFiltro.setAlignment(Pos.CENTER_LEFT);
         filaFiltro.managedProperty().bind(filaFiltro.visibleProperty());
 
@@ -65,10 +66,11 @@ public class ControladorComunidad extends VBox {
         filaFiltro.setVisible(ambito == AmbitoPublicacion.CARRERA);
     }
 
-    //Carga las publicaciones de la comunidad y aplica el filtro si la pestaña es Carrera.
+    //Carga las publicaciones y pone al día las sedes del filtro si la pestaña es Carrera.
     public void cargarPublicaciones() {
         mensaje.setText("");
         try {
+            if (ambito == AmbitoPublicacion.CARRERA) actualizarFiltroSedes();
             var publicaciones = ambito == AmbitoPublicacion.CARRERA
                     ? servicioComunidad.obtenerPorCarrera(sedeFiltroId)
                     : servicioComunidad.obtenerPorSede();
@@ -85,11 +87,24 @@ public class ControladorComunidad extends VBox {
             var publicacion = servicioComunidad.publicarEnCarrera(texto, tipo);
             if (sedeFiltroId != null && !sedeFiltroId.equals(publicacion.getSedeId())) {
                 sedeFiltroId = null;
-                filtroSede.setText("Todas las sedes");
+                filtroSede.setText(TODAS_LAS_SEDES);
             }
         } else {
             servicioComunidad.publicarEnSede(texto, tipo);
         }
+    }
+
+    //Actualiza el filtro con las sedes de la carrera actual y quita la selección si dejó de aplicar.
+    private void actualizarFiltroSedes() {
+        var usuario = servicioUsuarios.getUsuarioActual();
+        var sedes = servicioUsuarios.listarSedesPorCarrera(usuario == null ? null : usuario.getCarreraId());
+        var seleccion = sedes.stream().filter(sede -> sede.getId().equals(sedeFiltroId)).findFirst();
+        sedeFiltroId = seleccion.map(sede -> sede.getId()).orElse(null);
+        filtroSede.setText(seleccion.map(sede -> sede.getNombre()).orElse(TODAS_LAS_SEDES));
+        filtroSede.getItems().clear();
+        agregarOpcionSede(null, TODAS_LAS_SEDES);
+        sedes.forEach(sede -> agregarOpcionSede(sede.getId(), sede.getNombre()));
+        filtroSede.setDisable(sedes.isEmpty());
     }
 
     //Recibe el ID y el nombre de una sede y agrega esa opción al menú del filtro.

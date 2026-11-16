@@ -42,6 +42,7 @@ import javafx.stage.Stage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppSocialUNA extends Application {
 
@@ -155,9 +156,7 @@ public class AppSocialUNA extends Application {
         stage.show();
     }
 
-    // Abre los repositorios de usuarios, amistades y publicaciones.
-    // También prepara los catálogos de carreras y sedes si todavía no existen.
-    // Devuelve el servicio de usuarios listo para trabajar.
+    //Abre los repositorios, prepara los catálogos oficiales y devuelve el servicio de usuarios.
     private ServicioUsuarios cargarUsuarios() {
 
         var gestor = new GestorJSON(directorioDatos);
@@ -173,34 +172,9 @@ public class AppSocialUNA extends Application {
         repositorioPublicaciones = new RepositorioPublicacionesJSON(gestor);
         repositorioPublicaciones.cargar();
 
-        // Crea carreras de ejemplo si todavía no existe el archivo.
-        if (Files.notExists(directorioDatos.resolve("carreras.json"))) {
-
-            carreras.guardarCarreras(List.of(
-                    new Carrera("informatica", "Informática", true),
-                    new Carrera("administracion", "Administración", true)
-            ));
-        }
-
-        // Crea sedes de ejemplo si todavía no existe el archivo.
+        prepararCarreras(gestor, carreras);
         if (Files.notExists(directorioDatos.resolve("sedes.json"))) {
-
-            sedes.guardarSedes(List.of(
-                    new SedeCampus(
-                            "central",
-                            "Campus Omar Dengo",
-                            null,
-                            "Campus",
-                            true
-                    ),
-                    new SedeCampus(
-                            "siua",
-                            "Sede Interuniversitaria de Alajuela",
-                            "SIUA",
-                            "Sede",
-                            true
-                    )
-            ));
+            sedes.guardarSedes(List.of(gestor.leerCatalogoBase("sedes.json", SedeCampus[].class)));
         }
 
         return new ServicioUsuarios(
@@ -208,5 +182,25 @@ public class AppSocialUNA extends Application {
                 sedes,
                 carreras
         );
+    }
+
+    //Recibe el gestor y el repositorio. Crea el catálogo o completa las sedes de las carreras antiguas.
+    private void prepararCarreras(GestorJSON gestor, RepositorioCarrerasJSON carreras) {
+        if (Files.notExists(directorioDatos.resolve("carreras.json"))) {
+            carreras.guardarCarreras(List.of(gestor.leerCatalogoBase("carreras.json", Carrera[].class)));
+            return;
+        }
+
+        var actuales = carreras.listarCarreras();
+        if (actuales.stream().allMatch(Carrera::tieneSedesConfiguradas)) return;
+
+        var base = List.of(gestor.leerCatalogoBase("carreras.json", Carrera[].class)).stream()
+                .collect(Collectors.toMap(Carrera::getId, Carrera::getSedeIds));
+        var actualizadas = actuales.stream().map(carrera -> {
+            var sedes = base.get(carrera.getId());
+            if (carrera.tieneSedesConfiguradas() || sedes == null) return carrera;
+            return new Carrera(carrera.getId(), carrera.getNombre(), carrera.isActiva(), sedes);
+        }).toList();
+        if (!actualizadas.equals(actuales)) carreras.guardarCarreras(actualizadas);
     }
 }
