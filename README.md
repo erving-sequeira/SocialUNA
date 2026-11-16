@@ -137,3 +137,55 @@ src/
 **Respuesta:** `atlantafx-base` con `PrimerLight`/`PrimerDark` vía `Application.setUserAgentStylesheet(...)`, Ikonli + Octicons (`new FontIcon("oct-home-16")`) y un toggle por propiedad de sistema (`-Dsocialuna.tema=light`) para no montar un sistema de preferencias.
 
 **Uso:** `Tema.java` con claro/oscuro, iconos en el menú y `acceso.css` propio encima del tema.
+
+
+
+Isabella Cubillo:
+IMPLEMENTACIÓN EN EL BACKEND
+
+1.1. Revisión de la estructura del proyecto:
+Prompt:"Estoy trabajando en un proyecto Java utilizando IntelliJ IDEA. Te voy a compartir la estructura actual del proyecto para que me ayudes a identificar dónde debo implementar las clases que me corresponden según el UML. Quiero trabajar paso a paso, respetando la organización que ya tiene el proyecto y evitando modificar las clases de mis compañeros."
+
+1.2. Implementación de la clase Publicacion
+Prompt:"Estoy implementando la clase Publicacion según el diagrama UML. Ayúdame a revisar los atributos, constructores y métodos que necesita, tomando en cuenta las relaciones con Comentario, AmbitoPublicacion y TipoPublicacion. Quiero comprender cómo se relacionan estas clases y cómo evitar errores de dependencias."
+
+1.3. Resolución de errores de dependencias
+Prompt:"Al implementar Publicacion.java me aparecen errores relacionados con TipoPublicacion y Comentario. Ayúdame a identificar qué clases o enumeraciones hacen falta, cómo deben organizarse dentro del paquete model.entity y cómo comprobar que las referencias estén correctamente conectadas."
+
+1.4. Implementación del servicio de publicaciones
+Prompt:"Estoy trabajando en ServicioPublicacion. Necesito revisar cómo conectar el servicio con IServicioUsuarios, IServicioAmistad y RepositorioPublicacionesJSON. Ayúdame a validar la lógica para crear publicaciones, consultar el feed y ordenar las publicaciones de la más reciente a la más antigua, respetando las responsabilidades de cada clase."
+
+
+IMPLEMENTACIÓN EN EL FRONTEND
+2.1Revisión del UML de frontend
+Prompt:"Te voy a compartir el UML actualizado del frontend. Ayúdame a identificar cuáles son las clases que me corresponde implementar y qué responsabilidades tiene cada una. Quiero asegurarme de no duplicar el trabajo que están realizando mis compañeros."
+
+2.2. Implementación de ControladorLogin
+Prompt:"Estoy trabajando en ControladorLogin.java utilizando JavaFX. Necesito revisar cómo conectar IServicioUsuarios con NavegadorVistas para validar las credenciales, mostrar errores cuando los datos sean incorrectos y permitir la navegación hacia el registro y la pantalla principal."
+
+2.3. Implementación de ControladorAmigos
+Prompt:"Estoy implementando ControladorAmigos según el UML. Ayúdame a organizar la lógica para buscar usuarios por nombre, abrir el perfil de un estudiante y manejar los mensajes de error. Quiero que el controlador respete las interfaces y servicios que ya existen en el proyecto."
+
+2.4. Creación de la interfaz FXML de amigos
+Prompt:"Necesito crear el archivo FXML correspondiente a ControladorAmigos. Oriéntame sobre cómo organizar los componentes visuales, conectar los identificadores fx:id con los atributos del controlador y enlazar los botones con sus respectivos métodos."
+
+2.5. Implementación de ControladorFeed
+Prompt:"Estoy implementando ControladorFeed según el UML actualizado. Ayúdame a revisar cómo debe coordinar los servicios de usuarios y publicaciones, el NavegadorVistas, PanelPublicaciones y las pestañas del feed. Quiero mantener una separación adecuada entre la lógica de negocio y la interfaz gráfica."
+
+2.6. Creación de Feed.fxml
+Prompt:"Estoy preparando Feed.fxml para la pantalla principal de SocialUNA. Ayúdame a organizar la interfaz con las pestañas de Mi muro, Mi carrera y Mi sede, el campo para escribir publicaciones y el contenedor donde se mostrarán. También quiero comprobar que los eventos y los identificadores coincidan con ControladorFeed.java."
+
+
+INTEGRACIÓN DEL PROYECTO
+
+3.1. Integración con AppSocialUNA
+Prompt:"Te voy a compartir la versión actual de AppSocialUNA.java. Ayúdame a revisar cómo registrar las fábricas de los controladores y cómo inicializar los servicios necesarios para que la aplicación pueda navegar correctamente entre las pantallas."
+
+3.2. Revisión de NavegadorVistas
+Prompt:"Estoy revisando NavegadorVistas.java. Ayúdame a comprender cómo funciona la carga dinámica de archivos FXML, cómo se conecta cada vista con su controlador y qué debo comprobar para integrar correctamente la nueva pantalla Feed.fxml."
+
+3.3. Integración del inicio de sesión con el Feed
+Prompt:"Quiero comprobar el flujo de navegación desde ControladorLogin hasta Feed.fxml. Revisa cómo se realiza el inicio de sesión, cómo se obtiene el usuario activo y cómo se abre la pantalla principal sin afectar el funcionamiento del cierre de sesión."
+
+
+
