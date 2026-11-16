@@ -5,6 +5,7 @@ import cr.ac.una.est.socialuna.model.entity.SedeCampus;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.Tema;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -34,18 +35,36 @@ public class ControladorRegistro {
         this.navegador = Objects.requireNonNull(navegador);
     }
 
-    //Carga las carreras y sedes activas y desactiva el registro si falta alguno de los dos catálogos.
+    //Carga las carreras y deja elegir sede solo después de escoger una carrera.
     @FXML private void initialize() {
         mensaje.visibleProperty().bind(mensaje.textProperty().isNotEmpty());
         mensaje.managedProperty().bind(mensaje.visibleProperty());
         configurarCatalogo(carrera, Carrera::getNombre);
         configurarCatalogo(sede, SedeCampus::getNombre);
         carrera.getItems().setAll(usuarios.listarCarreras());
-        sede.getItems().setAll(usuarios.listarSedes());
-        if (carrera.getItems().isEmpty() || sede.getItems().isEmpty()) {
-            btnRegistrar.setDisable(true);
+        sede.setPromptText("Elige primero una carrera");
+        sede.disableProperty().bind(Bindings.isEmpty(sede.getItems()));
+        btnRegistrar.disableProperty().bind(carrera.valueProperty().isNull().or(sede.valueProperty().isNull()));
+        carrera.valueProperty().addListener((propiedad, anterior, seleccion) -> cargarSedes(seleccion));
+        if (carrera.getItems().isEmpty() || usuarios.listarSedes().isEmpty()) {
             mensaje.setText("El registro requiere al menos una carrera y una sede activas.");
         }
+    }
+
+    //Recibe la carrera elegida, limpia la sede anterior y carga solo las opciones compatibles.
+    private void cargarSedes(Carrera seleccion) {
+        sede.getSelectionModel().clearSelection();
+        sede.setValue(null);
+        if (seleccion == null) {
+            sede.getItems().clear();
+            sede.setPromptText("Elige primero una carrera");
+            mensaje.setText("");
+            return;
+        }
+
+        sede.getItems().setAll(usuarios.listarSedesPorCarrera(seleccion.getId()));
+        sede.setPromptText("Selecciona tu sede");
+        mensaje.setText(sede.getItems().isEmpty() ? "Esta carrera no tiene sedes activas." : "");
     }
 
     //Toma los datos del formulario, crea la cuenta y vuelve al login si todo sale bien.

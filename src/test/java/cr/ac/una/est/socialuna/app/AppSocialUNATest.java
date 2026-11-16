@@ -52,7 +52,7 @@ class AppSocialUNATest {
 
     @TempDir Path datos;
 
-    //Prueba que SocialUNA arranque mostrando el login.
+    //Prueba que el login abra y que los catálogos se creen o recuperen sus relaciones con sedes.
     @Test void iniciaLaVentanaSocialUnaConLogin() throws Exception {
         CompletableFuture<Void> resultado = new CompletableFuture<>();
         Platform.runLater(() -> {
@@ -63,6 +63,24 @@ class AppSocialUNATest {
                 assertTrue(stage.isShowing()); assertEquals("SocialUNA",stage.getTitle());
                 assertEquals(800,stage.getScene().getWidth(),1); assertEquals(600,stage.getScene().getHeight(),1);
                 assertEquals("vistaLogin", stage.getScene().getRoot().getId());
+                var gestor = new GestorJSON(datos);
+                assertEquals(139, new RepositorioCarrerasJSON(gestor).listarCarreras().size());
+                assertEquals(8, new RepositorioSedesJSON(gestor).listarSedes().size());
+                Files.writeString(datos.resolve("carreras.json"), """
+                        [
+                          {"id":"informatica","nombre":"Informática","activa":true},
+                          {"id":"administracion","nombre":"Administración","activa":false,"sedeIds":[]}
+                        ]
+                        """);
+                new AppSocialUNA(datos).start(stage);
+                assertEquals("vistaLogin", stage.getScene().getRoot().getId());
+                var migrado = new RepositorioCarrerasJSON(gestor);
+                var informatica = migrado.buscarCarreraPorId("informatica");
+                assertTrue(informatica.getSedeIds().contains("benjamin-nunez"));
+                assertFalse(informatica.getSedeIds().contains("central"));
+                var administracion = migrado.buscarCarreraPorId("administracion");
+                assertTrue(administracion.getSedeIds().isEmpty());
+                assertFalse(administracion.isActiva());
                 resultado.complete(null);
             } catch(Throwable error) { resultado.completeExceptionally(error); }
             finally { stage.close(); }
@@ -88,14 +106,17 @@ class AppSocialUNATest {
                 ((TextField) control(escena, "#nombre")).setText("Ana María");
                 ((TextField) control(escena, "#nombreUsuario")).setText(" ANA ");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
-                ((Button) control(escena, "#btnRegistrar")).fire();
-                assertTrue(((Label) control(escena, "#mensaje")).getText().contains("carrera y tu sede"));
+                assertTrue(control(escena, "#btnRegistrar").isDisabled());
                 assertFalse(Files.exists(datos.resolve("usuarios.json")));
                 var carreras = (ComboBox<?>) control(escena, "#carrera");
                 var sedes = (ComboBox<?>) control(escena, "#sede");
                 assertFalse(carreras.getItems().isEmpty());
-                assertFalse(sedes.getItems().isEmpty());
-                carreras.getSelectionModel().selectFirst();
+                assertTrue(sedes.getItems().isEmpty());
+                assertTrue(sedes.isDisabled());
+                var arte = carreras.getItems().stream().map(Carrera.class::cast)
+                        .filter(carrera -> "arte-escenico".equals(carrera.getId())).findFirst().orElseThrow();
+                carreras.getSelectionModel().select(carreras.getItems().indexOf(arte));
+                assertEquals(List.of("central"), sedes.getItems().stream().map(sede -> ((SedeCampus) sede).getId()).toList());
                 sedes.getSelectionModel().selectFirst();
                 ((Button) control(escena, "#btnRegistrar")).fire();
                 assertEquals("vistaLogin", escena.getRoot().getId());
@@ -174,8 +195,8 @@ class AppSocialUNATest {
                 var repo = new RepositorioUsuariosJSON(gestor);
                 var usuarios = new ServicioUsuarios(repo, new RepositorioSedesJSON(gestor),
                         new RepositorioCarrerasJSON(gestor));
-                var ana = usuarios.registrar("Ana", "ana", "prueba", "informatica", "central");
-                var beto = usuarios.registrar("Beto", "beto", "prueba", "informatica", "central");
+                var ana = usuarios.registrar("Ana", "ana", "prueba", "informatica", "benjamin-nunez");
+                var beto = usuarios.registrar("Beto", "beto", "prueba", "informatica", "benjamin-nunez");
                 var publicaciones = new RepositorioPublicacionesJSON(gestor);
                 publicaciones.cargar();
                 publicaciones.guardar(new Publicacion("beto-muro", beto.getId(), "Hola desde el muro",
@@ -280,7 +301,8 @@ class AppSocialUNATest {
 
                 pestanas.getSelectionModel().select(1);
                 var filtro = (MenuButton) control(escena, "#filtroSede");
-                filtro.getItems().getLast().fire();
+                assertFalse(filtro.getItems().stream().anyMatch(opcion -> opcion.getText().equals("Campus Omar Dengo")));
+                filtro.getItems().stream().filter(opcion -> opcion.getText().contains("SIUA")).findFirst().orElseThrow().fire();
                 var filtradas = (VBox) control(escena, "#listaTarjetas");
                 assertEquals(1, filtradas.getChildren().size());
                 var postFiltrado = (VBox) filtradas.getChildren().getFirst();
@@ -310,13 +332,24 @@ class AppSocialUNATest {
                 ((Button) control(escena, "#btnEditarPerfil")).fire();
                 var carreras = (ChoiceBox<?>) control(escena, "#editarCarrera");
                 assertEquals("informatica", ((Carrera) carreras.getValue()).getId());
-                carreras.getSelectionModel().selectLast();
-                ((ChoiceBox<?>) control(escena, "#editarSede")).getSelectionModel().selectLast();
+                var sedes = (ChoiceBox<?>) control(escena, "#editarSede");
+                assertEquals("benjamin-nunez", ((SedeCampus) sedes.getValue()).getId());
+                var arte = carreras.getItems().stream().map(Carrera.class::cast)
+                        .filter(carrera -> "arte-escenico".equals(carrera.getId())).findFirst().orElseThrow();
+                carreras.getSelectionModel().select(carreras.getItems().indexOf(arte));
+                assertNull(sedes.getValue());
+                assertTrue(control(escena, "#btnGuardarPerfil").isDisabled());
+                assertEquals(List.of("central"), sedes.getItems().stream().map(sede -> ((SedeCampus) sede).getId()).toList());
+                sedes.getSelectionModel().selectFirst();
                 ((Button) control(escena, "#btnGuardarPerfil")).fire();
                 assertFalse(editor.isVisible());
                 var guardado = new RepositorioUsuariosJSON(gestor).buscarUsuarioPorId(ana.getId());
-                assertEquals("administracion", guardado.getCarreraId());
-                assertEquals("siua", guardado.getSedeId());
+                assertEquals("arte-escenico", guardado.getCarreraId());
+                assertEquals("central", guardado.getSedeId());
+                ((Button) control(escena, "#btnMuro")).fire();
+                assertEquals(List.of("Todas las sedes", "Campus Omar Dengo"),
+                        filtro.getItems().stream().map(opcion -> opcion.getText()).toList());
+                ((Button) control(escena, "#btnMiPerfil")).fire();
                 ((Button) control(escena, "#btnCerrarSesion")).fire();
                 assertEquals("vistaLogin", escena.getRoot().getId());
                 resultado.complete(null);

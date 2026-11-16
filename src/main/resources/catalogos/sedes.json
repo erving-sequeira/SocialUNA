@@ -1,0 +1,51 @@
+[
+  {
+    "id": "central",
+    "nombre": "Campus Omar Dengo",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "benjamin-nunez",
+    "nombre": "Campus Presbítero Benjamín Núñez",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "siua",
+    "nombre": "Campus Alajuela (SIUA)",
+    "alias": "SIUA",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "sarapiqui",
+    "nombre": "Campus Sarapiquí",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "coto",
+    "nombre": "Campus Coto",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "perez-zeledon",
+    "nombre": "Campus Pérez Zeledón",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "liberia",
+    "nombre": "Campus Liberia",
+    "tipo": "Campus",
+    "activa": true
+  },
+  {
+    "id": "nicoya",
+    "nombre": "Campus Nicoya",
+    "tipo": "Campus",
+    "activa": true
+  }
+]

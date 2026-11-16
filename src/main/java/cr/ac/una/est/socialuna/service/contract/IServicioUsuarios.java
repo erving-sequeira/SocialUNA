@@ -33,4 +33,7 @@ public interface IServicioUsuarios {
 
     //Devuelve las sedes activas del catálogo.
     ArrayList<SedeCampus> listarSedes();
+
+    //Recibe el ID de la carrera y devuelve las sedes activas donde se imparte.
+    ArrayList<SedeCampus> listarSedesPorCarrera(String carreraId);
 }
