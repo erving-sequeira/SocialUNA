@@ -1,0 +1,34 @@
+[
+  {
+    "id": "db122335-a406-4d79-bbb4-9159f1d6caf3",
+    "nombre": "arleth varela",
+    "nombreUsuario": "arleth",
+    "passwordHash": "5fe1bac3d89c7db0d61e468c64b771e04f7f4ab7f0b6e65fbccd329a9ee5f481",
+    "carreraId": "informatica",
+    "sedeId": "siua"
+  },
+  {
+    "id": "d19e75aa-0817-416c-82d1-8d5a3ec3781f",
+    "nombre": "erving sequeira",
+    "nombreUsuario": "erving",
+    "passwordHash": "5707ef16361b3a64103b91102f0002562de888b7edcec3ba190191d848983b67",
+    "carreraId": "informatica",
+    "sedeId": "siua"
+  },
+  {
+    "id": "c5f28373-c134-404c-844d-67708a4cca3a",
+    "nombre": "isabella cubillo",
+    "nombreUsuario": "isa",
+    "passwordHash": "52aa6b6866c15d0e64ddece003ef2dc8da293b0b4a33899c1d1b0765357e654b",
+    "carreraId": "informatica",
+    "sedeId": "siua"
+  },
+  {
+    "id": "4db5043b-c398-440a-8228-1bfbd6bb1d55",
+    "nombre": "daniel alvarado",
+    "nombreUsuario": "daniel",
+    "passwordHash": "e937adea6647b118b1eb9e9331d87708083db237bddefcd24a25c8e2eca2ca22",
+    "carreraId": "informatica",
+    "sedeId": "siua"
+  }
+]
