@@ -79,7 +79,7 @@ src/
             └── RepositorioAmistadesJSONTest.java  # Guardar, reabrir y errores de archivo
 ```
 
-## Prompts del Equipo
+## Bitácora Prompts del Equipo
 
 ### Erving Sequeira
 ### 1. Estructura inicial del proyecto
@@ -137,3 +137,28 @@ src/
 **Respuesta:** `atlantafx-base` con `PrimerLight`/`PrimerDark` vía `Application.setUserAgentStylesheet(...)`, Ikonli + Octicons (`new FontIcon("oct-home-16")`) y un toggle por propiedad de sistema (`-Dsocialuna.tema=light`) para no montar un sistema de preferencias.
 
 **Uso:** `Tema.java` con claro/oscuro, iconos en el menú y `acceso.css` propio encima del tema.
+
+### Arleth Varela
+### 1. Carrera
+
+**Se implementó la clase con los atributos privados id, nombre y activa, un constructor vacío, otro con todos los atributos y sus getters.**
+
+### 2. SedeCampus
+
+**Se implementó la clase con los atributos privados id, nombre, alias, tipo y activa, sus dos constructores y getters.**
+
+### 3. IServicioComunidad
+
+**Se definieron las operaciones para consultar publicaciones por carrera o sede, publicar en esos ámbitos, comentar y obtener comentarios.**
+
+### 4. ServicioComunidad
+
+**Se preparó la lógica para consultar y crear publicaciones, validar sesión y visibilidad, agregar comentarios, persistirlos y ordenar publicaciones por fecha. Luego se ajustó el tipo de fecha a long según los constructores de las entidades.**
+
+**El prompt fue: “Podrías decirme cómo puedo implementar esta interfaz según la clase de contrato anterior.”**
+
+### 5. ControladorComunidad
+
+**Se preparó una vista JavaFX para seleccionar el ámbito, filtrar por sede, publicar, comentar, consultar comentarios y abrir perfiles.**
+
+**El promt utilizado fue: “Podrías ayudarme a implementar la ventana de error para la clase ControladorComunidad.”**
