@@ -22,12 +22,12 @@ public class RepositorioCarrerasJSON {
         cargar();
     }
 
-    //Lee carreras.json y reemplaza el catálogo en memoria si los datos son válidos.
+    //Lee carreras.json, valida las relaciones con sedes y actualiza el catálogo en memoria.
     public void cargar() {
         List<Carrera> leidas = gestor.leer(ARCHIVO, TIPO, new ArrayList<>());
         try {
             carreras = validarCarreras(leidas);
-        } catch (IllegalArgumentException error) {
+        } catch (IllegalArgumentException | NullPointerException error) {
             throw new IllegalStateException(ARCHIVO + " contiene datos inválidos.", error);
         }
     }
@@ -48,14 +48,15 @@ public class RepositorioCarrerasJSON {
         carreras = actualizadas;
     }
 
-    //Recibe una lista y devuelve una copia de sus carreras si todas son válidas y tienen IDs distintos.
+    //Valida los IDs de carrera y devuelve una copia que conserva sus sedes.
     private static ArrayList<Carrera> validarCarreras(List<Carrera> valores) {
         if (valores == null) throw new IllegalArgumentException("Falta la lista de carreras.");
         var resultado = new ArrayList<Carrera>();
         var ids = new HashSet<String>();
         for (Carrera valor : valores) {
             if (valor == null) throw new IllegalArgumentException("Hay una carrera vacía.");
-            var carrera = new Carrera(valor.getId(), valor.getNombre(), valor.isActiva());
+            var carrera = new Carrera(valor.getId(), valor.getNombre(), valor.isActiva(),
+                    valor.tieneSedesConfiguradas() ? valor.getSedeIds() : null);
             if (!ids.add(carrera.getId())) throw new IllegalArgumentException("ID de carrera repetido.");
             resultado.add(carrera);
         }

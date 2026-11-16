@@ -6,6 +6,7 @@ import cr.ac.una.est.socialuna.model.entity.Usuario;
 import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -120,7 +121,7 @@ public class PanelPerfil {
         acciones.getChildren().add(boton);
     }
 
-    //Recibe el área de datos y sus etiquetas. Agrega los botones para editar o cerrar sesión.
+    //Recibe el área de datos y sus etiquetas. Arma el editor con sedes según la carrera elegida.
     private void mostrarAccionesPropias(VBox acciones, VBox datos, Label carrera, Label sede) {
         ChoiceBox<Carrera> carreras = new ChoiceBox<>();
         carreras.setId("editarCarrera");
@@ -132,7 +133,14 @@ public class PanelPerfil {
         sedes.setId("editarSede");
         sedes.setAccessibleText("Sede");
         usarNombre(sedes, SedeCampus::getNombre);
-        sedes.getItems().setAll(usuarios.listarSedes());
+        sedes.disableProperty().bind(Bindings.isEmpty(sedes.getItems()));
+        carreras.valueProperty().addListener((propiedad, anterior, seleccion) -> {
+            sedes.setValue(null);
+            sedes.getItems().setAll(usuarios.listarSedesPorCarrera(seleccion == null ? null : seleccion.getId()));
+            mensaje.getStyleClass().setAll("label", "error");
+            mensaje.setText(seleccion != null && sedes.getItems().isEmpty()
+                    ? "Esta carrera no tiene sedes activas." : "");
+        });
         var editar = new Button("Editar datos");
         editar.setId("btnEditarPerfil");
         editar.getStyleClass().add("accent");
@@ -153,11 +161,15 @@ public class PanelPerfil {
         datos.managedProperty().bind(datos.visibleProperty());
         editar.setOnAction(evento -> {
             Usuario perfil = usuarios.getUsuarioActual();
+            mensaje.setText("");
             carreras.setValue(carreras.getItems().stream()
                     .filter(valor -> valor.getId().equals(perfil.getCarreraId())).findFirst().orElse(null));
             sedes.setValue(sedes.getItems().stream()
                     .filter(valor -> valor.getId().equals(perfil.getSedeId())).findFirst().orElse(null));
-            mensaje.setText("");
+            if (carreras.getValue() != null && sedes.getItems().isEmpty()) {
+                mensaje.getStyleClass().setAll("label", "error");
+                mensaje.setText("Esta carrera no tiene sedes activas.");
+            }
             formulario.setVisible(true);
             carreras.requestFocus();
         });

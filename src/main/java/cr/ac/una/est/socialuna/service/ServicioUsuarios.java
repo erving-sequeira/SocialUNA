@@ -129,6 +129,18 @@ public class ServicioUsuarios implements IServicioUsuarios {
         return sedes;
     }
 
+    //Recibe el ID de una carrera activa y devuelve solo las sedes activas donde se da.
+    @Override
+    public ArrayList<SedeCampus> listarSedesPorCarrera(String carreraId) {
+        Carrera carrera = repositorioCarreras.buscarCarreraPorId(carreraId);
+        if (carrera == null || !carrera.isActiva()) return new ArrayList<>();
+
+        var sedes = listarSedes();
+        var ids = carrera.getSedeIds();
+        sedes.removeIf(sede -> !ids.contains(sede.getId()));
+        return sedes;
+    }
+
     //Devuelve el perfil en sesión o da error si nadie ha entrado.
     private Usuario exigirSesion() {
         if (usuarioActual == null) {
@@ -179,7 +191,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
         }
     }
 
-    //Revisa que los IDs recibidos sean de una carrera y una sede activas.
+    //Recibe los IDs de carrera y sede. Da error si están inactivos o esa sede no ofrece la carrera.
     private void validarDatosAcademicos(String carreraId, String sedeId) {
         Carrera carrera = repositorioCarreras.buscarCarreraPorId(carreraId);
         if (carrera == null || !carrera.isActiva()) {
@@ -188,6 +200,9 @@ public class ServicioUsuarios implements IServicioUsuarios {
         SedeCampus sede = repositorioSedes.buscarSedePorId(sedeId);
         if (sede == null || !sede.isActiva()) {
             throw new IllegalArgumentException("Selecciona una sede activa del catálogo.");
+        }
+        if (!carrera.getSedeIds().contains(sede.getId())) {
+            throw new IllegalArgumentException("Esa carrera no se imparte en la sede elegida.");
         }
     }
 

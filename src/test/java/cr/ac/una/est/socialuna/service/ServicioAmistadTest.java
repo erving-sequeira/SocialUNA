@@ -34,7 +34,7 @@ class ServicioAmistadTest {
         perfiles = new RepositorioUsuariosJSON(gestor);
         var carreras = new RepositorioCarrerasJSON(gestor);
         var sedes = new RepositorioSedesJSON(gestor);
-        carreras.guardarCarreras(List.of(new Carrera("c1", "Informática", true)));
+        carreras.guardarCarreras(List.of(new Carrera("c1", "Informática", true, List.of("s1"))));
         sedes.guardarSedes(List.of(new SedeCampus("s1", "Alajuela", "SIUA", "Campus", true)));
         usuarios = new ServicioUsuarios(perfiles, sedes, carreras);
         ana = usuarios.registrar("Ana", "ana", "abc", "c1", "s1");

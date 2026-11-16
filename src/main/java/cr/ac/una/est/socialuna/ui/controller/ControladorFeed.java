@@ -2,7 +2,6 @@ package cr.ac.una.est.socialuna.ui.controller;
 
 import cr.ac.una.est.socialuna.model.entity.AmbitoPublicacion;
 import cr.ac.una.est.socialuna.model.entity.TipoPublicacion;
-import cr.ac.una.est.socialuna.service.contract.IServicioComunidad;
 import cr.ac.una.est.socialuna.service.contract.IServicioPublicacion;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.component.PanelPublicaciones;
@@ -15,14 +14,15 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ControladorFeed {
     private final IServicioPublicacion servicioPublicacion;
-    private final IServicioComunidad servicioComunidad;
     private final NavegadorVistas navegador;
     private final PanelPublicaciones panel;
+    private final Map<AmbitoPublicacion, ControladorComunidad> comunidades = new EnumMap<>(AmbitoPublicacion.class);
 
     @FXML private VBox vistaFeed;
     @FXML private TabPane pestanas;
@@ -36,10 +36,9 @@ public class ControladorFeed {
     @FXML private Label mensaje;
 
     //Recibe los servicios del muro, el navegador y el panel donde se muestran las publicaciones.
-    public ControladorFeed(IServicioPublicacion servicioPublicacion, IServicioComunidad servicioComunidad,
+    public ControladorFeed(IServicioPublicacion servicioPublicacion,
                            NavegadorVistas navegador, PanelPublicaciones panel) {
         this.servicioPublicacion = Objects.requireNonNull(servicioPublicacion);
-        this.servicioComunidad = Objects.requireNonNull(servicioComunidad);
         this.navegador = Objects.requireNonNull(navegador);
         this.panel = Objects.requireNonNull(panel);
     }
@@ -48,14 +47,17 @@ public class ControladorFeed {
     public void cargarFeed() {
         mensaje.setText("");
         try {
-            var publicaciones = switch (muroSeleccionado()) {
-                case MURO -> servicioPublicacion.obtenerFeed();
-                case CARRERA -> servicioComunidad.obtenerPorCarrera(null);
-                case SEDE -> servicioComunidad.obtenerPorSede();
-            };
-            panel.mostrar(publicaciones, false);
+            var ambito = muroSeleccionado();
+            if (ambito == AmbitoPublicacion.MURO) {
+                panel.mostrar(servicioPublicacion.obtenerFeed(), false);
+                contenedorPanel.getChildren().setAll(panel.getContenedor());
+            } else {
+                var comunidad = comunidades.computeIfAbsent(ambito, navegador::cargarComunidad);
+                comunidad.cargarPublicaciones();
+                contenedorPanel.getChildren().setAll(comunidad);
+            }
         } catch (RuntimeException error) {
-            panel.mostrar(new ArrayList<>(), false);
+            contenedorPanel.getChildren().clear();
             mostrarError(error.getMessage());
         }
     }
@@ -86,10 +88,11 @@ public class ControladorFeed {
 
         var tipo = tipoPregunta.isSelected() ? TipoPublicacion.PREGUNTA : TipoPublicacion.GENERAL;
         try {
-            switch (muroSeleccionado()) {
-                case MURO -> servicioPublicacion.publicar(texto, tipo);
-                case CARRERA -> servicioComunidad.publicarEnCarrera(texto, tipo);
-                case SEDE -> servicioComunidad.publicarEnSede(texto, tipo);
+            var ambito = muroSeleccionado();
+            if (ambito == AmbitoPublicacion.MURO) {
+                servicioPublicacion.publicar(texto, tipo);
+            } else {
+                comunidades.computeIfAbsent(ambito, navegador::cargarComunidad).publicar(texto, tipo);
             }
             cancelarPublicacion();
             cargarFeed();
@@ -145,7 +148,6 @@ public class ControladorFeed {
         formularioPublicacion.managedProperty().bind(formularioPublicacion.visibleProperty());
         mensaje.visibleProperty().bind(mensaje.textProperty().isNotEmpty());
         mensaje.managedProperty().bind(mensaje.visibleProperty());
-        contenedorPanel.getChildren().add(panel.getContenedor());
         panel.alAbrirPerfil(this::abrirPerfilAutor);
         pestanas.getSelectionModel().selectedItemProperty().addListener((observable, anterior, nueva) -> {
             if (nueva != null) tituloFormulario.setText("Publicar en " + nueva.getText());

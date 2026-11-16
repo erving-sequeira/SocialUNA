@@ -1,12 +1,1150 @@
 [
   {
-    "id": "informatica",
-    "nombre": "Informática",
-    "activa": true
-  },
-  {
     "id": "administracion",
     "nombre": "Administración",
-    "activa": true
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "siua",
+      "sarapiqui",
+      "coto",
+      "perez-zeledon",
+      "liberia",
+      "nicoya"
+    ]
+  },
+  {
+    "id": "administracion-de-oficinas",
+    "nombre": "Administración de Oficinas",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "sarapiqui",
+      "coto",
+      "perez-zeledon"
+    ]
+  },
+  {
+    "id": "administracion-educativa",
+    "nombre": "Administración Educativa",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "arte-escenico",
+    "nombre": "Arte Escénico",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "arte-y-comunicacion-visual",
+    "nombre": "Arte y Comunicación Visual",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "bibliotecologia-y-documentacion",
+    "nombre": "Bibliotecología y Gestión de la Información",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "biologia-enfasis-en-biologia-marina",
+    "nombre": "Biología – Énfasis en Biología Marina",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "biologia-enfasis-en-biologia-tropical",
+    "nombre": "Biología – Énfasis en Biología Tropical",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "biologia-enfasis-en-biotecnologia",
+    "nombre": "Biología – Énfasis en Biotecnología",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "cartografia-y-diseno-digital",
+    "nombre": "Cartografía y Diseño Digital",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ciencias-del-movimiento-humano",
+    "nombre": "Ciencias del Movimiento Humano",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "ciencias-geograficas",
+    "nombre": "Ciencias Geográficas",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "comercio-y-negocios-internacionales",
+    "nombre": "Comercio y Negocios Internacionales",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "sarapiqui",
+      "liberia"
+    ]
+  },
+  {
+    "id": "danza",
+    "nombre": "Danza",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "direccion-coral",
+    "nombre": "Dirección Coral",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "doctorado-en-ciencias-del-movimiento-humano",
+    "nombre": "Doctorado en Ciencias del Movimiento Humano",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "doctorado-en-ciencias-naturales-para-el-desarrollo",
+    "nombre": "Doctorado en Ciencias Naturales para el Desarrollo",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "doctorado-en-ciencias-sociales",
+    "nombre": "Doctorado en Ciencias Sociales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "doctorado-en-educacion-y-transformacion-educativa",
+    "nombre": "Doctorado en Educación y Transformación Educativa",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "doctorado-en-estudios-latinoamericanos",
+    "nombre": "Doctorado en Estudios Latinoamericanos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "doctorado-en-politica-economica",
+    "nombre": "Doctorado en Política Económica",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "doctorado-interdisciplinario-en-estudios-sociorreligiosos",
+    "nombre": "Doctorado Interdisciplinario en Estudios Sociorreligiosos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "economia",
+    "nombre": "Economía",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "educacion-comercial",
+    "nombre": "Educación Comercial",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "sarapiqui",
+      "coto",
+      "perez-zeledon"
+    ]
+  },
+  {
+    "id": "educacion-especial",
+    "nombre": "Educación Especial",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "educacion-musical",
+    "nombre": "Educación Musical",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "educacion-rural-i-y-ii-ciclos",
+    "nombre": "Educación Rural I y II Ciclos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ejecucion-y-ensenanza-del-instrumento",
+    "nombre": "Ejecución y Enseñanza del Instrumento",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-de-la-filosofia",
+    "nombre": "Enseñanza de la Filosofía",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-de-la-matematica",
+    "nombre": "Enseñanza de la Matemática",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-de-la-religion",
+    "nombre": "Enseñanza de la Religión",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-de-las-ciencias",
+    "nombre": "Enseñanza de las Ciencias",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-de-los-estudios-sociales-y-educacion-civica",
+    "nombre": "Enseñanza de los Estudios Sociales y Educación Cívica",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-del-arte-y-comunicacion-visual",
+    "nombre": "Enseñanza del Arte y Comunicación Visual",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-del-canto",
+    "nombre": "Enseñanza del Canto",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-del-espanol",
+    "nombre": "Enseñanza del Español",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-del-frances",
+    "nombre": "Enseñanza del Francés",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ensenanza-del-ingles",
+    "nombre": "Enseñanza del Inglés",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "coto",
+      "perez-zeledon",
+      "nicoya"
+    ]
+  },
+  {
+    "id": "ensenanza-del-ingles-para-i-y-ii-ciclo",
+    "nombre": "Enseñanza del Inglés para I y II Ciclo",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "filosofia",
+    "nombre": "Filosofía",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "fisica-aplicada",
+    "nombre": "Física aplicada",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "gestion-de-los-recursos-naturales-y-conservacion-de-la-biodiversidad",
+    "nombre": "Gestión de los Recursos Naturales y Conservación de la Biodiversidad",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "gestion-empresarial-del-turismo-sostenible",
+    "nombre": "Gestión Empresarial del Turismo Sostenible",
+    "activa": true,
+    "sedeIds": [
+      "coto",
+      "perez-zeledon",
+      "liberia",
+      "nicoya"
+    ]
+  },
+  {
+    "id": "genero-y-desarrollo",
+    "nombre": "Género y Desarrollo",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "historia",
+    "nombre": "Historia",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingenieria-de-bioprocesos-industriales",
+    "nombre": "Ingeniería de Bioprocesos Industriales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingenieria-en-agronomia",
+    "nombre": "Ingeniería en Agronomía",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingenieria-en-calidad-e-innovacion-agroalimentaria",
+    "nombre": "Ingeniería en Calidad e Innovación Agroalimentaria",
+    "activa": true,
+    "sedeIds": [
+      "perez-zeledon",
+      "nicoya"
+    ]
+  },
+  {
+    "id": "ingenieria-en-calidad-y-tecnologias-de-produccion",
+    "nombre": "Ingeniería en Calidad y Tecnologías de Producción",
+    "activa": true,
+    "sedeIds": [
+      "perez-zeledon",
+      "liberia"
+    ]
+  },
+  {
+    "id": "ingenieria-en-ciencias-forestales",
+    "nombre": "Ingeniería en Ciencias Forestales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingenieria-en-energias-sostenibles",
+    "nombre": "Ingeniería en Energías Sostenibles",
+    "activa": true,
+    "sedeIds": [
+      "liberia"
+    ]
+  },
+  {
+    "id": "ingenieria-en-gestion-ambiental",
+    "nombre": "Ingeniería en Gestión Ambiental",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "informatica",
+    "nombre": "Ingeniería en Sistemas de Información",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez",
+      "siua",
+      "sarapiqui",
+      "coto",
+      "perez-zeledon",
+      "liberia",
+      "nicoya"
+    ]
+  },
+  {
+    "id": "ingenieria-en-tecnologias-computacionales-para-la-ciencia-de-datos",
+    "nombre": "Ingeniería en Tecnologías Computacionales para la Ciencia de Datos",
+    "activa": true,
+    "sedeIds": [
+      "coto",
+      "perez-zeledon"
+    ]
+  },
+  {
+    "id": "ingenieria-en-topografia-y-catastro",
+    "nombre": "Ingeniería en Topografía y Catastro",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingenieria-hidrologica",
+    "nombre": "Ingeniería Hidrológica",
+    "activa": true,
+    "sedeIds": [
+      "nicoya"
+    ]
+  },
+  {
+    "id": "ingenieria-matematica-en-ciencia-de-datos",
+    "nombre": "Ingeniería Matemática en Ciencia de Datos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "ingles",
+    "nombre": "Inglés",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "siua",
+      "perez-zeledon",
+      "liberia"
+    ]
+  },
+  {
+    "id": "inteligencia-y-estrategia-global",
+    "nombre": "Inteligencia y estrategia global",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "lengua-francesa",
+    "nombre": "Lengua Francesa",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "linguistica-aplicada-con-enfasis-en-frances",
+    "nombre": "Lingüística Aplicada con énfasis en Francés",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "literatura-y-linguistica",
+    "nombre": "Literatura y Lingüística",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-abastecimiento-y-logistica-global",
+    "nombre": "Maestría en Abastecimiento y Logística Global",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-administracion-de-justicia",
+    "nombre": "Maestría en Administración de Justicia",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-administracion-de-recursos-humanos",
+    "nombre": "Maestría en Administración de Recursos Humanos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-agricultura-alternativa-con-mencion-en-agricultura-ecologica",
+    "nombre": "Maestría en Agricultura Ecológica",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-apicultura-tropical",
+    "nombre": "Maestría en Apicultura Tropical",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-cambio-ambiental-y-sostenibilidad",
+    "nombre": "Maestría en Cambio Ambiental y Sostenibilidad",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-ciencias-marinas-y-costeras",
+    "nombre": "Maestría en Ciencias Marinas y Costeras",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-conservacion-de-vida-silvestre-y-biodiversidad",
+    "nombre": "Maestría en Conservación de Vida Silvestre y Biodiversidad",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-conservacion-y-manejo-de-vida-silvestre",
+    "nombre": "Maestría en Conservación y Manejo de Vida Silvestre",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-derechos-humanos-y-educacion-para-la-paz",
+    "nombre": "Maestría en Derechos Humanos y Educación para la Paz",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-desarrollo-comunitario-y-sustentable",
+    "nombre": "Maestría en Desarrollo Comunitario y Sustentable",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-desarrollo-rural",
+    "nombre": "Maestría en Desarrollo Rural",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-didactica-matematica",
+    "nombre": "Maestría en Didáctica Matemática",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-economia-del-desarrollo",
+    "nombre": "Maestría en Economía del Desarrollo",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-ecotoxicologia-tropical",
+    "nombre": "Maestría en Ecotoxicología Tropical",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-educacion",
+    "nombre": "Maestría en Educación",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-educacion-rural-centroamericana",
+    "nombre": "Maestría en Educación Rural Centroamericana",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-enfermedades-tropicales",
+    "nombre": "Maestría en Enfermedades Tropicales",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-entomologia-medica",
+    "nombre": "Maestría en Entomología Médica",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-epidemiologia-con-enfasis-en-epidemiologia-aplicada-a-los-sistema-de-salud",
+    "nombre": "Maestría en Epidemiología con énfasis en Epidemiología aplicada a los Sistema de Salud",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-estudios-de-cultura-centroamericana-con-enfasis-en-literatura",
+    "nombre": "Maestría en Estudios de Cultura Centroamericana con Énfasis en Literatura",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-estudios-de-la-ninez-y-la-adolescencia",
+    "nombre": "Maestría en Estudios de la Niñez y la Adolescencia",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-estudios-latinoamericanos-con-enfasis-en-cultura-y-desarrollo",
+    "nombre": "Maestría en Estudios Latinoamericanos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-estudios-sociorreligiosos-generos-y-diversidades",
+    "nombre": "Maestría en Estudios Sociorreligiosos, Géneros y Diversidades",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-estudios-teologicos",
+    "nombre": "Maestría en Estudios Teológicos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-filosofia-contemporanea",
+    "nombre": "Maestría en Filosofía Contemporánea",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-fisica-medica",
+    "nombre": "Maestría en Física Médica",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-gerencia-de-la-seguridad-alimentaria-y-nutricional",
+    "nombre": "Maestría en Gerencia de la Seguridad Alimentaria y Nutricional",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-gerencia-del-comercio-internacional",
+    "nombre": "Maestría en Gerencia del Comercio Internacional",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez",
+      "liberia"
+    ]
+  },
+  {
+    "id": "maestria-en-gestion-de-la-innovacion-tecnologica",
+    "nombre": "Maestría en Gestión de la Innovación Tecnológica",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-gestion-educativa-con-enfasis-en-liderazgo",
+    "nombre": "Maestría en Gestión Educativa con énfasis en Liderazgo",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-gestion-social-de-la-cultura-y-el-arte",
+    "nombre": "Maestría en Gestión Social de la Cultura y el Arte",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-gestion-y-estudios-ambientales",
+    "nombre": "Maestría en Gestión y Estudios Ambientales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-gestion-y-finanzas-publicas",
+    "nombre": "Maestría en Gestión y Finanzas Públicas",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-historia-aplicada",
+    "nombre": "Maestría en Historia Aplicada",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-humanismo-sociedad-y-ambiente",
+    "nombre": "Maestría en Humanismo, Sociedad y Ambiente",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-jazz-y-practicas-musicales-contemporaneas",
+    "nombre": "Maestría en Jazz y Prácticas Musicales Contemporáneas",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-la-ensenanza-de-las-ciencias-naturales",
+    "nombre": "Maestría en la Enseñanza de las Ciencias Naturales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-medicina-de-la-conservacion",
+    "nombre": "Maestría en Medicina de la Conservación",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-mercadeo-y-ventas",
+    "nombre": "Maestría en Mercadeo y Ventas",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-metrologia-y-calidad",
+    "nombre": "Maestría en Metrología y Calidad",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-musica",
+    "nombre": "Maestría en Música",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-pedagogia",
+    "nombre": "Maestría en Pedagogía con énfasis en desarrollo y atención integral de la primera infancia y diversidad de los procesos educativos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-pensamiento-estrategico-y-prospectiva",
+    "nombre": "Maestría en Pensamiento Estratégico y Prospectiva",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-perspectiva-de-genero-en-los-derechos-humanos",
+    "nombre": "Maestría en Perspectiva de género en los derechos humanos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-planificacion",
+    "nombre": "Maestría en Planificación",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-politica-economica",
+    "nombre": "Maestría en Política Económica",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-produccion-animal-sostenible",
+    "nombre": "Maestría en Producción Animal Sostenible",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-relaciones-internacionales-y-diplomacia",
+    "nombre": "Maestría en Relaciones Internacionales y Diplomacia",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-responsabilidad-social-y-sostenibilidad-2",
+    "nombre": "Maestría en Responsabilidad Social y Sostenibilidad",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-salud-integral-y-movimiento-humano",
+    "nombre": "Maestría en Salud Integral y Movimiento Humano",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-salud-ocupacional",
+    "nombre": "Maestría en Salud Ocupacional",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-sistemas-de-informacion-geografica-y-teledeteccion",
+    "nombre": "Maestría en Sistemas de Información Geográfica y Teledetección",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-tecnologia-e-innovacion-educativa",
+    "nombre": "Maestría en Tecnología e Innovación Educativa",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-administracion-de-tecnologia-de-la-informacion",
+    "nombre": "Maestría en Tecnologías de la Información",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-terapias-complementarias",
+    "nombre": "Maestría en Terapias Complementarias",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "maestria-en-traduccion-ingles-espanol",
+    "nombre": "Maestría en Traducción Inglés – Español",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-turismo-y-desarrollo-sostenible",
+    "nombre": "Maestría en Turismo y Desarrollo Sostenible",
+    "activa": true,
+    "sedeIds": [
+      "nicoya"
+    ]
+  },
+  {
+    "id": "maestria-interuniversitaria-en-bioetica",
+    "nombre": "Maestría Interuniversitaria en Bioética",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-profesional-en-ciberseguridad-industrial",
+    "nombre": "Maestría Profesional en Ciberseguridad Industrial",
+    "activa": true,
+    "sedeIds": [
+      "nicoya"
+    ]
+  },
+  {
+    "id": "maestria-profesional-en-danza-con-enfasis-en-creacion-en-danza-y-en-formacion-y-desarrollo-social-en-danza",
+    "nombre": "Maestría Profesional en Danza con énfasis en Creación en Danza y en Formación y Desarrollo Social en Danza",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-profesional-de-estudios-de-genero",
+    "nombre": "Maestría Profesional en Estudios de Género con énfasis en Políticas Públicas y énfasis en Violencias de Género",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "maestria-en-linguistica-aplicada",
+    "nombre": "Maestría profesional en lingüística aplicada: con énfasis en la enseñanza del inglés como lengua extrajera o con énfasis en la enseñanza del inglés con fines específicos",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "medicina-veterinaria",
+    "nombre": "Medicina Veterinaria",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "cuerdas-frotadas",
+    "nombre": "Música con énfasis en la ejecución y enseñanza de instrumentos de cuerdas frotadas",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "orientacion",
+    "nombre": "Orientación",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "pedagogia-con-enfasis-en-didactica",
+    "nombre": "Pedagogía con énfasis en Didáctica",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "pedagogia-para-preescolar",
+    "nombre": "Pedagogía con énfasis en Educación Preescolar y primera infancia",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "pedagogia-con-enfasis-en-i-y-ii-ciclo-de-la-educacion-general-basica",
+    "nombre": "Pedagogía con énfasis en I y II Ciclo de la Educación General Básica",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "liberia"
+    ]
+  },
+  {
+    "id": "planificacion-economica-y-social",
+    "nombre": "Planificación Económica y Social",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "perez-zeledon"
+    ]
+  },
+  {
+    "id": "preparacion-y-readaptacion-fisica-deportiva",
+    "nombre": "Preparación y Readaptación Física Deportiva",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "promocion-de-la-salud-y-movimiento-humano",
+    "nombre": "Promoción de la Salud y Movimiento Humano",
+    "activa": true,
+    "sedeIds": [
+      "benjamin-nunez"
+    ]
+  },
+  {
+    "id": "psicologia",
+    "nombre": "Psicología",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "quimica-industrial",
+    "nombre": "Química Industrial",
+    "activa": true,
+    "sedeIds": [
+      "central",
+      "siua"
+    ]
+  },
+  {
+    "id": "relaciones-internacionales",
+    "nombre": "Relaciones Internacionales",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "sociologia",
+    "nombre": "Sociología",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
+  },
+  {
+    "id": "teologia",
+    "nombre": "Teología",
+    "activa": true,
+    "sedeIds": [
+      "central"
+    ]
   }
 ]

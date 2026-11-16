@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.Strictness;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +47,16 @@ public class GestorJSON {
         } catch (JsonParseException | IllegalStateException e) {
             throw new IllegalStateException(
                     nombreArchivo + " contiene JSON inválido; se conserva su contenido sin modificarlo.", e);
+        }
+    }
+
+    //Recibe el nombre y el tipo de un catálogo incluido con la app y devuelve sus datos.
+    public <T> T leerCatalogoBase(String nombreArchivo, Class<T> tipo) {
+        try (var entrada = GestorJSON.class.getResourceAsStream("/copiaRespaldoBase/" + nombreArchivo)) {
+            if (entrada == null) throw new IllegalStateException("No se encontró el catálogo base " + nombreArchivo + ".");
+            return gson.fromJson(new InputStreamReader(entrada, StandardCharsets.UTF_8), tipo);
+        } catch (IOException | JsonParseException error) {
+            throw new IllegalStateException("No se pudo leer el catálogo base " + nombreArchivo + ".", error);
         }
     }
 

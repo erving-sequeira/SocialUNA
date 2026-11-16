@@ -16,6 +16,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -51,7 +52,7 @@ class AppSocialUNATest {
 
     @TempDir Path datos;
 
-    //Prueba que SocialUNA arranque mostrando el login.
+    //Prueba que el login abra y que los catálogos se creen o recuperen sus relaciones con sedes.
     @Test void iniciaLaVentanaSocialUnaConLogin() throws Exception {
         CompletableFuture<Void> resultado = new CompletableFuture<>();
         Platform.runLater(() -> {
@@ -62,6 +63,24 @@ class AppSocialUNATest {
                 assertTrue(stage.isShowing()); assertEquals("SocialUNA",stage.getTitle());
                 assertEquals(800,stage.getScene().getWidth(),1); assertEquals(600,stage.getScene().getHeight(),1);
                 assertEquals("vistaLogin", stage.getScene().getRoot().getId());
+                var gestor = new GestorJSON(datos);
+                assertEquals(139, new RepositorioCarrerasJSON(gestor).listarCarreras().size());
+                assertEquals(8, new RepositorioSedesJSON(gestor).listarSedes().size());
+                Files.writeString(datos.resolve("carreras.json"), """
+                        [
+                          {"id":"informatica","nombre":"Informática","activa":true},
+                          {"id":"administracion","nombre":"Administración","activa":false,"sedeIds":[]}
+                        ]
+                        """);
+                new AppSocialUNA(datos).start(stage);
+                assertEquals("vistaLogin", stage.getScene().getRoot().getId());
+                var migrado = new RepositorioCarrerasJSON(gestor);
+                var informatica = migrado.buscarCarreraPorId("informatica");
+                assertTrue(informatica.getSedeIds().contains("benjamin-nunez"));
+                assertFalse(informatica.getSedeIds().contains("central"));
+                var administracion = migrado.buscarCarreraPorId("administracion");
+                assertTrue(administracion.getSedeIds().isEmpty());
+                assertFalse(administracion.isActiva());
                 resultado.complete(null);
             } catch(Throwable error) { resultado.completeExceptionally(error); }
             finally { stage.close(); }
@@ -87,14 +106,17 @@ class AppSocialUNATest {
                 ((TextField) control(escena, "#nombre")).setText("Ana María");
                 ((TextField) control(escena, "#nombreUsuario")).setText(" ANA ");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
-                ((Button) control(escena, "#btnRegistrar")).fire();
-                assertTrue(((Label) control(escena, "#mensaje")).getText().contains("carrera y tu sede"));
+                assertTrue(control(escena, "#btnRegistrar").isDisabled());
                 assertFalse(Files.exists(datos.resolve("usuarios.json")));
                 var carreras = (ComboBox<?>) control(escena, "#carrera");
                 var sedes = (ComboBox<?>) control(escena, "#sede");
                 assertFalse(carreras.getItems().isEmpty());
-                assertFalse(sedes.getItems().isEmpty());
-                carreras.getSelectionModel().selectFirst();
+                assertTrue(sedes.getItems().isEmpty());
+                assertTrue(sedes.isDisabled());
+                var arte = carreras.getItems().stream().map(Carrera.class::cast)
+                        .filter(carrera -> "arte-escenico".equals(carrera.getId())).findFirst().orElseThrow();
+                carreras.getSelectionModel().select(carreras.getItems().indexOf(arte));
+                assertEquals(List.of("central"), sedes.getItems().stream().map(sede -> ((SedeCampus) sede).getId()).toList());
                 sedes.getSelectionModel().selectFirst();
                 ((Button) control(escena, "#btnRegistrar")).fire();
                 assertEquals("vistaLogin", escena.getRoot().getId());
@@ -173,23 +195,24 @@ class AppSocialUNATest {
                 var repo = new RepositorioUsuariosJSON(gestor);
                 var usuarios = new ServicioUsuarios(repo, new RepositorioSedesJSON(gestor),
                         new RepositorioCarrerasJSON(gestor));
-                var ana = usuarios.registrar("Ana", "ana", "prueba", "informatica", "central");
-                var beto = usuarios.registrar("Beto", "beto", "prueba", "informatica", "central");
+                var ana = usuarios.registrar("Ana", "ana", "prueba", "informatica", "benjamin-nunez");
+                var beto = usuarios.registrar("Beto", "beto", "prueba", "informatica", "benjamin-nunez");
                 var publicaciones = new RepositorioPublicacionesJSON(gestor);
                 publicaciones.cargar();
                 publicaciones.guardar(new Publicacion("beto-muro", beto.getId(), "Hola desde el muro",
                         100, AmbitoPublicacion.MURO, TipoPublicacion.GENERAL, null, null));
+                publicaciones.guardar(new Publicacion("beto-carrera", beto.getId(), "Desde la SIUA",
+                        101, AmbitoPublicacion.CARRERA, TipoPublicacion.GENERAL, "informatica", "siua"));
 
                 new AppSocialUNA(datos).start(stage);
                 var escena = stage.getScene();
                 ((TextField) control(escena, "#nombreUsuario")).setText("ana");
                 ((TextField) control(escena, "#contrasena")).setText("prueba");
                 ((Button) control(escena, "#btnIngresar")).fire();
-                var seleccionado = javafx.css.PseudoClass.getPseudoClass("selected");
+                String seleccionado = "opcion-seleccionada";
                 var menu = control(escena, "#menuInferior");
                 assertNotNull(menu);
-                var publicacionesVisibles = (VBox) control(escena, "#contenedorPanel");
-                var tarjetas = (VBox) publicacionesVisibles.getChildren().getFirst();
+                var tarjetas = (VBox) control(escena, "#listaTarjetas");
                 assertInstanceOf(Label.class, tarjetas.getChildren().getFirst());
 
                 ((Button) control(escena, "#btnBuscarEstudiantes")).fire();
@@ -203,8 +226,8 @@ class AppSocialUNATest {
                 ((Button) fila.getChildren().getLast()).fire();
                 assertNotNull(control(escena, "#vistaPerfil"));
                 assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnBuscarEstudiantes").getPseudoClassStates().contains(seleccionado));
-                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnBuscarEstudiantes").getStyleClass().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
 
                 var amistad = (Button) control(escena, "#btnAmistad");
                 assertNull(control(escena, "#btnCerrarSesion"));
@@ -227,8 +250,8 @@ class AppSocialUNATest {
                 autor.fire();
                 assertNotNull(control(escena, "#vistaPerfil"));
                 assertEquals("Beto", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnMuro").getPseudoClassStates().contains(seleccionado));
-                assertFalse(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnMuro").getStyleClass().contains(seleccionado));
+                assertFalse(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
                 ((Button) control(escena, "#btnAmistad")).fire();
                 assertEquals("Amigos · 0", ((Label) control(escena, "#cantidadAmigos")).getText());
                 ((Button) control(escena, "#btnMuro")).fire();
@@ -255,20 +278,48 @@ class AppSocialUNATest {
                     ((TextArea) control(escena, "#textoPublicacion")).setText("¿Una pregunta en " + tab.getText() + "?");
                     ((Button) control(escena, "#btnPublicar")).fire();
                     assertFalse(formulario.isVisible());
-                    var pregunta = (VBox) tarjetas.getChildren().getFirst();
+                    var listaActual = (VBox) control(escena, "#listaTarjetas");
+                    var pregunta = (VBox) listaActual.getChildren().getFirst();
                     assertTrue(pregunta.getStyleClass().contains("tarjeta-pregunta"));
                     assertEquals("Pregunta", ((Label) pregunta.lookup(".tipo-pregunta")).getText());
+                    if ("tabMuro".equals(tab.getId())) {
+                        assertEquals(2, pregunta.getChildren().size());
+                    } else {
+                        comprobarComentarios(pregunta);
+                    }
                 }
                 publicaciones.cargar();
                 for (var ambito : AmbitoPublicacion.values()) {
-                    assertTrue(publicaciones.listar().stream().anyMatch(publicacion ->
-                            publicacion.getAmbito() == ambito && publicacion.getTipo() == TipoPublicacion.PREGUNTA));
+                    var pregunta = publicaciones.listar().stream()
+                            .filter(publicacion -> publicacion.getAmbito() == ambito
+                                    && publicacion.getTipo() == TipoPublicacion.PREGUNTA)
+                            .findFirst().orElseThrow();
+                    if (ambito != AmbitoPublicacion.MURO) {
+                        assertEquals("Respuesta de prueba", pregunta.getComentarios().getFirst().getTexto());
+                    }
                 }
+
+                pestanas.getSelectionModel().select(1);
+                var filtro = (MenuButton) control(escena, "#filtroSede");
+                assertFalse(filtro.getItems().stream().anyMatch(opcion -> opcion.getText().equals("Campus Omar Dengo")));
+                filtro.getItems().stream().filter(opcion -> opcion.getText().contains("SIUA")).findFirst().orElseThrow().fire();
+                var filtradas = (VBox) control(escena, "#listaTarjetas");
+                assertEquals(1, filtradas.getChildren().size());
+                var postFiltrado = (VBox) filtradas.getChildren().getFirst();
+                assertEquals("Desde la SIUA", ((Label) postFiltrado.getChildren().get(1)).getText());
+                pestanas.getSelectionModel().select(2);
+                assertFalse(control(escena, "#filtroSede").isVisible()
+                        && control(escena, "#filtroSede").getParent().isVisible());
+                pestanas.getSelectionModel().select(1);
+                assertSame(filtro, control(escena, "#filtroSede"));
+                assertEquals(1, filtradas.getChildren().size());
+                filtro.getItems().getFirst().fire();
+                assertEquals(2, filtradas.getChildren().size());
 
                 ((Button) control(escena, "#btnMiPerfil")).fire();
                 assertNull(control(escena, "#btnAmistad"));
                 assertEquals("Ana", ((Label) control(escena, ".marca")).getText());
-                assertTrue(control(escena, "#btnMiPerfil").getPseudoClassStates().contains(seleccionado));
+                assertTrue(control(escena, "#btnMiPerfil").getStyleClass().contains(seleccionado));
                 assertSame(menu, control(escena, "#menuInferior"));
                 var editor = control(escena, "#formularioPerfil");
                 assertFalse(editor.isVisible());
@@ -281,13 +332,24 @@ class AppSocialUNATest {
                 ((Button) control(escena, "#btnEditarPerfil")).fire();
                 var carreras = (ChoiceBox<?>) control(escena, "#editarCarrera");
                 assertEquals("informatica", ((Carrera) carreras.getValue()).getId());
-                carreras.getSelectionModel().selectLast();
-                ((ChoiceBox<?>) control(escena, "#editarSede")).getSelectionModel().selectLast();
+                var sedes = (ChoiceBox<?>) control(escena, "#editarSede");
+                assertEquals("benjamin-nunez", ((SedeCampus) sedes.getValue()).getId());
+                var arte = carreras.getItems().stream().map(Carrera.class::cast)
+                        .filter(carrera -> "arte-escenico".equals(carrera.getId())).findFirst().orElseThrow();
+                carreras.getSelectionModel().select(carreras.getItems().indexOf(arte));
+                assertNull(sedes.getValue());
+                assertTrue(control(escena, "#btnGuardarPerfil").isDisabled());
+                assertEquals(List.of("central"), sedes.getItems().stream().map(sede -> ((SedeCampus) sede).getId()).toList());
+                sedes.getSelectionModel().selectFirst();
                 ((Button) control(escena, "#btnGuardarPerfil")).fire();
                 assertFalse(editor.isVisible());
                 var guardado = new RepositorioUsuariosJSON(gestor).buscarUsuarioPorId(ana.getId());
-                assertEquals("administracion", guardado.getCarreraId());
-                assertEquals("siua", guardado.getSedeId());
+                assertEquals("arte-escenico", guardado.getCarreraId());
+                assertEquals("central", guardado.getSedeId());
+                ((Button) control(escena, "#btnMuro")).fire();
+                assertEquals(List.of("Todas las sedes", "Campus Omar Dengo"),
+                        filtro.getItems().stream().map(opcion -> opcion.getText()).toList());
+                ((Button) control(escena, "#btnMiPerfil")).fire();
                 ((Button) control(escena, "#btnCerrarSesion")).fire();
                 assertEquals("vistaLogin", escena.getRoot().getId());
                 resultado.complete(null);
@@ -298,6 +360,22 @@ class AppSocialUNATest {
             }
         });
         resultado.get(15, TimeUnit.SECONDS);
+    }
+
+    //Recibe una tarjeta de comunidad y prueba que su comentario se vea sin recargar la lista.
+    private static void comprobarComentarios(VBox tarjeta) {
+        var ver = (Button) tarjeta.getChildren().get(2);
+        assertFalse(ver.isDisabled());
+        ver.fire();
+        var comentarios = (VBox) tarjeta.getChildren().get(3);
+        assertEquals("Todavía no hay comentarios.", ((Label) comentarios.getChildren().getFirst()).getText());
+        var editor = (HBox) tarjeta.getChildren().get(4);
+        var campo = (TextField) editor.getChildren().getFirst();
+        campo.setText("Respuesta de prueba");
+        ((Button) editor.getChildren().getLast()).fire();
+        assertTrue(campo.getText().isEmpty());
+        var fila = (HBox) comentarios.getChildren().getFirst();
+        assertEquals("Respuesta de prueba", ((Label) fila.getChildren().getLast()).getText());
     }
 
     //Recibe la escena y un selector. Prepara el contenido de ScrollPane y devuelve el nodo que coincide.
@@ -356,7 +434,14 @@ class AppSocialUNATest {
                 var texto = (TextField) editor.getChildren().getFirst();
                 var enviar = (Button) editor.getChildren().get(1);
                 var enviado = new AtomicReference<List<String>>();
-                panel.alComentar((id, valor) -> enviado.set(List.of(id, valor)));
+                panel.alComentar((id, valor) -> false);
+                texto.setText("Borrador pendiente");
+                enviar.fire();
+                assertEquals("Borrador pendiente", texto.getText());
+                panel.alComentar((id, valor) -> {
+                    enviado.set(List.of(id, valor));
+                    return true;
+                });
                 texto.setText("  ");
                 assertTrue(enviar.isDisabled());
                 texto.setText(" Mi comentario ");

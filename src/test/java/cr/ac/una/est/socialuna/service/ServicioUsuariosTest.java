@@ -32,8 +32,9 @@ class ServicioUsuariosTest {
         usuarios = new RepositorioUsuariosJSON(gestor);
         carreras = new RepositorioCarrerasJSON(gestor);
         sedes = new RepositorioSedesJSON(gestor);
-        carreras.guardarCarreras(List.of(new Carrera("c1", "Informática", true), new Carrera("c2", "Arte", true),
-                new Carrera("c-inactiva", "Retirada", false)));
+        carreras.guardarCarreras(List.of(new Carrera("c1", "Informática", true, List.of("s1", "s-inactiva")),
+                new Carrera("c2", "Arte", true, List.of("s2")),
+                new Carrera("c-inactiva", "Retirada", false, List.of("s1"))));
         sedes.guardarSedes(List.of(new SedeCampus("s1", "Alajuela", "SIUA", "Campus", true),
                 new SedeCampus("s2", "Heredia", "Central", "Campus", true),
                 new SedeCampus("s-inactiva", "Retirada", null, "Campus", false)));
@@ -63,11 +64,15 @@ class ServicioUsuariosTest {
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", "abc", "c1", "  "));
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", "abc", "no-existe", "s1"));
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", "abc", "c1", "s-inactiva"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", "abc", "c1", "s2"));
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", "abc", "c-inactiva", "s1"));
         assertThrows(IllegalArgumentException.class, () -> servicio.registrar("Beto", "beto", null, "c1", "s1"));
         assertEquals(1, usuarios.listarUsuarios().size());
         assertEquals(List.of("c1", "c2"), servicio.listarCarreras().stream().map(Carrera::getId).toList());
         assertEquals(List.of("s1", "s2"), servicio.listarSedes().stream().map(SedeCampus::getId).toList());
+        assertEquals(List.of("s1"), servicio.listarSedesPorCarrera("c1").stream().map(SedeCampus::getId).toList());
+        assertTrue(servicio.listarSedesPorCarrera("c-inactiva").isEmpty());
+        assertTrue(servicio.listarSedesPorCarrera(null).isEmpty());
     }
 
     //Prueba que el login valide la contraseña y maneje la sesión activa.
@@ -104,6 +109,9 @@ class ServicioUsuariosTest {
         var ana = servicio.registrar("Ana", "ana", "abc", "c1", "s1");
         assertThrows(IllegalStateException.class, () -> servicio.actualizarDatosAcademicos("c2", "s2"));
         servicio.iniciarSesion("ana", "abc");
+        assertThrows(IllegalArgumentException.class, () -> servicio.actualizarDatosAcademicos("c2", "s1"));
+        assertEquals("c1", servicio.getUsuarioActual().getCarreraId());
+        assertEquals("s1", usuarios.buscarUsuarioPorId(ana.getId()).getSedeId());
         var actualizado = servicio.actualizarDatosAcademicos(" c2 ", " s2 ");
         assertEquals(ana.getId(), actualizado.getId());
         assertEquals("c2", actualizado.getCarreraId());
