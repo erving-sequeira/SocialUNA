@@ -13,10 +13,12 @@ public class Publicacion {
     private String carreraId;
     private String sedeId;
     private ArrayList<Comentario> comentarios;
+    private ArrayList<String> reacciones;
 
-    //Deja la lista de comentarios vacía al crear la publicación desde el JSON.
+    //Deja vacías las listas al crear la publicación desde el JSON.
     protected Publicacion() {
         this.comentarios = new ArrayList<>();
+        this.reacciones = new ArrayList<>();
     }
 
     //Crea la publicación con ID, autor, texto, fecha, ámbito y tipo. Pide carrera o sede según el ámbito.
@@ -48,6 +50,7 @@ public class Publicacion {
         this.carreraId = carreraId;
         this.sedeId = sedeId;
         this.comentarios = new ArrayList<>();
+        this.reacciones = new ArrayList<>();
     }
 
     //Recibe un comentario y lo agrega a la lista de esta publicación.
@@ -57,6 +60,45 @@ public class Publicacion {
                     "El comentario es obligatorio.");
         }
         this.comentarios.add(comentario);
+    }
+
+    //Recibe un ID de usuario y lo agrega a las reacciones si todavía no estaba.
+    public void agregarReaccion(String usuarioId) {
+        if (usuarioId == null || usuarioId.isBlank()) return;
+        String id = usuarioId.strip();
+        if (!reacciones().contains(id)) reacciones().add(id);
+    }
+
+    //Recibe un ID de usuario y alterna su reacción. Devuelve true si quedó con me gusta.
+    public boolean alternarReaccion(String usuarioId) {
+        if (usuarioId == null || usuarioId.isBlank()) {
+            throw new IllegalArgumentException("El usuario de la reacción es obligatorio.");
+        }
+        String id = usuarioId.strip();
+        if (reacciones().remove(id)) return false;
+        reacciones().add(id);
+        return true;
+    }
+
+    //Recibe un ID de usuario y dice si ya reaccionó a esta publicación.
+    public boolean leGustaA(String usuarioId) {
+        return usuarioId != null && reacciones().contains(usuarioId.strip());
+    }
+
+    //Devuelve cuántas reacciones tiene la publicación.
+    public int getTotalReacciones() {
+        return reacciones().size();
+    }
+
+    //Devuelve una copia de los IDs de usuarios que reaccionaron.
+    public ArrayList<String> getReacciones() {
+        return new ArrayList<>(reacciones());
+    }
+
+    //Devuelve la lista de reacciones y la crea si Gson la dejó nula.
+    private ArrayList<String> reacciones() {
+        if (reacciones == null) reacciones = new ArrayList<>();
+        return reacciones;
     }
 
     //Devuelve el ID de la publicación.

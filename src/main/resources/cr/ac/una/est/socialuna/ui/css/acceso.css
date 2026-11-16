@@ -176,3 +176,52 @@
     -fx-background-color: -una-verde-suave;
     -fx-text-fill: -una-verde;
 }
+
+.espacio-social .boton-eliminar {
+    -fx-text-fill: -color-danger-fg;
+}
+
+.espacio-social .fila-respuesta {
+    -fx-padding: 0 0 0 28px;
+}
+
+.espacio-social .mencion-respuesta {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 12px;
+}
+
+.espacio-social .fecha-publicacion {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 12px;
+}
+
+.espacio-social .boton-reaccion {
+    -fx-background-color: transparent;
+    -fx-border-color: -una-borde;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-text-fill: -color-fg-muted;
+    -fx-padding: 4px 10px;
+}
+
+.espacio-social .boton-reaccion.reaccion-activa {
+    -fx-text-fill: -una-verde;
+    -fx-border-color: -una-verde;
+}
+
+.espacio-social .avatar {
+    -fx-background-radius: 50%;
+    -fx-alignment: center;
+}
+
+.espacio-social .avatar-letra {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.espacio-social .avatar-1 { -fx-background-color: #2e7d32; }
+.espacio-social .avatar-2 { -fx-background-color: #1565c0; }
+.espacio-social .avatar-3 { -fx-background-color: #6a1b9a; }
+.espacio-social .avatar-4 { -fx-background-color: #ad1457; }
+.espacio-social .avatar-5 { -fx-background-color: #ef6c00; }
+.espacio-social .avatar-6 { -fx-background-color: #00838f; }

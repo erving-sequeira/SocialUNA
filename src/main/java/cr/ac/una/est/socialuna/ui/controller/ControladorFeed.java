@@ -7,6 +7,8 @@ import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.component.PanelPublicaciones;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -49,7 +51,7 @@ public class ControladorFeed {
         try {
             var ambito = muroSeleccionado();
             if (ambito == AmbitoPublicacion.MURO) {
-                panel.mostrar(servicioPublicacion.obtenerFeed(), false);
+                panel.mostrar(servicioPublicacion.obtenerFeed(), true);
                 contenedorPanel.getChildren().setAll(panel.getContenedor());
             } else {
                 var comunidad = comunidades.computeIfAbsent(ambito, navegador::cargarComunidad);
@@ -149,6 +151,12 @@ public class ControladorFeed {
         mensaje.visibleProperty().bind(mensaje.textProperty().isNotEmpty());
         mensaje.managedProperty().bind(mensaje.visibleProperty());
         panel.alAbrirPerfil(this::abrirPerfilAutor);
+        panel.alComentar(this::comentar);
+        panel.alResponder(this::responder);
+        panel.alEliminarComentario(this::eliminarComentario);
+        panel.alVerComentarios(this::mostrarComentarios);
+        panel.alEliminarPublicacion(this::eliminarPublicacion);
+        panel.alReaccionar(this::reaccionar);
         pestanas.getSelectionModel().selectedItemProperty().addListener((observable, anterior, nueva) -> {
             if (nueva != null) tituloFormulario.setText("Publicar en " + nueva.getText());
             listaPublicaciones.setVvalue(0);
@@ -157,6 +165,94 @@ public class ControladorFeed {
         vistaFeed.sceneProperty().addListener((propiedad, anterior, actual) -> {
             if (actual != null) cargarFeed();
         });
+    }
+
+    //Recibe el ID del post y el texto. Devuelve true si se guardó y actualiza esa tarjeta.
+    private boolean comentar(String publicacionId, String texto) {
+        try {
+            servicioPublicacion.comentar(publicacionId, texto);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el post, el comentario padre y el texto. Devuelve true si se guardó la respuesta.
+    private boolean responder(String publicacionId, String comentarioPadreId, String texto) {
+        try {
+            servicioPublicacion.responder(publicacionId, comentarioPadreId, texto);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el post y el comentario propio. Pide confirmación, lo borra y refresca el hilo.
+    private boolean eliminarComentario(String publicacionId, String comentarioId) {
+        if (!confirmar("¿Eliminar este comentario? Se borrarán también sus respuestas.",
+                "Eliminar comentario")) {
+            return false;
+        }
+        try {
+            servicioPublicacion.eliminarComentario(publicacionId, comentarioId);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el ID del post y alterna el me gusta del usuario en sesión.
+    private void reaccionar(String publicacionId) {
+        try {
+            var publicacion = servicioPublicacion.alternarReaccion(publicacionId);
+            panel.actualizarReaccion(publicacion);
+            mensaje.setText("");
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Recibe el ID del post y muestra sus comentarios en la misma tarjeta.
+    private void mostrarComentarios(String publicacionId) {
+        try {
+            panel.mostrarComentarios(publicacionId, servicioPublicacion.obtenerComentarios(publicacionId));
+            mensaje.setText("");
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Recibe el ID del post. Pide confirmación, lo elimina y recarga el muro.
+    private boolean eliminarPublicacion(String publicacionId) {
+        if (!confirmarEliminacion()) return false;
+        try {
+            servicioPublicacion.eliminarPublicacion(publicacionId);
+            cargarFeed();
+            return true;
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+    }
+
+    //Pide confirmación antes de borrar una publicación con sus comentarios.
+    private boolean confirmarEliminacion() {
+        return confirmar("¿Eliminar esta publicación? También se borrarán sus comentarios y respuestas.",
+                "Eliminar publicación");
+    }
+
+    //Recibe el mensaje y el título. Muestra una alerta de confirmación.
+    private boolean confirmar(String mensaje, String titulo) {
+        var alerta = new Alert(Alert.AlertType.CONFIRMATION, mensaje, ButtonType.CANCEL, ButtonType.OK);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        return alerta.showAndWait().filter(ButtonType.OK::equals).isPresent();
     }
 
     //Recibe el texto del error y lo muestra sobre la lista de publicaciones.

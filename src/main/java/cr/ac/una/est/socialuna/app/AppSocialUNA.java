@@ -137,7 +137,7 @@ public class AppSocialUNA extends Application {
         navegador.registrarFabrica(ControladorAmigos.class,
                 () -> new ControladorAmigos(usuarios, servicioAmistad, navegador));
         navegador.registrarFabrica(PanelPerfil.class,
-                () -> new PanelPerfil(usuarios, servicioAmistad, navegador));
+                () -> new PanelPerfil(usuarios, servicioAmistad, navegador, servicioPublicacion));
 
         navegador.registrarFabrica(ControladorComunidad.class,
                 () -> new ControladorComunidad(usuarios, servicioComunidad, navegador, new PanelPublicaciones(usuarios)));

@@ -57,8 +57,13 @@ public class RepositorioPublicacionesJSON {
                             comentario.getId(),
                             comentario.getAutorId(),
                             comentario.getTexto(),
-                            comentario.getCreadoEn()
+                            comentario.getCreadoEn(),
+                            comentario.getRespuestaAId()
                     ));
+                }
+
+                for (String usuarioId : registro.getReacciones()) {
+                    publicacion.agregarReaccion(usuarioId);
                 }
 
                 publicaciones.add(publicacion);
@@ -154,6 +159,10 @@ public class RepositorioPublicacionesJSON {
         }
         actualizada.agregarComentario(comentario);
 
+        for (String usuarioId : anterior.getReacciones()) {
+            actualizada.agregarReaccion(usuarioId);
+        }
+
         datos.getPublicaciones().set(indice, actualizada);
 
         try {
@@ -162,6 +171,115 @@ public class RepositorioPublicacionesJSON {
             datos.getPublicaciones().set(indice, anterior);
             throw fallo;
         }
+    }
+
+    //Recibe el ID de una publicación, la quita con sus comentarios y guarda el archivo.
+    public void eliminar(String id) {
+        exigirCarga();
+
+        int indice = buscarIndicePorId(id);
+
+        if (indice < 0) {
+            throw new IllegalArgumentException(
+                    "No existe la publicación indicada.");
+        }
+
+        Publicacion eliminada = datos.getPublicaciones().remove(indice);
+
+        try {
+            guardarEnArchivo();
+        } catch (RuntimeException fallo) {
+            datos.getPublicaciones().add(indice, eliminada);
+            throw fallo;
+        }
+    }
+
+    //Recibe el ID de una publicación y el de un comentario. Borra ese comentario y todo su hilo.
+    public void eliminarComentario(String publicacionId, String comentarioId) {
+        exigirCarga();
+
+        int indice = buscarIndicePorId(publicacionId);
+
+        if (indice < 0) {
+            throw new IllegalArgumentException(
+                    "No existe la publicación indicada.");
+        }
+
+        Publicacion anterior = datos.getPublicaciones().get(indice);
+
+        if (anterior.getComentarios().stream().noneMatch(c -> c.getId().equals(comentarioId))) {
+            throw new IllegalArgumentException(
+                    "No existe el comentario indicado.");
+        }
+
+        var aEliminar = new HashSet<String>();
+        aEliminar.add(comentarioId);
+
+        boolean cambio = true;
+        while (cambio) {
+            cambio = false;
+            for (Comentario comentario : anterior.getComentarios()) {
+                if (!aEliminar.contains(comentario.getId())
+                        && comentario.getRespuestaAId() != null
+                        && aEliminar.contains(comentario.getRespuestaAId())) {
+                    aEliminar.add(comentario.getId());
+                    cambio = true;
+                }
+            }
+        }
+
+        Publicacion actualizada = new Publicacion(
+                anterior.getId(),
+                anterior.getAutorId(),
+                anterior.getTexto(),
+                anterior.getCreadoEn(),
+                anterior.getAmbito(),
+                anterior.getTipo(),
+                anterior.getCarreraId(),
+                anterior.getSedeId()
+        );
+
+        for (Comentario comentario : anterior.getComentarios()) {
+            if (!aEliminar.contains(comentario.getId())) {
+                actualizada.agregarComentario(comentario);
+            }
+        }
+        for (String usuarioId : anterior.getReacciones()) {
+            actualizada.agregarReaccion(usuarioId);
+        }
+
+        datos.getPublicaciones().set(indice, actualizada);
+
+        try {
+            guardarEnArchivo();
+        } catch (RuntimeException fallo) {
+            datos.getPublicaciones().set(indice, anterior);
+            throw fallo;
+        }
+    }
+
+    //Recibe el ID de la publicación y del usuario. Alterna su reacción y guarda el cambio.
+    public boolean alternarReaccion(String publicacionId, String usuarioId) {
+        exigirCarga();
+
+        int indice = buscarIndicePorId(publicacionId);
+
+        if (indice < 0) {
+            throw new IllegalArgumentException(
+                    "No existe la publicación indicada.");
+        }
+
+        Publicacion publicacion = datos.getPublicaciones().get(indice);
+        boolean activa = publicacion.alternarReaccion(usuarioId);
+
+        try {
+            guardarEnArchivo();
+        } catch (RuntimeException fallo) {
+            publicacion.alternarReaccion(usuarioId);
+            throw fallo;
+        }
+
+        return activa;
     }
 
     //Busca el ID de la publicación y devuelve su posición en la lista, o -1 si no está.

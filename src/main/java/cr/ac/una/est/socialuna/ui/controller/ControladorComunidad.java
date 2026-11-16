@@ -7,6 +7,8 @@ import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import cr.ac.una.est.socialuna.ui.component.PanelPublicaciones;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -46,7 +48,11 @@ public class ControladorComunidad extends VBox {
         mensaje.managedProperty().bind(mensaje.visibleProperty());
 
         panel.alComentar(this::comentar);
+        panel.alResponder(this::responder);
+        panel.alEliminarComentario(this::eliminarComentario);
         panel.alVerComentarios(this::mostrarComentarios);
+        panel.alEliminarPublicacion(this::eliminarPublicacion);
+        panel.alReaccionar(this::reaccionar);
         panel.alAbrirPerfil(id -> {
             try {
                 navegador.mostrarPerfil(id);
@@ -128,6 +134,72 @@ public class ControladorComunidad extends VBox {
         }
         mostrarComentarios(publicacionId);
         return true;
+    }
+
+    //Recibe el post, el comentario padre y el texto. Devuelve true si se guardó la respuesta.
+    private boolean responder(String publicacionId, String comentarioPadreId, String texto) {
+        try {
+            servicioComunidad.responder(publicacionId, comentarioPadreId, texto);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el post y el comentario propio. Pide confirmación, lo borra y refresca el hilo.
+    private boolean eliminarComentario(String publicacionId, String comentarioId) {
+        if (!confirmar("¿Eliminar este comentario? Se borrarán también sus respuestas.",
+                "Eliminar comentario")) {
+            return false;
+        }
+        try {
+            servicioComunidad.eliminarComentario(publicacionId, comentarioId);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el ID del post y alterna el me gusta del usuario en sesión.
+    private void reaccionar(String publicacionId) {
+        try {
+            var publicacion = servicioComunidad.alternarReaccion(publicacionId);
+            panel.actualizarReaccion(publicacion);
+            mensaje.setText("");
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Recibe el ID del post. Pide confirmación, lo elimina y recarga la comunidad.
+    private boolean eliminarPublicacion(String publicacionId) {
+        if (!confirmarEliminacion()) return false;
+        try {
+            servicioComunidad.eliminarPublicacion(publicacionId);
+            cargarPublicaciones();
+            return true;
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+    }
+
+    //Pide confirmación antes de borrar una publicación con sus comentarios.
+    private boolean confirmarEliminacion() {
+        return confirmar("¿Eliminar esta publicación? También se borrarán sus comentarios y respuestas.",
+                "Eliminar publicación");
+    }
+
+    //Recibe el mensaje y el título. Muestra una alerta de confirmación.
+    private boolean confirmar(String mensaje, String titulo) {
+        var alerta = new Alert(Alert.AlertType.CONFIRMATION, mensaje, ButtonType.CANCEL, ButtonType.OK);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        return alerta.showAndWait().filter(ButtonType.OK::equals).isPresent();
     }
 
     //Recibe el ID del post y muestra sus comentarios en la misma tarjeta.

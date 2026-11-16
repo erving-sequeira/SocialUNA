@@ -4,14 +4,19 @@ import cr.ac.una.est.socialuna.model.entity.Carrera;
 import cr.ac.una.est.socialuna.model.entity.SedeCampus;
 import cr.ac.una.est.socialuna.model.entity.Usuario;
 import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
+import cr.ac.una.est.socialuna.service.contract.IServicioPublicacion;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
@@ -20,21 +25,35 @@ import java.util.function.Function;
 public class PanelPerfil {
     private final IServicioUsuarios usuarios;
     private final IServicioAmistad amistades;
+    private final IServicioPublicacion publicaciones;
     private final NavegadorVistas navegador;
+    private final PanelPublicaciones panelPublicaciones;
     private final ScrollPane contenedor = new ScrollPane();
     private final Label mensaje = new Label();
+    private String perfilIdActual;
 
     //Recibe los servicios y el navegador para armar el perfil propio o el de otra persona.
-    public PanelPerfil(IServicioUsuarios usuarios, IServicioAmistad amistades, NavegadorVistas navegador) {
+    public PanelPerfil(IServicioUsuarios usuarios, IServicioAmistad amistades,
+                       NavegadorVistas navegador, IServicioPublicacion publicaciones) {
         this.usuarios = usuarios;
         this.amistades = amistades;
         this.navegador = navegador;
+        this.publicaciones = publicaciones;
+        this.panelPublicaciones = new PanelPublicaciones(usuarios);
         contenedor.setFitToWidth(true);
         contenedor.setId("vistaPerfil");
         contenedor.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mensaje.setWrapText(true);
         mensaje.visibleProperty().bind(mensaje.textProperty().isNotEmpty());
         mensaje.managedProperty().bind(mensaje.visibleProperty());
+
+        panelPublicaciones.alAbrirPerfil(this::abrirPerfil);
+        panelPublicaciones.alComentar(this::comentar);
+        panelPublicaciones.alResponder(this::responder);
+        panelPublicaciones.alEliminarComentario(this::eliminarComentario);
+        panelPublicaciones.alVerComentarios(this::mostrarComentarios);
+        panelPublicaciones.alEliminarPublicacion(this::eliminarPublicacion);
+        panelPublicaciones.alReaccionar(this::reaccionar);
     }
 
     //Recibe el ID y muestra el perfil con los controles que correspondan. Devuelve la pantalla armada.
@@ -43,6 +62,7 @@ public class PanelPerfil {
         if (actual == null) throw new IllegalStateException("Inicia sesión para ver perfiles.");
         Usuario perfil = usuarios.obtenerPerfil(perfilId);
         if (perfil == null) throw new IllegalArgumentException("Ese perfil ya no está disponible.");
+        perfilIdActual = perfilId;
 
         var nombre = new Label(perfil.getNombre());
         nombre.setWrapText(true);
@@ -76,9 +96,18 @@ public class PanelPerfil {
         mensaje.setText("");
         var titulo = new Label(propio ? "Mi perfil" : "Perfil de estudiante");
         titulo.getStyleClass().add("titulo");
-        var identidad = new VBox(6, nombre, alias, cantidad);
+
+        var identidadTexto = new VBox(6, nombre, alias, cantidad);
+        var identidad = new HBox(12, Avatar.crear(perfil, 48), identidadTexto);
+        identidad.setAlignment(Pos.CENTER_LEFT);
         identidad.getStyleClass().add("panel-social");
-        var cuerpo = new VBox(14, titulo, identidad, datos, acciones, mensaje);
+
+        var tituloPublicaciones = new Label("Publicaciones");
+        tituloPublicaciones.getStyleClass().add("titulo");
+        panelPublicaciones.mostrar(publicaciones.obtenerPublicacionesDe(perfilId), true);
+        var seccionPublicaciones = new VBox(10, tituloPublicaciones, panelPublicaciones.getContenedor());
+
+        var cuerpo = new VBox(14, titulo, identidad, datos, acciones, mensaje, seccionPublicaciones);
         cuerpo.getStyleClass().add("cuerpo-social");
         contenedor.setContent(cuerpo);
         return contenedor;
@@ -203,6 +232,116 @@ public class PanelPerfil {
         botones.visibleProperty().bind(formulario.visibleProperty().not());
         botones.managedProperty().bind(botones.visibleProperty());
         acciones.getChildren().addAll(botones, formulario);
+    }
+
+    //Recibe el ID y abre ese perfil desde una publicación.
+    private void abrirPerfil(String perfilId) {
+        try {
+            navegador.mostrarPerfil(perfilId);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Recibe el post y el texto. Devuelve true si se guardó el comentario.
+    private boolean comentar(String publicacionId, String texto) {
+        try {
+            publicaciones.comentar(publicacionId, texto);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el post, el comentario padre y el texto. Devuelve true si se guardó la respuesta.
+    private boolean responder(String publicacionId, String comentarioPadreId, String texto) {
+        try {
+            publicaciones.responder(publicacionId, comentarioPadreId, texto);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el post y el comentario propio. Devuelve true si se borró el comentario.
+    private boolean eliminarComentario(String publicacionId, String comentarioId) {
+        if (!confirmar("¿Eliminar este comentario? Se borrarán también sus respuestas.",
+                "Eliminar comentario")) {
+            return false;
+        }
+        try {
+            publicaciones.eliminarComentario(publicacionId, comentarioId);
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+        mostrarComentarios(publicacionId);
+        return true;
+    }
+
+    //Recibe el ID del post y muestra sus comentarios en la misma tarjeta.
+    private void mostrarComentarios(String publicacionId) {
+        try {
+            panelPublicaciones.mostrarComentarios(publicacionId,
+                    publicaciones.obtenerComentarios(publicacionId));
+            limpiarMensaje();
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Recibe el ID del post. Pide confirmación, lo elimina y vuelve a pintar el perfil.
+    private boolean eliminarPublicacion(String publicacionId) {
+        if (!confirmarEliminacion()) return false;
+        try {
+            publicaciones.eliminarPublicacion(publicacionId);
+            mostrarPerfil(perfilIdActual);
+            return true;
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+            return false;
+        }
+    }
+
+    //Recibe el ID del post y alterna el me gusta del usuario en sesión.
+    private void reaccionar(String publicacionId) {
+        try {
+            var publicacion = publicaciones.alternarReaccion(publicacionId);
+            panelPublicaciones.actualizarReaccion(publicacion);
+            limpiarMensaje();
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            mostrarError(error.getMessage());
+        }
+    }
+
+    //Pide confirmación antes de borrar una publicación con sus comentarios.
+    private boolean confirmarEliminacion() {
+        return confirmar("¿Eliminar esta publicación? También se borrarán sus comentarios y respuestas.",
+                "Eliminar publicación");
+    }
+
+    //Recibe el mensaje y el título. Muestra una alerta de confirmación.
+    private boolean confirmar(String texto, String titulo) {
+        var alerta = new Alert(Alert.AlertType.CONFIRMATION, texto, ButtonType.CANCEL, ButtonType.OK);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        return alerta.showAndWait().filter(ButtonType.OK::equals).isPresent();
+    }
+
+    //Recibe el mensaje de error y lo muestra en el perfil.
+    private void mostrarError(String texto) {
+        mensaje.getStyleClass().setAll("label", "error");
+        mensaje.setText(texto == null || texto.isBlank() ? "No se pudo completar la operación." : texto);
+    }
+
+    //Quita el mensaje de error del perfil.
+    private void limpiarMensaje() {
+        mensaje.getStyleClass().setAll("label");
+        mensaje.setText("");
     }
 
     //Recibe el selector y la función que saca el nombre. Hace que el selector muestre ese nombre.

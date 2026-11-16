@@ -1,5 +1,37 @@
 {
   "publicaciones": [
-
+    {
+      "id": "c0faf35f-f0c7-4817-9a66-e572dcbc8502",
+      "autorId": "db122335-a406-4d79-bbb4-9159f1d6caf3",
+      "texto": "Ya llegaron los commits?",
+      "creadoEn": 1794864782377,
+      "ambito": "MURO",
+      "tipo": "PREGUNTA",
+      "comentarios": [
+        {
+          "id": "11c6123e-3543-4688-903b-d6e4a9ddafd7",
+          "autorId": "4db5043b-c398-440a-8228-1bfbd6bb1d55",
+          "texto": "Si, si llegaron al final",
+          "creadoEn": 1794864913079
+        }
+      ],
+      "reacciones": [
+        "db122335-a406-4d79-bbb4-9159f1d6caf3",
+        "d19e75aa-0817-416c-82d1-8d5a3ec3781f",
+        "c5f28373-c134-404c-844d-67708a4cca3a"
+      ]
+    },
+    {
+      "id": "172b8da2-a5d0-48b2-9af4-97c2b9c17f30",
+      "autorId": "4db5043b-c398-440a-8228-1bfbd6bb1d55",
+      "texto": "Ar Ar Ar",
+      "creadoEn": 1794865250957,
+      "ambito": "CARRERA",
+      "tipo": "GENERAL",
+      "carreraId": "informatica",
+      "sedeId": "siua",
+      "comentarios": [],
+      "reacciones": []
+    }
   ]
 }

@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "0c55a222-69a2-4bdc-8458-8eff050c00b0",
+    "usuarioAId": "c5f28373-c134-404c-844d-67708a4cca3a",
+    "usuarioBId": "db122335-a406-4d79-bbb4-9159f1d6caf3",
+    "creadoEn": 1794864818350
+  },
+  {
+    "id": "5f6d7ec3-223c-4f01-8815-6b3dc434dd35",
+    "usuarioAId": "d19e75aa-0817-416c-82d1-8d5a3ec3781f",
+    "usuarioBId": "db122335-a406-4d79-bbb4-9159f1d6caf3",
+    "creadoEn": 1794864857461
+  },
+  {
+    "id": "7cad8def-bc57-43f8-87d2-f5becf9262bf",
+    "usuarioAId": "4db5043b-c398-440a-8228-1bfbd6bb1d55",
+    "usuarioBId": "db122335-a406-4d79-bbb4-9159f1d6caf3",
+    "creadoEn": 1794864904585
+  }
+]

@@ -21,6 +21,18 @@ public interface IServicioComunidad {
     //Recibe el ID de una publicación visible y el texto. Guarda y devuelve el comentario.
     Comentario comentar(String publicacionId, String texto);
 
+    //Recibe el ID del post, el comentario padre y el texto. Guarda y devuelve la respuesta.
+    Comentario responder(String publicacionId, String comentarioPadreId, String texto);
+
     //Recibe el ID de una publicación visible y devuelve sus comentarios.
     ArrayList<Comentario> obtenerComentarios(String publicacionId);
+
+    //Recibe el ID del post y del comentario propio. Borra el comentario y sus respuestas.
+    void eliminarComentario(String publicacionId, String comentarioId);
+
+    //Recibe el ID de una publicación visible y alterna el me gusta del usuario en sesión.
+    Publicacion alternarReaccion(String publicacionId);
+
+    //Recibe el ID de una publicación propia y la elimina con sus comentarios.
+    void eliminarPublicacion(String publicacionId);
 }

@@ -4,6 +4,7 @@ import cr.ac.una.est.socialuna.model.entity.Usuario;
 import cr.ac.una.est.socialuna.service.contract.IServicioAmistad;
 import cr.ac.una.est.socialuna.service.contract.IServicioUsuarios;
 import cr.ac.una.est.socialuna.ui.NavegadorVistas;
+import cr.ac.una.est.socialuna.ui.component.Avatar;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -95,7 +96,7 @@ public class ControladorAmigos {
             HBox.setHgrow(nombre, Priority.ALWAYS);
             nombre.setMaxWidth(Double.MAX_VALUE);
             botonPerfil.setMinWidth(Button.USE_PREF_SIZE);
-            var fila = new HBox(12, nombre, botonPerfil);
+            var fila = new HBox(12, Avatar.crear(usuario, 36), nombre, botonPerfil);
             fila.setAlignment(Pos.CENTER_LEFT);
             fila.getStyleClass().add("resultado-estudiante");
             contenedor.getChildren().add(fila);
