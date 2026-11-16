@@ -79,7 +79,7 @@ src/
             └── RepositorioAmistadesJSONTest.java  # Guardar, reabrir y errores de archivo
 ```
 
-## Prompts del Equipo
+## Bitácora Prompts del Equipo
 
 ### Erving Sequeira
 ### 1. Estructura inicial del proyecto
@@ -139,8 +139,7 @@ src/
 **Uso:** `Tema.java` con claro/oscuro, iconos en el menú y `acceso.css` propio encima del tema.
 
 
-
-### Isabella Cubillo:
+### Isabella Cubillo
 ### IMPLEMENTACIÓN EN EL BACKEND
 
 **1.1. Revisión de la estructura del proyecto:**
@@ -187,5 +186,29 @@ Prompt:"Estoy revisando NavegadorVistas.java. Ayúdame a comprender cómo funcio
 **3.3. Integración del inicio de sesión con el Feed**
 Prompt:"Quiero comprobar el flujo de navegación desde ControladorLogin hasta Feed.fxml. Revisa cómo se realiza el inicio de sesión, cómo se obtiene el usuario activo y cómo se abre la pantalla principal sin afectar el funcionamiento del cierre de sesión."
 
+### Arleth Varela
+### 1. Carrera
+
+**Se implementó la clase con los atributos privados id, nombre y activa, un constructor vacío, otro con todos los atributos y sus getters.**
+
+### 2. SedeCampus
+
+**Se implementó la clase con los atributos privados id, nombre, alias, tipo y activa, sus dos constructores y getters.**
+
+### 3. IServicioComunidad
+
+**Se definieron las operaciones para consultar publicaciones por carrera o sede, publicar en esos ámbitos, comentar y obtener comentarios.**
+
+### 4. ServicioComunidad
+
+**Se preparó la lógica para consultar y crear publicaciones, validar sesión y visibilidad, agregar comentarios, persistirlos y ordenar publicaciones por fecha. Luego se ajustó el tipo de fecha a long según los constructores de las entidades.**
+
+**El prompt fue: “Podrías decirme cómo puedo implementar esta interfaz según la clase de contrato anterior.”**
+
+### 5. ControladorComunidad
+
+**Se preparó una vista JavaFX para seleccionar el ámbito, filtrar por sede, publicar, comentar, consultar comentarios y abrir perfiles.**
+
+**El promt utilizado fue: “Podrías ayudarme a implementar la ventana de error para la clase ControladorComunidad.”**
 
 
