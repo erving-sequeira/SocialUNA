@@ -52,7 +52,7 @@ public class GestorJSON {
 
     //Recibe el nombre y el tipo de un catálogo incluido con la app y devuelve sus datos.
     public <T> T leerCatalogoBase(String nombreArchivo, Class<T> tipo) {
-        try (var entrada = GestorJSON.class.getResourceAsStream("/catalogos/" + nombreArchivo)) {
+        try (var entrada = GestorJSON.class.getResourceAsStream("/copiaRespaldoBase/" + nombreArchivo)) {
             if (entrada == null) throw new IllegalStateException("No se encontró el catálogo base " + nombreArchivo + ".");
             return gson.fromJson(new InputStreamReader(entrada, StandardCharsets.UTF_8), tipo);
         } catch (IOException | JsonParseException error) {
