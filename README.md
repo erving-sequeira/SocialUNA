@@ -212,3 +212,13 @@ Prompt:"Quiero comprobar el flujo de navegación desde ControladorLogin hasta Fe
 **El promt utilizado fue: “Podrías ayudarme a implementar la ventana de error para la clase ControladorComunidad.”**
 
 
+
+### Daniel Alvarado
+
+Durante el desarrollo de SocialUNA utilicé herramientas de inteligencia artificial como apoyo para implementar, probar y documentar el proyecto. Revisé las propuestas y decidí cuáles incorporar según los requisitos y el estado del código.
+
+1. **Creación y actualización de pruebas.** Utilicé IA para preparar y ajustar pruebas a medida que incorporábamos nuevas funcionalidades. Estas pruebas ayudaron a detectar errores en la validación de datos, la persistencia en JSON y la navegación entre pantallas.
+2. **Implementación de clases bajo supervisión.** Utilicé agentes de IA para agilizar la creación de clases a partir del UML y de responsabilidades definidas previamente. Revisé las implementaciones para comprobar que respetaran los contratos del proyecto y se integraran con el código del equipo.
+3. **Reorganización de la interfaz gráfica.** Definí qué debía mostrar cada pantalla, qué acciones debía permitir y cómo se conectaría con las demás. Con esas especificaciones, utilicé IA para reorganizar el muro, la búsqueda de estudiantes y el perfil, e incorporar el menú de navegación inferior.
+4. **Diagnóstico y corrección de fallos de integración.** Usé IA para revisar la conexión entre las vistas, los controladores y los servicios. Esto ayudó a corregir la apertura de perfiles ajenos y a conectar los comentarios con las pestañas de Carrera y Sede.
+5. **Actualización de los diagramas UML.** Utilicé IA para comparar el código con los diagramas de frontend y backend e incorporar los cambios en métodos y relaciones. Un ejemplo fue documentar cómo se vinculan las carreras con las sedes donde se imparten y dónde se valida esa compatibilidad.
